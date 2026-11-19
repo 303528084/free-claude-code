@@ -161,10 +161,12 @@ jobs:
             echo "$list" | grep -qx "$f" || { echo "缺少必要条目：$f" >&2; exit 1; }
           done
           echo "--- app.tgz 内部（载荷是否打进去了）---"
-          applist="$(tar -xzf "$FPK" -O app.tgz | tar -tzf - | sed 's#^\./##')"
-          echo "app.tgz 内条目数：$(echo "$applist" | wc -l)"
+          applist="$RUNNER_TEMP/applist.txt"
+          tar -xzf "$FPK" -O app.tgz | tar -tzf - | sed 's#^\./##' > "$applist"
+          echo "app.tgz 内条目数：$(wc -l < "$applist")"
+          head -n 12 "$applist"
           for f in ui/config ui/images/icon_64.png shim/gateway_shim.py venv/bin/fcc-server runtime/python/bin/python3; do
-            if echo "$applist" | grep -qx "$f"; then echo "OK   $f"; else echo "MISS $f" >&2; missing=1; fi
+            if grep -qF -- "$f" "$applist"; then echo "OK   $f"; else echo "MISS $f" >&2; missing=1; fi
           done
           [ -z "${missing:-}" ] || { echo "载荷不完整，安装后服务会起不来" >&2; exit 1; }
 
