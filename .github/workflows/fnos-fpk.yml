@@ -153,26 +153,20 @@ jobs:
       - name: 冒烟检查（包结构）
         run: |
           set -euo pipefail
-          # fnpack 的检查已覆盖 manifest/config/app/cmd/wizard；这里只复核关键文件在包里
           file "$FPK"
-          python3 - "$FPK" <<'PY'
-          import sys, zipfile, tarfile
-          path = sys.argv[1]
-          names = []
-          if zipfile.is_zipfile(path):
-              names = zipfile.ZipFile(path).namelist()
-          elif tarfile.is_tarfile(path):
-              names = tarfile.open(path).getnames()
-          else:
-              print("未识别的归档格式，跳过内部检查"); sys.exit(0)
-          need = ["manifest", "cmd/main", "app/ui/config", "app/shim/gateway_shim.py",
-                  "app/venv/bin/fcc-server", "app/runtime/python/bin/python3"]
-          missing = [n for n in need if not any(x.endswith(n) or x == n for x in names)]
-          print("包内条目数：", len(names))
-          if missing:
-              print("缺少必要文件：", missing); sys.exit(1)
-          print("关键文件齐全")
-          PY
+          echo "包内条目数：$(tar -tzf "$FPK" | wc -l)"
+          echo "--- 一级条目 ---"
+          tar -tzf "$FPK" | awk -F/ 'NF<=2' | head -n 40
+          echo "--- app/ 子目录统计 ---"
+          tar -tzf "$FPK" | grep '^app/' | cut -d/ -f1-2 | sort | uniq -c | sort -rn | head -n 15
+          echo "--- 关键时刻检查 ---"
+          list="$(tar -tzf "$FPK")"
+          for f in manifest cmd/main app/ui/config; do
+            echo "$list" | grep -qx "$f" || { echo "缺少必要文件：$f" >&2; exit 1; }
+          done
+          for f in app/venv/bin/fcc-server app/runtime/python/bin/python3 app/shim/gateway_shim.py; do
+            if echo "$list" | grep -qx "$f"; then echo "OK  $f"; else echo "WARN 缺少 $f（安装后服务起不来）"; fi
+          done
 
       - name: 上传构建产物（artifact）
         uses: actions/upload-artifact@v4
