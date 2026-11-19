@@ -202,7 +202,7 @@ jobs:
           - 不是在 Docker 里跑，而是飞牛原生应用（FPK），由系统接管启停与状态
           - 自带 CPython 3.14.10 与全部依赖，不依赖应用中心的 python312
           - 桌面入口走飞牛统一网关（Unix Socket），在飞牛桌面窗口内直接打开汉化 Admin
-          - 局域网模型客户端走 ${TRIM_SERVICE_PORT} 端口（默认 8586）
+          - 局域网模型客户端走 \${TRIM_SERVICE_PORT} 端口（默认 8586）
 
           ## 安装
 
