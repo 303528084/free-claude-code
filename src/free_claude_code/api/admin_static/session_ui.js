@@ -86,7 +86,7 @@
     input.type = "text";
     input.autocomplete = "off";
     input.value = value;
-    input.setAttribute("aria-label", "Selected model");
+    input.setAttribute("aria-label", "已选模型");
     let committed = value,
       optionsSignature = JSON.stringify(values());
     const combobox = new window.FccModelCombobox(input, {
@@ -95,7 +95,7 @@
       values,
       registry,
       emptyMessage: () =>
-        values().length ? "No matching models." : "No models available.",
+        values().length ? "没有匹配的模型。" : "暂无可用模型。",
       onSelect: (model) => {
         committed = model;
         onSelect(model);

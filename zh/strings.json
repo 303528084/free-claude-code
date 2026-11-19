@@ -1,0 +1,557 @@
+{
+  "_comment": "en -> zh translation dictionary used by zh/apply_translations.py. Re-applied after every upstream sync.",
+  "string_literals": {
+    "admin.js": {
+      "Providers": "供应商",
+      "Model Config": "模型配置",
+      "Messaging": "消息",
+      "Integrations": "集成",
+      "Code sessions": "代码会话",
+      "API format": "API 格式",
+      "API keys": "API 密钥",
+      "Adaptive thinking": "自适应思考",
+      "Add Claude Code (FCC) using JetBrains' installed Claude Agent. Start that agent once before connecting, and finish any configuration edits.": "使用 JetBrains 已安装的 Claude Agent 添加 Claude Code (FCC)。连接前请先启动一次该代理，并完成所有配置编辑。",
+      "Add FCC models to VS Code Chat. Your selected models stay unchanged.": "把 FCC 模型添加到 VS Code Chat，已选模型保持不变。",
+      "Add provider": "添加供应商",
+      "Agent removed. Reopen JetBrains to disconnect.": "代理已移除，重新打开 JetBrains 即可断开。",
+      "Applied. Reconnecting to the server…": "已应用，正在重新连接服务器…",
+      "Applying…": "正在应用…",
+      "Availability check failed. Use Test to retry.": "可用性检查失败，请点「Test」重试。",
+      "Base URL": "接口地址（Base URL）",
+      "Cancel sign-in": "取消登录",
+      "Changes saved": "已保存",
+      "Chat draft cleanup deferred until the next page load: storage unavailable": "聊天草稿清理推迟到下次页面加载：存储不可用",
+      "Chat-template thinking": "对话模板思考",
+      "Check the highlighted API key rows.": "请检查标红的 API 密钥行。",
+      "Checking API keys…": "正在检查 API 密钥…",
+      "Checking account status": "正在检查账号状态",
+      "Checking account status…": "正在检查账号状态…",
+      "Checking models…": "正在检查模型…",
+      "Claude onboarding completed.": "Claude 首次引导已完成。",
+      "Cloud providers": "云端供应商",
+      "Complete onboarding": "完成引导",
+      "Configure Codex to use FCC. Your selected model stays unchanged.": "配置 Codex 使用 FCC，已选模型保持不变。",
+      "Configured - enter a new value to replace": "已配置 - 输入新值以替换",
+      "Connected. New DSH sessions use FCC. Reopen DSH if it does not reload the changes.": "已连接，新建的 DSH 会话将使用 FCC。若未自动生效，请重新打开 DSH。",
+      "Copy code": "复制代码",
+      "Could not load models. Check the provider's settings and retry.": "无法加载模型，请检查该供应商的设置后重试。",
+      "Could not prepare the Codex model catalog. Refresh models to retry.": "无法准备 Codex 模型目录，请刷新模型后重试。",
+      "Custom providers": "自定义供应商",
+      "DSH Desktop configuration updated.": "DSH Desktop 配置已更新。",
+      "DSH Desktop is disconnected. Select another model in existing DSH sessions.": "DSH Desktop 已断开，请在现有 DSH 会话中选择其他模型。",
+      "Default authentication": "默认认证方式",
+      "Device code copied.": "设备码已复制。",
+      "Drag to reorder, or use the up and down arrow keys.": "可拖动排序，或使用上下方向键。",
+      "Enter a full provider/model fallback.": "请输入完整的 provider/model 回退项。",
+      "Fallback reasoning effort": "回退项推理强度",
+      "Finish removing FCC's configuration. Fully quit Claude Desktop before retrying, then reopen it.": "请完成 FCC 配置的移除：重试前先完全退出 Claude Desktop，再重新打开。",
+      "Finish signing in, then return to this page.": "完成登录后回到本页面。",
+      "Hide advanced": "收起高级选项",
+      "How FCC sends reasoning controls. Provider default leaves computation to the upstream.": "FCC 如何传递推理控制参数。选「供应商默认」则由上游决定。",
+      "How previous reasoning is sent to a Chat Completions endpoint.": "历史推理内容如何发送给 Chat Completions 端点。",
+      "Include the API path, for example https://gateway.example/v1.": "需包含 API 路径，例如 https://gateway.example/v1。",
+      "Install and open DSH Desktop once, then connect FCC as the default for new sessions.": "先安装并打开一次 DSH Desktop，再把 FCC 设为新会话的默认选项。",
+      "Key 1": "密钥 1",
+      "Key 1 is used. Leave the list empty for endpoints that do not require a key.": "使用 1 号密钥。不需要密钥的端点请留空。",
+      "Limited effort (low / medium / high)": "受限强度（low / medium / high）",
+      "Loading admin config": "正在加载管理配置",
+      "Loading…": "加载中…",
+      "Local providers": "本地供应商",
+      "Local server unavailable": "本地服务不可用",
+      "Messaging could not start.": "消息功能启动失败。",
+      "Messaging is starting": "消息功能正在启动",
+      "Messaging status": "消息功能状态",
+      "Model IDs": "模型 ID",
+      "Models saved. Select an FCC model in VS Code Chat. Reload VS Code if needed.": "模型已保存，请在 VS Code Chat 中选择 FCC 模型；必要时重载 VS Code。",
+      "Models updated in VS Code.": "VS Code 中的模型已更新。",
+      "Native reasoning": "原生推理",
+      "No changes": "无改动",
+      "No custom providers yet.": "暂无自定义供应商。",
+      "No discovered models. Refresh models or enter a custom slug.": "未发现模型，请刷新模型或手动输入自定义 slug。",
+      "No matching models. You can still enter a custom slug.": "没有匹配的模型，也可以手动输入自定义 slug。",
+      "Not applied. Check the highlighted API keys.": "未应用，请检查标红的 API 密钥。",
+      "Not configured": "未配置",
+      "Not connected": "未连接",
+      "OAuth providers": "OAuth 供应商",
+      "Open Admin": "打开管理台",
+      "Open sign-in": "打开登录",
+      "OpenAI effort": "OpenAI 推理强度",
+      "Optional, one upstream model ID per line. Leave empty to discover models automatically.": "可选，每行一个上游模型 ID。留空则自动发现模型。",
+      "Provider check could not be completed.": "供应商检查未能完成。",
+      "Provider check failed.": "供应商检查失败。",
+      "Provider default": "供应商默认",
+      "Reasoning format": "推理格式",
+      "Reasoning history format": "推理历史格式",
+      "Reasoning object": "推理对象",
+      "Reconnecting…": "正在重连…",
+      "Refresh models": "刷新模型",
+      "Remove FCC's Codex configuration. Other settings stay unchanged.": "移除 FCC 的 Codex 配置，其他设置保持不变。",
+      "Remove FCC's Desktop connection. Existing FCC sessions need another model selected to continue.": "移除 FCC 的 Desktop 连接。现有 FCC 会话需另选模型才能继续。",
+      "Remove FCC's VS Code settings.": "移除 FCC 的 VS Code 设置。",
+      "Remove FCC's configuration and return to normal Claude sign-in. Fully quit Claude Desktop first, then reopen it.": "移除 FCC 配置，恢复 Claude 正常登录。请先完全退出 Claude Desktop 再重新打开。",
+      "Remove FCC's model group from VS Code Chat.": "从 VS Code Chat 中移除 FCC 模型组。",
+      "Remove provider": "删除供应商",
+      "Remove the Claude Code (FCC) agent, including its custom settings. Finish any configuration edits first.": "移除 Claude Code (FCC) 代理及其自定义设置。请先完成所有配置编辑。",
+      "Retry disconnect": "重试断开",
+      "Saved. Some keys could not be verified.": "已保存，部分密钥未能校验。",
+      "Saving…": "正在保存…",
+      "Select the API exposed by your endpoint.": "选择该端点对外提供的 API 类型。",
+      "Set FCC as Claude Desktop's gateway. Fully quit Claude Desktop before connecting, then reopen it.": "把 FCC 设为 Claude Desktop 的网关。连接前请完全退出 Claude Desktop，再重新打开。",
+      "Settings removed. Reload VS Code to disconnect.": "设置已移除，重载 VS Code 即可断开。",
+      "Settings removed. Reopen Claude Desktop to disconnect.": "设置已移除，重新打开 Claude Desktop 即可断开。",
+      "Settings removed. Restart Codex to disconnect.": "设置已移除，重启 Codex 即可断开。",
+      "Settings saved. Reload VS Code to connect.": "设置已保存，重载 VS Code 即可连接。",
+      "Settings saved. Reopen Claude Desktop to connect.": "设置已保存，重新打开 Claude Desktop 即可连接。",
+      "Settings saved. Reopen JetBrains, select Claude Code (FCC), and start a new chat.": "设置已保存。重新打开 JetBrains，选择 Claude Code (FCC) 并新建对话。",
+      "Settings saved. Restart Codex and select an FCC model.": "设置已保存，重启 Codex 并选择 FCC 模型。",
+      "Settings updated. Reload VS Code.": "设置已更新，请重载 VS Code。",
+      "Settings updated. Reopen Claude Desktop.": "设置已更新，请重新打开 Claude Desktop。",
+      "Settings updated. Reopen JetBrains and start a new chat.": "设置已更新，请重新打开 JetBrains 并新建对话。",
+      "Settings updated. Restart Codex.": "设置已更新，请重启 Codex。",
+      "Show advanced": "展开高级选项",
+      "That model and API key are already in the fallback list.": "该模型与 API 密钥已在回退列表中。",
+      "The local provider did not respond.": "本地供应商没有响应。",
+      "The server has not reconnected yet.": "服务器尚未重新连接。",
+      "Thinking on/off": "思考开关",
+      "Token-budget thinking": "Token 预算思考",
+      "Undo removal": "撤销删除",
+      "Will set FCC's URL and token, enable model discovery, skip VS Code login, and complete Claude onboarding.": "将写入 FCC 的地址与 token，启用模型发现，跳过 VS Code 登录，并完成 Claude 首次引导。",
+      "Close and reopen this modal to load saved settings before saving again.": "请关闭并重新打开此弹窗以载入已保存的设置，然后再保存。",
+      "Process env": "进程环境变量",
+      "process env": "进程环境变量"
+    },
+    "code_sessions.js": {
+      "Allow for": "允许时长",
+      "Allow selected": "允许所选",
+      "Answer sent…": "答案已发送…",
+      "Ask Codex to work on this folder…": "让 Codex 在这个文件夹里工作…",
+      "Browse…": "浏览…",
+      "Cancel request": "取消请求",
+      "Check deletion": "正在检查删除状态",
+      "Choose a model": "选择模型",
+      "Choose a model for the selected provider.": "为所选供应商选择一个模型。",
+      "Choose an existing folder on the computer running FCC. You can also enter its path manually.": "在运行 FCC 的电脑上选择一个已有文件夹，也可以手动输入路径。",
+      "Choose…": "选择…",
+      "Code session": "代码会话",
+      "Code sessions": "代码会话",
+      "Code title": "会话标题",
+      "Connecting…": "正在连接…",
+      "Create session": "创建会话",
+      "Delete session": "删除会话",
+      "Delete session?": "删除会话？",
+      "Deleting…": "正在删除…",
+      "Enter path manually": "手动输入路径",
+      "Full access": "完全访问",
+      "Line breaks in this folder name are shown as ␍ and ␊.": "文件夹名中的换行以 ␍ 和 ␊ 显示。",
+      "Load more sessions": "加载更多会话",
+      "Load older messages": "加载更早的消息",
+      "Loading sessions…": "正在加载会话…",
+      "Model list unavailable.": "模型列表不可用。",
+      "Models are loading…": "模型加载中…",
+      "Models for the selected provider are loading…": "正在加载所选供应商的模型…",
+      "New code session": "新建代码会话",
+      "No longer active": "已不再活跃",
+      "No matching sessions.": "没有匹配的会话。",
+      "Reconnecting…": "正在重连…",
+      "Retry Send": "重试发送",
+      "Search titles and folders": "搜索标题和文件夹",
+      "Selected effort is unavailable. Choose another effort.": "所选推理强度不可用，请另选。",
+      "Selected model is unavailable. Choose another model.": "所选模型不可用，请另选。",
+      "Session deleted.": "会话已删除。",
+      "Start your first code session.": "开始你的第一个代码会话。",
+      "Sub-agent ": "子代理 ",
+      "Submit answers": "提交答案",
+      "Synchronizing…": "同步中…",
+      "Thinking…": "思考中…",
+      "This deletes the conversation from FCC and Codex history. Your project files stay in place.": "这会从 FCC 与 Codex 历史中删除该对话，项目文件保持原样。",
+      "This session": "本次会话",
+      "This session was deleted.": "该会话已删除。",
+      "This tool's form cannot be displayed. Decline or cancel this request.": "无法显示该工具的表单，请拒绝或取消此请求。",
+      "This turn": "本轮",
+      "This turn failed.": "本轮失败。",
+      "Turn stopped.": "已停止本轮。",
+      "Use config": "使用配置",
+      "Use config uses this session's original configured permission selection.": "「使用配置」表示沿用该会话最初配置的权限选项。",
+      "Work with Codex in a project folder.": "在项目文件夹中与 Codex 协作。",
+      "Your answer": "你的回答",
+      "← Code sessions": "← 代码会话"
+    },
+    "session_ui.js": {
+      "No matching models.": "没有匹配的模型。",
+      "No models available.": "暂无可用模型。",
+      "Selected model": "已选模型"
+    },
+    "api_key_editor.js": {
+      "Add key": "添加密钥",
+      "Configured - enter a new key to replace": "已配置 - 输入新密钥以替换",
+      "Enter API key": "输入 API 密钥",
+      "Enter a key or remove this row.": "请输入密钥或删除该行。",
+      "Move cancelled.": "移动已取消。",
+      "No keys configured.": "未配置密钥。"
+    }
+  },
+  "template_literals": {
+    "admin.js": [
+      [
+        "`Could not reload settings: ${error.message}`",
+        "`无法重新加载设置：${error.message}`"
+      ],
+      [
+        "`Shared with ${shared.map(connectedAccountName).join(\", \")}.`",
+        "`已与 ${shared.map(connectedAccountName).join(\"、\")} 共享。`"
+      ],
+      [
+        "`Enter code ${status.user_code} at ${status.verification_url}`",
+        "`请在 ${status.verification_url} 输入代码 ${status.user_code}`"
+      ],
+      [
+        "`Connect your ${providerName} account to discover models.`",
+        "`连接你的 ${providerName} 账号以发现模型。`"
+      ],
+      [
+        "`Disconnect this ${connectedAccountName(provider)} account from FCC?`",
+        "`是否将该 ${connectedAccountName(provider)} 账号从 FCC 断开？`"
+      ],
+      [
+        "`Copy this device code: ${code}`",
+        "`请复制此设备码：${code}`"
+      ],
+      [
+        "`${count} model${count === 1 ? \"\" : \"s\"} available`",
+        "`可用模型 ${count} 个`"
+      ],
+      [
+        "`${name} model and effort`",
+        "`${name} 模型与推理强度`"
+      ],
+      [
+        "`Fallback model ${index + 1}`",
+        "`回退模型 ${index + 1}`"
+      ],
+      [
+        "`Reasoning effort for ${entry.model}`",
+        "`${entry.model} 的推理强度`"
+      ],
+      [
+        "`API key for ${entry.model}`",
+        "`${entry.model} 的 API 密钥`"
+      ],
+      [
+        "`Move ${entry.model}`",
+        "`移动 ${entry.model}`"
+      ],
+      [
+        "`Remove ${entry.model}`",
+        "`删除 ${entry.model}`"
+      ],
+      [
+        "option(number, `Key ${number}`)",
+        "option(number, `密钥 ${number}`)"
+      ],
+      [
+        "`Key ${value} (unavailable)`",
+        "`密钥 ${value}（不可用）`"
+      ],
+      [
+        "`${count} unsaved change${count === 1 ? \"\" : \"s\"}`",
+        "`${count} 项未保存改动`"
+      ],
+      [
+        "`Settings were saved. ${error.message} Use Reconnect to try again.`",
+        "`设置已保存。${error.message} 请用「重连」重试。`"
+      ],
+      [
+        "`Key saved. ${check.message}`",
+        "`密钥已保存。${check.message}`"
+      ],
+      [
+        ", Key ${check.index + 1}: Key saved. ${check.message}`",
+        "，密钥 ${check.index + 1}：密钥已保存。${check.message}`"
+      ],
+      [
+        "`Applied. Restart fcc-server to use: ${pending.join(\", \")}`",
+        "`已应用。重启 fcc-server 后生效：${pending.join(\"、\")}`"
+      ],
+      [
+        "      : \"Applied\";",
+        "      : \"已应用\";"
+      ],
+      [
+        "`Saved${pending.length ? \". Restart required\" : \"\"}. Some keys could not be verified.`",
+        "`已保存${pending.length ? \"，需重启生效\" : \"\"}。部分密钥未能校验。`"
+      ],
+      [
+        "`Applied, but could not reload settings: ${error.message}`",
+        "`已应用，但无法重新加载设置：${error.message}`"
+      ],
+      [
+        "`Could not apply settings: ${error.message}`",
+        "`无法应用设置：${error.message}`"
+      ],
+      [
+        "\" Close and reopen this modal to load saved settings before saving again.\"",
+        "\" 请关闭并重新打开此弹窗以载入已保存的设置，然后再保存。\""
+      ],
+      [
+        "`Reachable: ${provider.base_url}${suffix}`",
+        "`可访问：${provider.base_url}${suffix}`"
+      ],
+      [
+        "`${provider.base_url} returned HTTP ${provider.status_code}`",
+        "`${provider.base_url} 返回 HTTP ${provider.status_code}`"
+      ],
+      [
+        "`Unavailable: ${detail}${suffix}`",
+        "`不可用：${detail}${suffix}`"
+      ],
+      [
+        "`Unavailable: ${result.message || \"供应商检查失败。\"}`",
+        "`不可用：${result.message || \"供应商检查失败。\"}`"
+      ],
+      [
+        "`${state.modelOptions.length} models available; could not refresh ${labels}`",
+        "`可用模型 ${state.modelOptions.length} 个；无法刷新 ${labels}`"
+      ],
+      [
+        "`${state.modelOptions.length} models available`",
+        "`可用模型 ${state.modelOptions.length} 个`"
+      ],
+      [
+        "`Could not refresh models: ${error.message}`",
+        "`无法刷新模型：${error.message}`"
+      ],
+      [
+        "\"Add fallback\"",
+        "\"添加回退项\""
+      ],
+      [
+        "\"New fallback model\"",
+        "\"新增回退模型\""
+      ]
+    ],
+    "code_sessions.js": [
+      [
+        "`Context used: ${exactUsed} of ${maximum.toLocaleString(\"en-US\")} tokens (${percentage}%)`",
+        "`已用上下文：${exactUsed} / ${maximum.toLocaleString(\"en-US\")} tokens（${percentage}%）`"
+      ],
+      [
+        "`Context used: ${exactUsed} tokens`",
+        "`已用上下文：${exactUsed} tokens`"
+      ],
+      [
+        "`${childReview ? \"子代理 \" : \"\"}Auto-review: Result unavailable`",
+        "`${childReview ? \"子代理 \" : \"\"}自动评审：结果不可用`"
+      ],
+      [
+        "\"Open tool request\"",
+        "\"打开工具请求\""
+      ],
+      [
+        "\"This tool supplied an unsupported link.\"",
+        "\"该工具提供了不受支持的链接。\""
+      ]
+    ],
+    "api_key_editor.js": [
+      [
+        "`Duplicates Key ${index + 1}.`",
+        "`与密钥 ${index + 1} 重复。`"
+      ],
+      [
+        "`Duplicates Key ${previous + 1}.`",
+        "`与密钥 ${previous + 1} 重复。`"
+      ],
+      [
+        "`Key moved to position ${destination + 1} of ${this.entries.length}.`",
+        "`密钥已移动到第 ${destination + 1} 位（共 ${this.entries.length} 个）。`"
+      ],
+      [
+        "`Key dropped at position ${index + 1}.`",
+        "`密钥已放置到第 ${index + 1} 位。`"
+      ],
+      [
+        "`Picked up Key ${index + 1}. Use arrow keys to move, Space to drop, or Escape to cancel.`",
+        "`已拿起密钥 ${index + 1}。用方向键移动，空格放置，Esc 取消。`"
+      ],
+      [
+        "`Move Key ${index + 1}`",
+        "`移动密钥 ${index + 1}`"
+      ],
+      [
+        "`Remove Key ${index + 1}`",
+        "`删除密钥 ${index + 1}`"
+      ],
+      [
+        "`Key ${index + 1}`",
+        "`密钥 ${index + 1}`"
+      ],
+      [
+        "this.button(\"Remove\", `",
+        "this.button(\"删除\", `"
+      ]
+    ]
+  },
+  "html_literals": {
+    "/index.html": [
+      [
+        "<title>Free Claude Code Admin</title>",
+        "<title>Free Claude Code 管理台</title>"
+      ],
+      [
+        "Server Control · v__FCC_VERSION__",
+        "服务控制 · v__FCC_VERSION__"
+      ],
+      [
+        "aria-label=\"Admin views\"",
+        "aria-label=\"管理视图\""
+      ],
+      [
+        "aria-label=\"Runtime configuration\"",
+        "aria-label=\"运行时配置\""
+      ],
+      [
+        "aria-label=\"Model configuration\"",
+        "aria-label=\"模型配置\""
+      ],
+      [
+        "aria-label=\"Messaging configuration\"",
+        "aria-label=\"消息配置\""
+      ],
+      [
+        "aria-label=\"Open Free Claude Code on GitHub\"",
+        "aria-label=\"在 GitHub 上打开 Free Claude Code\""
+      ],
+      [
+        "aria-label=\"Close provider settings\"",
+        "aria-label=\"关闭供应商设置\""
+      ],
+      [
+        "aria-label=\"Close\"",
+        "aria-label=\"关闭\""
+      ],
+      [
+        "<h2 id=\"pageTitle\">Providers</h2>",
+        "<h2 id=\"pageTitle\">供应商</h2>"
+      ],
+      [
+        "Use FCC models in VS Code's built-in chat and agent mode.",
+        "在 VS Code 内置聊天与代理模式中使用 FCC 模型。"
+      ],
+      [
+        "Use FCC's models in the Claude Code extension for VS Code.",
+        "在 VS Code 的 Claude Code 扩展中使用 FCC 的模型。"
+      ],
+      [
+        "Claude Code in VS Code",
+        "VS Code 中的 Claude Code"
+      ],
+      [
+        "Claude Code onboarding",
+        "Claude Code 首次引导"
+      ],
+      [
+        "Complete Claude Code's first-time setup for this user.",
+        "为当前用户完成 Claude Code 的首次设置。"
+      ],
+      [
+        "Mark Claude Code onboarding as completed for this user.",
+        "将当前用户的 Claude Code 首次引导标记为已完成。"
+      ],
+      [
+        "Codex in VS Code and App",
+        "VS Code 与 App 中的 Codex"
+      ],
+      [
+        "Use FCC's models in the Codex VS Code extension and desktop app.",
+        "在 Codex 的 VS Code 扩展与桌面应用中使用 FCC 的模型。"
+      ],
+      [
+        "Claude Code in JetBrains ACP",
+        "JetBrains ACP 中的 Claude Code"
+      ],
+      [
+        "Use FCC's models in Claude Code through JetBrains ACP.",
+        "通过 JetBrains ACP 在 Claude Code 中使用 FCC 的模型。"
+      ],
+      [
+        "Route Claude Code in JetBrains through your FCC server.",
+        "让 JetBrains 中的 Claude Code 走你的 FCC 服务端。"
+      ],
+      [
+        "Claude Code in App",
+        "App 中的 Claude Code"
+      ],
+      [
+        "Use FCC's models in the Claude desktop app.",
+        "在 Claude 桌面应用中使用 FCC 的模型。"
+      ],
+      [
+        "Use FCC's models in the DeepSeek Harness desktop app.",
+        "在 DeepSeek Harness 桌面应用中使用 FCC 的模型。"
+      ],
+      [
+        "Install and open DSH Desktop once, then connect FCC as the default for new sessions.",
+        "先安装并打开一次 DSH Desktop，再把 FCC 设为新会话的默认选项。"
+      ],
+      [
+        "Choose an existing folder on the computer running FCC. You can also enter its path manually.",
+        "在运行 FCC 的电脑上选择一个已有文件夹，也可以手动输入路径。"
+      ],
+      [
+        "Loading…",
+        "加载中…"
+      ],
+      [
+        "Retry update",
+        "重试更新"
+      ],
+      [
+        "Retry",
+        "重试"
+      ],
+      [
+        "Files to modify",
+        "将要修改的文件"
+      ],
+      [
+        "Complete onboarding",
+        "完成引导"
+      ],
+      [
+        "Connect",
+        "连接"
+      ],
+      [
+        ">No changes<",
+        ">无改动<"
+      ],
+      [
+        ">Apply<",
+        ">应用<"
+      ],
+      [
+        ">Cancel<",
+        ">取消<"
+      ],
+      [
+        ">Save<",
+        ">保存<"
+      ],
+      [
+        "Add FCC models to VS Code Chat. Your selected models stay unchanged.",
+        "把 FCC 模型添加到 VS Code Chat，已选模型保持不变。"
+      ],
+      [
+        "Will set FCC's URL and token, enable model discovery, skip VS Code login, and complete Claude onboarding.",
+        "将写入 FCC 的地址与 token，启用模型发现，跳过 VS Code 登录，并完成 Claude 首次引导。"
+      ],
+      [
+        "Configure Codex to use FCC. Your selected model stays unchanged.",
+        "配置 Codex 使用 FCC，已选模型保持不变。"
+      ],
+      [
+        "Set FCC as Claude Desktop's gateway. Fully quit Claude Desktop before connecting, then reopen it.",
+        "把 FCC 设为 Claude Desktop 的网关。连接前请完全退出 Claude Desktop，再重新打开。"
+      ]
+    ]
+  }
+}

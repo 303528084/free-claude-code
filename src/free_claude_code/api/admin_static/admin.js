@@ -29,36 +29,36 @@ const NULL_VALUE = "__FCC_NULL__";
 const VIEW_GROUPS = [
   {
     id: "providers",
-    label: "Providers",
-    title: "Providers",
+    label: "供应商",
+    title: "供应商",
     sections: ["runtime"],
     containerId: "providersSections",
   },
   {
     id: "model_config",
-    label: "Model Config",
-    title: "Model Config",
+    label: "模型配置",
+    title: "模型配置",
     sections: ["models", "web_tools"],
     containerId: "modelConfigSections",
   },
   {
     id: "messaging",
-    label: "Messaging",
-    title: "Messaging",
+    label: "消息",
+    title: "消息",
     sections: ["messaging", "voice"],
     containerId: "messagingSections",
   },
   {
     id: "integrations",
-    label: "Integrations",
-    title: "Integrations",
+    label: "集成",
+    title: "集成",
     sections: [],
     containerId: "view-integrations",
   },
   {
     id: "code",
-    label: "Code sessions",
-    title: "Code sessions",
+    label: "代码会话",
+    title: "代码会话",
     sections: [],
     containerId: "codeRoot",
   },
@@ -74,7 +74,7 @@ function sourceLabel(source) {
   const labels = {
     default: "default",
     managed_env: "",
-    process: "process env",
+    process: "进程环境变量",
   };
   return Object.prototype.hasOwnProperty.call(labels, source) ? labels[source] : source;
 }
@@ -128,8 +128,8 @@ function renderStartup() {
     message.hidden = !visible;
     message.classList.toggle("startup-spinner", visible && messaging.state === "starting");
     message.classList.toggle("error", messaging?.state === "failed");
-    message.textContent = messaging?.state === "failed" ? messaging.message || "Messaging could not start." : messaging?.warning || "";
-    message.setAttribute("aria-label", messaging?.state === "starting" ? "Messaging is starting" : "Messaging status");
+    message.textContent = messaging?.state === "failed" ? messaging.message || "消息功能启动失败。" : messaging?.warning || "";
+    message.setAttribute("aria-label", messaging?.state === "starting" ? "消息功能正在启动" : "消息功能状态");
   }
   if (!startup) return;
   document.querySelectorAll("[data-startup-provider]").forEach((button) => {
@@ -213,7 +213,7 @@ async function load({ providersOnly = false } = {}) {
   state.localStatusRequest = null;
   state.startupRequest?.controller.abort();
   state.startupRequest = null;
-  showMessage("Loading admin config");
+  showMessage("正在加载管理配置");
   const config = await api("/admin/api/config");
   if (request !== state.configRequest) return;
   config.custom_providers ||= [];
@@ -318,9 +318,9 @@ function renderProviders(providerStatus) {
   const container = byId("providerGroups");
   container.replaceChildren();
   [
-    ["oauth", "OAuth providers"],
-    ["cloud", "Cloud providers"],
-    ["local", "Local providers"],
+    ["oauth", "OAuth 供应商"],
+    ["cloud", "云端供应商"],
+    ["local", "本地供应商"],
   ].forEach(([kind, label]) => {
     const group = document.createElement("section");
     group.className = "provider-strip";
@@ -330,9 +330,9 @@ function renderProviders(providerStatus) {
     group.appendChild(heading);
     const subgroups = [
       ["configured", kind === "oauth" ? "Connected" : "Configured"],
-      ["unconfigured", kind === "oauth" ? "Not connected" : "Not configured"],
+      ["unconfigured", kind === "oauth" ? "未连接" : "未配置"],
     ];
-    if (kind === "oauth") subgroups.unshift(["loading", "Checking account status"]);
+    if (kind === "oauth") subgroups.unshift(["loading", "正在检查账号状态"]);
     subgroups.forEach(([subgroupId, subgroupLabel]) => {
       const subgroup = document.createElement("div");
       subgroup.dataset.providerSubgroup = subgroupId;
@@ -352,12 +352,12 @@ function renderProviders(providerStatus) {
   custom.className = "provider-strip";
   custom.dataset.providerGroup = "custom";
   const heading = document.createElement("h3");
-  heading.textContent = "Custom providers";
-  const add = authButton("Add provider", () => openCustomProviderDialog(), "primary-button");
+  heading.textContent = "自定义供应商";
+  const add = authButton("添加供应商", () => openCustomProviderDialog(), "primary-button");
   add.id = "addCustomProvider";
   add.disabled = !!state.config.custom_providers_locked;
   const empty = document.createElement("p");
-  empty.textContent = "No custom providers yet.";
+  empty.textContent = "暂无自定义供应商。";
   empty.hidden = state.config.custom_providers.length > 0;
   const grid = document.createElement("div");
   grid.className = "provider-grid";
@@ -440,7 +440,7 @@ function updateProviderCard(provider) {
 async function refreshProviderConfig() {
   if (!state.configRefreshRequired) return true;
   try { await load({ providersOnly: true }); return true; }
-  catch (error) { showMessage(`Could not reload settings: ${error.message}`, "error"); return false; }
+  catch (error) { showMessage(`无法重新加载设置：${error.message}`, "error"); return false; }
 }
 
 async function openProviderDialog(providerId) {
@@ -462,7 +462,7 @@ async function openProviderDialog(providerId) {
     if (shared.length) {
       const note = document.createElement("div");
       note.className = "field-description";
-      note.textContent = `Shared with ${shared.map(connectedAccountName).join(", ")}.`;
+      note.textContent = `已与 ${shared.map(connectedAccountName).join("、")} 共享。`;
       wrapper.appendChild(note);
     }
     fields.appendChild(wrapper);
@@ -479,9 +479,9 @@ async function openProviderDialog(providerId) {
 }
 
 const CUSTOM_LABELS = {
-  provider_default: "Provider default", openai_effort: "OpenAI effort", limited_effort: "Limited effort (low / medium / high)",
-  reasoning_object: "Reasoning object", thinking: "Thinking on/off", chat_template: "Chat-template thinking",
-  native_responses: "Native reasoning", messages_manual: "Token-budget thinking", messages_adaptive: "Adaptive thinking",
+  provider_default: "供应商默认", openai_effort: "OpenAI 推理强度", limited_effort: "受限强度（low / medium / high）",
+  reasoning_object: "推理对象", thinking: "思考开关", chat_template: "对话模板思考",
+  native_responses: "原生推理", messages_manual: "Token 预算思考", messages_adaptive: "自适应思考",
 };
 
 async function openCustomProviderDialog(providerId = null) {
@@ -491,7 +491,7 @@ async function openCustomProviderDialog(providerId = null) {
   };
   state.providerId = providerId || "__custom_new__";
   state.customProvider = provider;
-  byId("providerDialogTitle").textContent = providerId ? provider.display_name : "Add provider";
+  byId("providerDialogTitle").textContent = providerId ? provider.display_name : "添加供应商";
   byId("providerMessage").textContent = "";
   byId("providerDialogCheck").hidden = true;
   renderProviderCheckMessage(byId("providerDialogAvailability"), null);
@@ -500,12 +500,12 @@ async function openCustomProviderDialog(providerId = null) {
   const formats = (state.config.custom_reasoning_formats || {})[provider.api_format] || ["provider_default"];
   const definitions = [
     ["display_name", "Name", "string", [], ""],
-    ["base_url", "Base URL", "string", [], "Include the API path, for example https://gateway.example/v1."],
-    ["api_keys", "API keys", "api_key_list", [], "Key 1 is used. Leave the list empty for endpoints that do not require a key."],
-    ["api_format", "API format", "select", [["openai_chat", "Chat Completions"], ["openai_responses", "Responses"], ["anthropic_messages", "Anthropic Messages"]], "Select the API exposed by your endpoint."],
-    ["reasoning_format", "Reasoning format", "select", formats.map((value) => [value, CUSTOM_LABELS[value]]), "How FCC sends reasoning controls. Provider default leaves computation to the upstream."],
-    ["reasoning_history_format", "Reasoning history format", "select", [["reasoning_content", "reasoning_content"], ["reasoning", "reasoning"]], "How previous reasoning is sent to a Chat Completions endpoint."],
-    ["model_ids", "Model IDs", "textarea", [], "Optional, one upstream model ID per line. Leave empty to discover models automatically."],
+    ["base_url", "接口地址（Base URL）", "string", [], "需包含 API 路径，例如 https://gateway.example/v1。"],
+    ["api_keys", "API 密钥", "api_key_list", [], "使用 1 号密钥。不需要密钥的端点请留空。"],
+    ["api_format", "API 格式", "select", [["openai_chat", "Chat Completions"], ["openai_responses", "Responses"], ["anthropic_messages", "Anthropic Messages"]], "选择该端点对外提供的 API 类型。"],
+    ["reasoning_format", "推理格式", "select", formats.map((value) => [value, CUSTOM_LABELS[value]]), "FCC 如何传递推理控制参数。选「供应商默认」则由上游决定。"],
+    ["reasoning_history_format", "推理历史格式", "select", [["reasoning_content", "reasoning_content"], ["reasoning", "reasoning"]], "历史推理内容如何发送给 Chat Completions 端点。"],
+    ["model_ids", "模型 ID", "textarea", [], "可选，每行一个上游模型 ID。留空则自动发现模型。"],
   ];
   for (const [key, label, type, options, description] of definitions) {
     fields.appendChild(renderField({ key, label, type, options: options.map(([value, label]) => ({value, label})), description,
@@ -527,11 +527,11 @@ async function openCustomProviderDialog(providerId = null) {
   const actions = byId("providerDialogActions");
   actions.replaceChildren();
   if (providerId && !state.config.custom_providers_locked) {
-    if (!provider.model_ids.length) actions.appendChild(authButton("Refresh models", (button) => testProvider(providerId, button), "secondary-button"));
-    actions.appendChild(authButton("Remove provider", () => apply(providerId, "delete"), "danger-button"));
+    if (!provider.model_ids.length) actions.appendChild(authButton("刷新模型", (button) => testProvider(providerId, button), "secondary-button"));
+    actions.appendChild(authButton("删除供应商", () => apply(providerId, "delete"), "danger-button"));
     const modelConfig = document.createElement("a");
     modelConfig.href = "/admin/model_config";
-    modelConfig.textContent = "Model Config";
+    modelConfig.textContent = "模型配置";
     modelConfig.addEventListener("click", (event) => { event.preventDefault(); byId("providerDialog").close(); navigateToView("model_config"); });
     actions.appendChild(modelConfig);
   }
@@ -548,7 +548,7 @@ function renderProviderDialogActions(provider) {
   actions.replaceChildren();
   const oauth = provider.kind === "connected_account";
   if (!oauth && !provider.missing_configuration_keys.length) {
-    const button = authButton(provider.kind === "local" ? "Test" : "Refresh models", (target) => testProvider(provider.provider_id, target), "secondary-button");
+    const button = authButton(provider.kind === "local" ? "Test" : "刷新模型", (target) => testProvider(provider.provider_id, target), "secondary-button");
     button.dataset.startupProvider = provider.provider_id;
     if (state.providerChecks.get(provider.provider_id)?.status === "checking") {
       button.dataset.operationBusy = "true";
@@ -569,24 +569,24 @@ function connectedAccountName(provider) {
 }
 
 function connectedAccountMeta(provider, status) {
-  if (!status) return "Checking account status…";
+  if (!status) return "正在检查账号状态…";
   const providerName = connectedAccountName(provider);
   if (status.state === "connecting") {
     if (status.mode === "device" && status.user_code && status.verification_url) {
-      return `Enter code ${status.user_code} at ${status.verification_url}`;
+      return `请在 ${status.verification_url} 输入代码 ${status.user_code}`;
     }
-    return status.message || "Finish signing in, then return to this page.";
+    return status.message || "完成登录后回到本页面。";
   }
   if (status.connected) {
-    return providerCheckResult(provider.provider_id)?.message || "Checking models…";
+    return providerCheckResult(provider.provider_id)?.message || "正在检查模型…";
   }
-  return status.message || `Connect your ${providerName} account to discover models.`;
+  return status.message || `连接你的 ${providerName} 账号以发现模型。`;
 }
 
 function populateConnectedAccountActions(provider, status, actions) {
   const providerId = provider.provider_id;
   if (!status) {
-    const loading = authButton("Loading…", () => {}, "secondary-button startup-busy");
+    const loading = authButton("加载中…", () => {}, "secondary-button startup-busy");
     loading.disabled = true;
     loading.setAttribute("aria-busy", "true");
     actions.appendChild(loading);
@@ -595,15 +595,15 @@ function populateConnectedAccountActions(provider, status, actions) {
   if (status.state === "connecting") {
     const target = status.authorization_url || status.verification_url;
     if (target) {
-      actions.appendChild(authButton("Open sign-in", () => window.open(target, "_blank", "noopener")));
+      actions.appendChild(authButton("打开登录", () => window.open(target, "_blank", "noopener")));
     }
     if (status.mode === "device" && status.user_code) {
       actions.appendChild(
-        authButton("Copy code", () => copyDeviceCode(status.user_code), "secondary-button"),
+        authButton("复制代码", () => copyDeviceCode(status.user_code), "secondary-button"),
       );
     }
     actions.appendChild(
-      authButton("Cancel sign-in", () => cancelConnectedAccountLogin(providerId), "secondary-button"),
+      authButton("取消登录", () => cancelConnectedAccountLogin(providerId), "secondary-button"),
     );
     return;
   }
@@ -716,7 +716,7 @@ async function cancelConnectedAccountLogin(providerId) {
 
 async function disconnectConnectedAccount(providerId) {
   const provider = connectedAccountDescriptor(providerId);
-  if (!window.confirm(`Disconnect this ${connectedAccountName(provider)} account from FCC?`)) return;
+  if (!window.confirm(`是否将该 ${connectedAccountName(provider)} 账号从 FCC 断开？`)) return;
   clearConnectedAccountPoll(providerId);
   try {
     const status = await api(`/admin/api/providers/${providerId}/auth`, { method: "DELETE" });
@@ -767,14 +767,14 @@ function connectedAccountDescriptor(providerId) {
 async function copyDeviceCode(code) {
   try {
     await navigator.clipboard.writeText(code);
-    showMessage("Device code copied.");
+    showMessage("设备码已复制。");
   } catch {
-    showMessage(`Copy this device code: ${code}`);
+    showMessage(`请复制此设备码：${code}`);
   }
 }
 
 function modelCountMessage(count) {
-  return `${count} model${count === 1 ? "" : "s"} available`;
+  return `可用模型 ${count} 个`;
 }
 
 function providerCheckResult(providerId) {
@@ -784,15 +784,15 @@ function providerCheckResult(providerId) {
   const discovery = state.startup?.startup?.providers?.[providerId];
   let result;
   if (discovery === "starting") {
-    result = { status: "checking", message: "Checking models…" };
+    result = { status: "checking", message: "正在检查模型…" };
   } else if (discovery === "failed") {
-    result = { status: "error", message: state.startup.startup.provider_errors?.[providerId] || "Could not load models. Check the provider's settings and retry." };
+    result = { status: "error", message: state.startup.startup.provider_errors?.[providerId] || "无法加载模型，请检查该供应商的设置后重试。" };
   } else if (discovery === "ready") {
     result = { status: "ok", message: modelCountMessage(state.startup.cached_models[providerId]?.length || 0) };
   } else if (discovery === "unavailable") {
     return {
       status: "",
-      message: "Local server unavailable",
+      message: "本地服务不可用",
       availability: check ? { ...check, status: "" } : undefined,
     };
   }
@@ -870,7 +870,7 @@ function renderSections(sections, fields) {
         const refreshButton = document.createElement("button");
         refreshButton.type = "button";
         refreshButton.className = "secondary-button";
-        refreshButton.textContent = "Refresh models";
+        refreshButton.textContent = "刷新模型";
         refreshButton.dataset.startupCatalog = "true";
         refreshButton.addEventListener("click", () => refreshModelOptions(refreshButton));
         heading.appendChild(refreshButton);
@@ -890,10 +890,10 @@ function renderSections(sections, fields) {
         const toggle = document.createElement("button");
         toggle.type = "button";
         toggle.className = "ghost-button advanced-toggle";
-        toggle.textContent = "Show advanced";
+        toggle.textContent = "展开高级选项";
         toggle.addEventListener("click", () => {
           const showing = sectionEl.classList.toggle("show-advanced");
-          toggle.textContent = showing ? "Hide advanced" : "Show advanced";
+          toggle.textContent = showing ? "收起高级选项" : "展开高级选项";
         });
         sectionEl.appendChild(toggle);
       }
@@ -916,7 +916,7 @@ function renderModelRoutes(grid, fields) {
     const row = document.createElement("div");
     row.className = "model-route-row";
     row.setAttribute("role", "group");
-    row.setAttribute("aria-label", `${name} model and effort`);
+    row.setAttribute("aria-label", `${name} 模型与推理强度`);
     row.append(renderField(fieldsByKey.get(modelKey)), renderField(fieldsByKey.get(effortKey)));
     grid.appendChild(row);
     fieldsByKey.delete(modelKey);
@@ -1002,7 +1002,7 @@ function renderField(field) {
       const removing = input.dataset.remove !== "true";
       input.dataset.remove = removing ? "true" : "false";
       input.readOnly = removing;
-      removeButton.textContent = removing ? "Undo removal" : "Remove";
+      removeButton.textContent = removing ? "撤销删除" : "Remove";
       clearCredentialError(input);
       updateDirtyState();
     });
@@ -1064,8 +1064,8 @@ function inputForField(field) {
     input.spellcheck = false;
     input.setAttribute("autocorrect", "off");
     input.placeholder = field.configured
-      ? "Configured - enter a new value to replace"
-      : "Not configured";
+      ? "已配置 - 输入新值以替换"
+      : "未配置";
     input.value = "";
     input.autocomplete = "off";
   } else {
@@ -1085,8 +1085,8 @@ function createModelCombobox(input, field) {
         : state.modelOptions,
     emptyMessage: () =>
       state.modelOptions.length
-        ? "No matching models. You can still enter a custom slug."
-        : "No discovered models. Refresh models or enter a custom slug.",
+        ? "没有匹配的模型，也可以手动输入自定义 slug。"
+        : "未发现模型，请刷新模型或手动输入自定义 slug。",
     registry: state.modelComboboxes,
   });
 }
@@ -1107,9 +1107,9 @@ class ModelListEditor {
 
     const addRow = document.createElement("div");
     addRow.className = "model-list-add";
-    const addCombobox = this.modelCombobox("", "add", "New fallback model");
+    const addCombobox = this.modelCombobox("", "add", "新增回退模型");
     this.addInput = addCombobox.input;
-    this.addEffort = this.effortSelect("inherit", "Fallback reasoning effort");
+    this.addEffort = this.effortSelect("inherit", "回退项推理强度");
     this.addEffort.id = `field-${field.key}-effort`;
     this.addKey = this.keySelect("", 1, "Fallback API key");
     this.addProviderId = "";
@@ -1121,7 +1121,7 @@ class ModelListEditor {
     this.addInput.addEventListener("input", updateAddModel);
     this.addInput.addEventListener("change", updateAddModel);
 
-    this.addButton = this.actionButton("", "Add fallback", () => this.add());
+    this.addButton = this.actionButton("", "添加回退项", () => this.add());
     this.addButton.className = "secondary-button model-list-action";
     this.addButton.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 6v12M6 12h12" stroke-linecap="round"/></svg>';
     addRow.append(addCombobox.element, this.addEffort, this.addKey, this.addButton);
@@ -1160,12 +1160,12 @@ class ModelListEditor {
   add() {
     const value = this.addInput.value.trim();
     if (!value) {
-      showMessage("Enter a full provider/model fallback.", "error");
+      showMessage("请输入完整的 provider/model 回退项。", "error");
       return;
     }
     const apiKeyNumber = Number(this.addKey.value);
     if (this.values.some((entry) => entry.model === value && (entry.api_key_number ?? 1) === apiKeyNumber)) {
-      showMessage("That model and API key are already in the fallback list.", "error");
+      showMessage("该模型与 API 密钥已在回退列表中。", "error");
       return;
     }
     this.values.push({ model: value, reasoning: this.addEffort.value, api_key_number: apiKeyNumber });
@@ -1212,24 +1212,24 @@ class ModelListEditor {
       const row = document.createElement("div");
       row.className = "model-list-row";
 
-      const combobox = this.modelCombobox(entry.model, `row-${index}`, `Fallback model ${index + 1}`);
+      const combobox = this.modelCombobox(entry.model, `row-${index}`, `回退模型 ${index + 1}`);
       this.rowComboboxes.push(combobox);
-      const effort = this.effortSelect(entry.reasoning, `Reasoning effort for ${entry.model}`);
+      const effort = this.effortSelect(entry.reasoning, `${entry.model} 的推理强度`);
       effort.addEventListener("change", () => {
         entry.reasoning = effort.value;
         this.sync();
       });
-      const key = this.keySelect(entry.model, entry.api_key_number ?? 1, `API key for ${entry.model}`);
+      const key = this.keySelect(entry.model, entry.api_key_number ?? 1, `${entry.model} 的 API 密钥`);
       this.rowKeys.push({ entry, select: key });
       key.addEventListener("change", () => {
         entry.api_key_number = Number(key.value);
         this.sync();
       });
 
-      const handle = this.actionButton("⠿", `Move ${entry.model}`);
+      const handle = this.actionButton("⠿", `移动 ${entry.model}`);
       handle.classList.add("model-list-drag");
       handle.draggable = !this.field.locked;
-      handle.title = "Drag to reorder, or use the up and down arrow keys.";
+      handle.title = "可拖动排序，或使用上下方向键。";
       handle.addEventListener("keydown", (event) => {
         if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
         event.preventDefault();
@@ -1244,7 +1244,7 @@ class ModelListEditor {
       });
       handle.addEventListener("dragend", () => this.clearDrag());
 
-      const remove = this.actionButton("", `Remove ${entry.model}`, () => this.remove(index));
+      const remove = this.actionButton("", `删除 ${entry.model}`, () => this.remove(index));
       remove.className = "danger-button model-list-action";
       remove.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       const updateModel = () => {
@@ -1252,10 +1252,10 @@ class ModelListEditor {
         entry.model = combobox.input.value.trim();
         if (this.providerId(entry.model) !== previousProvider) entry.api_key_number = 1;
         this.updateKeySelect(key, entry.model, entry.api_key_number ?? 1);
-        key.setAttribute("aria-label", `API key for ${entry.model}`);
-        effort.setAttribute("aria-label", `Reasoning effort for ${entry.model}`);
-        handle.setAttribute("aria-label", `Move ${entry.model}`);
-        remove.setAttribute("aria-label", `Remove ${entry.model}`);
+        key.setAttribute("aria-label", `${entry.model} 的 API 密钥`);
+        effort.setAttribute("aria-label", `${entry.model} 的推理强度`);
+        handle.setAttribute("aria-label", `移动 ${entry.model}`);
+        remove.setAttribute("aria-label", `删除 ${entry.model}`);
         this.sync();
       };
       combobox.input.addEventListener("input", updateModel);
@@ -1334,12 +1334,12 @@ class ModelListEditor {
     const count = this.keyCount(model);
     select.replaceChildren();
     if (count === null) {
-      select.appendChild(option(1, this.providerId(model) ? "Default authentication" : "Key 1"));
+      select.appendChild(option(1, this.providerId(model) ? "默认认证方式" : "密钥 1"));
     } else {
-      for (let number = 1; number <= Math.max(1, count); number++) select.appendChild(option(number, `Key ${number}`));
+      for (let number = 1; number <= Math.max(1, count); number++) select.appendChild(option(number, `密钥 ${number}`));
     }
     if (value > Math.max(1, count ?? 1)) {
-      const unavailable = option(value, `Key ${value} (unavailable)`);
+      const unavailable = option(value, `密钥 ${value}（不可用）`);
       unavailable.disabled = true;
       select.appendChild(unavailable);
     }
@@ -1409,7 +1409,7 @@ function changedValues(root = byId("adminViews")) {
 function updateDirtyState() {
   const count = Object.keys(changedValues()).length;
   byId("dirtyState").textContent =
-    state.restart ? "Changes saved" : count === 0 ? "No changes" : `${count} unsaved change${count === 1 ? "" : "s"}`;
+    state.restart ? "已保存" : count === 0 ? "无改动" : `${count} 项未保存改动`;
   byId("applyButton").disabled = state.applying || (!state.restart && count === 0);
   byId("saveProvider").disabled = state.applying || !!state.restart || state.configRefreshRequired || !Object.keys(changedValues(byId("providerFields"))).length;
 }
@@ -1460,12 +1460,12 @@ function setApplying(applying) {
   byId("providerDialogBody").inert = applying || !!state.restart;
   byId("closeProviderDialog").disabled = applying;
   byId("cancelProviderDialog").disabled = applying;
-  byId("saveProvider").textContent = applying ? "Saving…" : "Save";
+  byId("saveProvider").textContent = applying ? "正在保存…" : "Save";
   byId("saveProvider").classList.toggle("startup-busy", applying);
   byId("saveProvider").setAttribute("aria-busy", String(applying));
   byId("applyButton").textContent = state.restart
-    ? applying ? "Reconnecting…" : "Reconnect"
-    : applying ? "Applying…" : "Apply";
+    ? applying ? "正在重连…" : "Reconnect"
+    : applying ? "正在应用…" : "Apply";
   updateDirtyState();
 }
 
@@ -1489,13 +1489,13 @@ async function waitForRestart(restart, target) {
     }
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
-  throw new Error("The server has not reconnected yet.");
+  throw new Error("服务器尚未重新连接。");
 }
 
 function appendAdminLink(target) {
   const link = document.createElement("a");
   link.href = target.href;
-  link.textContent = "Open Admin";
+  link.textContent = "打开管理台";
   byId("messageArea").append(document.createElement("br"), link);
 }
 
@@ -1508,7 +1508,7 @@ async function reconnectAfterRestart() {
   const { restart, warnings, providersOnly, providerId, checks } = state.restart;
   const target = new URL(restart.admin_url || "/admin", window.location.href);
   setApplying(true);
-  showMessage(["Applied. Reconnecting to the server…", ...warnings].join("\n"), warnings.length ? "warn" : "ok");
+  showMessage(["已应用，正在重新连接服务器…", ...warnings].join("\n"), warnings.length ? "warn" : "ok");
   try {
     await waitForRestart(restart, target);
     if (target.origin !== window.location.origin) {
@@ -1524,7 +1524,7 @@ async function reconnectAfterRestart() {
     if (providerId) await restoreSavedProvider(providerId, checks);
   } catch (error) {
     state.configRefreshRequired = true;
-    showMessage([`Settings were saved. ${error.message} Use Reconnect to try again.`, ...warnings].join("\n"), "warn");
+    showMessage([`设置已保存。${error.message} 请用「重连」重试。`, ...warnings].join("\n"), "warn");
     appendAdminLink(target);
   } finally {
     setApplying(false);
@@ -1560,8 +1560,8 @@ async function showRestartNotice() {
 async function restoreSavedProvider(providerId, checks) {
   if (!connectedAccountDescriptor(providerId)) return;
   await openProviderDialog(providerId);
-  showCredentialErrors(checks.map((check) => ({ ...check, message: `Key saved. ${check.message}` })));
-  byId("providerMessage").textContent = "Saved. Some keys could not be verified.";
+  showCredentialErrors(checks.map((check) => ({ ...check, message: `密钥已保存。${check.message}` })));
+  byId("providerMessage").textContent = "已保存，部分密钥未能校验。";
   byId("providerMessage").className = "message-area warn";
 }
 
@@ -1584,7 +1584,7 @@ async function apply(providerId = null, customAction = null) {
       values[editor.field.key] = editor.payload();
     }
     if (invalid) {
-      showMessage("Check the highlighted API key rows.", "error");
+      showMessage("请检查标红的 API 密钥行。", "error");
       invalid.focus();
       return;
     }
@@ -1602,7 +1602,7 @@ async function apply(providerId = null, customAction = null) {
   let rejectedField = null;
   let applied = false;
   setApplying(true);
-  showMessage(checkingKeys ? "Checking API keys…" : "Applying…");
+  showMessage(checkingKeys ? "正在检查 API 密钥…" : "正在应用…");
   try {
     const result = await api("/admin/api/config/apply", {
       method: "POST",
@@ -1611,13 +1611,13 @@ async function apply(providerId = null, customAction = null) {
     const checks = result.credential_checks || [];
     if (!result.applied) {
       rejectedField = showCredentialErrors(checks, result.credential_row_errors || []);
-      showMessage(rejectedField ? "Not applied. Check the highlighted API keys." : (result.errors || []).join("; "), "error");
+      showMessage(rejectedField ? "未应用，请检查标红的 API 密钥。" : (result.errors || []).join("; "), "error");
       return;
     }
     applied = true;
     const warningChecks = checks.filter((check) => check.status === "unverified");
     const warnings = warningChecks.map((check) =>
-      `${state.fields.get(check.key)?.label || "API keys"}, Key ${check.index + 1}: Key saved. ${check.message}`
+      `${state.fields.get(check.key)?.label || "API 密钥"}，密钥 ${check.index + 1}：密钥已保存。${check.message}`
     );
     const savedProviderId = warnings.length && providerId && mutation?.action !== "delete" ? result.custom_provider_id || providerId : null;
     if (providerId && !savedProviderId) byId("providerDialog").close();
@@ -1632,17 +1632,17 @@ async function apply(providerId = null, customAction = null) {
     await load({ providersOnly: !!providerId });
     if (savedProviderId) await restoreSavedProvider(savedProviderId, warningChecks);
     const message = pending.length
-      ? `Applied. Restart fcc-server to use: ${pending.join(", ")}`
-      : "Applied";
+      ? `已应用。重启 fcc-server 后生效：${pending.join("、")}`
+      : "已应用";
     showMessage([message, ...warnings].join("\n"), warnings.length ? "warn" : "ok");
     if (savedProviderId) {
-      byId("providerMessage").textContent = `Saved${pending.length ? ". Restart required" : ""}. Some keys could not be verified.`;
+      byId("providerMessage").textContent = `已保存${pending.length ? "，需重启生效" : ""}。部分密钥未能校验。`;
       byId("providerMessage").className = "message-area warn";
     }
   } catch (error) {
     if (providerId && (applied || error.status === 409 || !error.status || error.status >= 500)) state.configRefreshRequired = true;
-    showMessage(applied ? `Applied, but could not reload settings: ${error.message}` : `Could not apply settings: ${error.message}`, "error");
-    if (providerId && state.configRefreshRequired) byId("providerMessage").append(" Close and reopen this modal to load saved settings before saving again.");
+    showMessage(applied ? `已应用，但无法重新加载设置：${error.message}` : `无法应用设置：${error.message}`, "error");
+    if (providerId && state.configRefreshRequired) byId("providerMessage").append(" 请关闭并重新打开此弹窗以载入已保存的设置，然后再保存。");
   } finally {
     setApplying(false);
     if (rejectedField) {
@@ -1679,18 +1679,18 @@ async function refreshLocalStatus(config) {
         }
         const suffix = diagnostics.length ? ` (${diagnostics.join(", ")})` : "";
         if (provider.status === "reachable") {
-          updateProviderCheckResult(providerId, "ok", `Reachable: ${provider.base_url}${suffix}`, "availability");
+          updateProviderCheckResult(providerId, "ok", `可访问：${provider.base_url}${suffix}`, "availability");
           return;
         }
         const detail = provider.message
           ? provider.message
           : provider.status_code
-            ? `${provider.base_url} returned HTTP ${provider.status_code}`
-            : "The local provider did not respond.";
-        updateProviderCheckResult(providerId, "error", `Unavailable: ${detail}${suffix}`, "availability");
+            ? `${provider.base_url} 返回 HTTP ${provider.status_code}`
+            : "本地供应商没有响应。";
+        updateProviderCheckResult(providerId, "error", `不可用：${detail}${suffix}`, "availability");
       } catch {
         if (state.localStatusRequest !== request || !request.providerIds.has(providerId)) return;
-        updateProviderCheckResult(providerId, "error", "Availability check failed. Use Test to retry.", "availability");
+        updateProviderCheckResult(providerId, "error", "可用性检查失败，请点「Test」重试。", "availability");
       }
     }));
   } finally {
@@ -1723,7 +1723,7 @@ async function testProvider(providerId, button) {
       updateProviderCheckResult(
         providerId,
         "error",
-        `Unavailable: ${result.message || "Provider check failed."}`,
+        `不可用：${result.message || "供应商检查失败。"}`,
       );
     }
   } catch {
@@ -1731,7 +1731,7 @@ async function testProvider(providerId, button) {
     updateProviderCheckResult(
       providerId,
       "error",
-      "Provider check could not be completed.",
+      "供应商检查未能完成。",
     );
   } finally {
     delete button.dataset.operationBusy;
@@ -1773,14 +1773,14 @@ async function refreshModelOptions(button) {
     if (failedProviders.length) {
       const labels = failedProviders.map(providerDisplayName).join(", ");
       showMessage(
-        `${state.modelOptions.length} models available; could not refresh ${labels}`,
+        `可用模型 ${state.modelOptions.length} 个；无法刷新 ${labels}`,
         "warn",
       );
     } else {
-      showMessage(`${state.modelOptions.length} models available`, "ok");
+      showMessage(`可用模型 ${state.modelOptions.length} 个`, "ok");
     }
   } catch (error) {
-    showMessage(`Could not refresh models: ${error.message}`, "error");
+    showMessage(`无法刷新模型：${error.message}`, "error");
   } finally {
     delete button.dataset.operationBusy;
     button.disabled = false;
@@ -1854,7 +1854,7 @@ try {
     if (key.startsWith("fcc.chat.draft.")) sessionStorage.removeItem(key);
   }
 } catch {
-  console.warn("Chat draft cleanup deferred until the next page load: storage unavailable");
+  console.warn("聊天草稿清理推迟到下次页面加载：存储不可用");
 }
 
 const claudeIntegrationDialog = byId("claudeIntegrationDialog");
@@ -1867,11 +1867,11 @@ const claudeOnboardingPath = "/admin/api/integrations/claude-onboarding";
 function renderClaudeOnboarding() {
   const { completed, busy, paths, checkRequest } = claudeOnboarding;
   const button = byId("openClaudeOnboarding");
-  button.textContent = busy ? checkRequest ? "Loading…" : "Saving…" : completed === null ? "Retry" : completed ? "Completed" : "Complete onboarding";
+  button.textContent = busy ? checkRequest ? "加载中…" : "正在保存…" : completed === null ? "Retry" : completed ? "Completed" : "完成引导";
   button.disabled = busy || completed === true;
   button.setAttribute("aria-busy", String(busy));
   const action = byId("confirmClaudeOnboarding");
-  action.textContent = busy ? "Saving…" : "Complete onboarding";
+  action.textContent = busy ? "正在保存…" : "完成引导";
   action.disabled = busy || completed !== false;
   const files = byId("claudeOnboardingFiles");
   files.replaceChildren();
@@ -1929,7 +1929,7 @@ byId("confirmClaudeOnboarding").addEventListener("click", async () => {
     const result = await api(`${claudeOnboardingPath}/complete`, { method: "POST" });
     claudeOnboarding.completed = result.completed;
     claudeOnboardingDialog.close();
-    integrationMessage("claudeOnboardingMessage", "Claude onboarding completed.");
+    integrationMessage("claudeOnboardingMessage", "Claude 首次引导已完成。");
   } catch (error) {
     integrationMessage("claudeOnboardingDialogMessage", error.message, true);
     integrationMessage("claudeOnboardingMessage", error.message, true);
@@ -1986,12 +1986,12 @@ function finishIntegrationCheck(integration, request, render) {
 function refreshIntegrationUpdates(previous, current) {
   if (state.activeView !== "integrations") return;
   for (const [id, integration, refresh, messageId, message] of [
-    ["vscode-chat", vscodeChatIntegration, refreshVSCodeChatIntegration, "vscodeChatIntegrationMessage", "Models updated in VS Code."],
-    ["claude-vscode", claudeIntegration, refreshClaudeIntegration, "claudeIntegrationMessage", "Settings updated. Reload VS Code."],
-    ["jetbrains-acp", jetBrainsIntegration, refreshJetBrainsIntegration, "jetBrainsIntegrationMessage", "Settings updated. Reopen JetBrains and start a new chat."],
-    ["codex", codexIntegration, refreshCodexIntegration, "codexIntegrationMessage", "Settings updated. Restart Codex."],
-    ["claude-desktop", claudeDesktopIntegration, refreshClaudeDesktopIntegration, "claudeDesktopIntegrationMessage", "Settings updated. Reopen Claude Desktop."],
-    ["dsh-desktop", dshDesktopIntegration, refreshDshDesktopIntegration, "dshDesktopIntegrationMessage", "DSH Desktop configuration updated."],
+    ["vscode-chat", vscodeChatIntegration, refreshVSCodeChatIntegration, "vscodeChatIntegrationMessage", "VS Code 中的模型已更新。"],
+    ["claude-vscode", claudeIntegration, refreshClaudeIntegration, "claudeIntegrationMessage", "设置已更新，请重载 VS Code。"],
+    ["jetbrains-acp", jetBrainsIntegration, refreshJetBrainsIntegration, "jetBrainsIntegrationMessage", "设置已更新，请重新打开 JetBrains 并新建对话。"],
+    ["codex", codexIntegration, refreshCodexIntegration, "codexIntegrationMessage", "设置已更新，请重启 Codex。"],
+    ["claude-desktop", claudeDesktopIntegration, refreshClaudeDesktopIntegration, "claudeDesktopIntegrationMessage", "设置已更新，请重新打开 Claude Desktop。"],
+    ["dsh-desktop", dshDesktopIntegration, refreshDshDesktopIntegration, "dshDesktopIntegrationMessage", "DSH Desktop 配置已更新。"],
   ]) {
     const phase = current?.[id]?.state;
     // Successful actions clear update metadata, not the last observed state.
@@ -2013,16 +2013,16 @@ function renderClaudeIntegration() {
   const { connected, paths } = claudeIntegration;
   const busy = claudeIntegration.busy || integrationUpdating(claudeIntegration, "claude-vscode");
   const action = connected ? "Disconnect" : "Connect";
-  byId("openClaudeIntegration").textContent = busy ? "Loading…" : connected === null ? "Retry" : action;
+  byId("openClaudeIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
   byId("openClaudeIntegration").disabled = busy;
   byId("openClaudeIntegration").setAttribute("aria-busy", String(busy));
-  byId("confirmClaudeIntegration").textContent = busy ? "Saving…" : action;
+  byId("confirmClaudeIntegration").textContent = busy ? "正在保存…" : action;
   byId("confirmClaudeIntegration").disabled = busy || connected === null;
   byId("openClaudeIntegration").className = connected && !busy ? "danger-button" : "primary-button";
   byId("confirmClaudeIntegration").className = connected ? "danger-button" : "primary-button";
   byId("claudeIntegrationDescription").textContent = connected
-    ? "Remove FCC's VS Code settings."
-    : "Will set FCC's URL and token, enable model discovery, skip VS Code login, and complete Claude onboarding.";
+    ? "移除 FCC 的 VS Code 设置。"
+    : "将写入 FCC 的地址与 token，启用模型发现，跳过 VS Code 登录，并完成 Claude 首次引导。";
   const files = byId("claudeIntegrationFiles");
   files.replaceChildren();
   if (paths) {
@@ -2082,8 +2082,8 @@ byId("confirmClaudeIntegration").addEventListener("click", async () => {
     claudeIntegration.update = null;
     claudeIntegrationDialog.close();
     integrationMessage("claudeIntegrationMessage", disconnect
-      ? "Settings removed. Reload VS Code to disconnect."
-      : "Settings saved. Reload VS Code to connect.");
+      ? "设置已移除，重载 VS Code 即可断开。"
+      : "设置已保存，重载 VS Code 即可连接。");
   } catch (error) {
     integrationMessage("claudeIntegrationDialogMessage", error.message, true);
     integrationMessage("claudeIntegrationMessage", error.message, true);
@@ -2112,16 +2112,16 @@ function renderVSCodeChatIntegration() {
   byId("retryVSCodeChatIntegration").hidden = connected === null || vscodeChatIntegration.update?.state !== "failed";
   byId("retryVSCodeChatIntegration").disabled = busy;
   const action = connected ? "Disconnect" : "Connect";
-  byId("openVSCodeChatIntegration").textContent = busy ? "Loading…" : connected === null ? "Retry" : action;
+  byId("openVSCodeChatIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
   byId("openVSCodeChatIntegration").disabled = busy;
   byId("openVSCodeChatIntegration").setAttribute("aria-busy", String(busy));
-  byId("confirmVSCodeChatIntegration").textContent = busy ? "Saving…" : action;
+  byId("confirmVSCodeChatIntegration").textContent = busy ? "正在保存…" : action;
   byId("confirmVSCodeChatIntegration").disabled = busy || connected === null;
   byId("openVSCodeChatIntegration").className = connected && !busy ? "danger-button" : "primary-button";
   byId("confirmVSCodeChatIntegration").className = connected ? "danger-button" : "primary-button";
   byId("vscodeChatIntegrationDescription").textContent = connected
-    ? "Remove FCC's model group from VS Code Chat."
-    : "Add FCC models to VS Code Chat. Your selected models stay unchanged.";
+    ? "从 VS Code Chat 中移除 FCC 模型组。"
+    : "把 FCC 模型添加到 VS Code Chat，已选模型保持不变。";
   const files = byId("vscodeChatIntegrationFiles");
   files.replaceChildren();
   if (paths) {
@@ -2182,8 +2182,8 @@ byId("confirmVSCodeChatIntegration").addEventListener("click", async () => {
     vscodeChatIntegration.update = null;
     vscodeChatIntegrationDialog.close();
     integrationMessage("vscodeChatIntegrationMessage", disconnect
-      ? "Settings removed. Reload VS Code to disconnect."
-      : "Models saved. Select an FCC model in VS Code Chat. Reload VS Code if needed.");
+      ? "设置已移除，重载 VS Code 即可断开。"
+      : "模型已保存，请在 VS Code Chat 中选择 FCC 模型；必要时重载 VS Code。");
   } catch (error) {
     integrationMessage("vscodeChatIntegrationDialogMessage", error.message, true);
     integrationMessage("vscodeChatIntegrationMessage", error.message, true);
@@ -2210,20 +2210,20 @@ function renderCodexIntegration() {
   const initializing = connected === false && state.startup?.startup?.catalog_file === "starting";
   const unavailable = connected === false && state.startup?.startup?.catalog_file === "failed";
   const busy = codexIntegration.busy || initializing || integrationUpdating(codexIntegration, "codex");
-  const catalogError = "Could not prepare the Codex model catalog. Refresh models to retry.";
+  const catalogError = "无法准备 Codex 模型目录，请刷新模型后重试。";
   if (unavailable) integrationMessage("codexIntegrationMessage", catalogError, true);
   else if (byId("codexIntegrationMessage").textContent === catalogError) integrationMessage("codexIntegrationMessage", "");
   const action = connected ? "Disconnect" : "Connect";
-  byId("openCodexIntegration").textContent = busy ? "Loading…" : connected === null ? "Retry" : action;
+  byId("openCodexIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
   byId("openCodexIntegration").disabled = busy;
   byId("openCodexIntegration").setAttribute("aria-busy", String(busy));
-  byId("confirmCodexIntegration").textContent = busy ? "Saving…" : action;
+  byId("confirmCodexIntegration").textContent = busy ? "正在保存…" : action;
   byId("confirmCodexIntegration").disabled = busy || connected === null || unavailable;
   byId("openCodexIntegration").className = connected && !busy ? "danger-button" : "primary-button";
   byId("confirmCodexIntegration").className = connected ? "danger-button" : "primary-button";
   byId("codexIntegrationDescription").textContent = connected
-    ? "Remove FCC's Codex configuration. Other settings stay unchanged."
-    : "Configure Codex to use FCC. Your selected model stays unchanged.";
+    ? "移除 FCC 的 Codex 配置，其他设置保持不变。"
+    : "配置 Codex 使用 FCC，已选模型保持不变。";
   const files = byId("codexIntegrationFiles");
   files.replaceChildren();
   if (paths) {
@@ -2284,8 +2284,8 @@ byId("confirmCodexIntegration").addEventListener("click", async () => {
     codexIntegration.update = null;
     codexIntegrationDialog.close();
     integrationMessage("codexIntegrationMessage", disconnect
-      ? "Settings removed. Restart Codex to disconnect."
-      : "Settings saved. Restart Codex and select an FCC model.");
+      ? "设置已移除，重启 Codex 即可断开。"
+      : "设置已保存，重启 Codex 并选择 FCC 模型。");
   } catch (error) {
     integrationMessage("codexIntegrationDialogMessage", error.message, true);
     integrationMessage("codexIntegrationMessage", error.message, true);
@@ -2311,16 +2311,16 @@ function renderJetBrainsIntegration() {
   const { connected, paths } = jetBrainsIntegration;
   const busy = jetBrainsIntegration.busy || integrationUpdating(jetBrainsIntegration, "jetbrains-acp");
   const action = connected ? "Disconnect" : "Connect";
-  byId("openJetBrainsIntegration").textContent = busy ? "Loading…" : connected === null ? "Retry" : action;
+  byId("openJetBrainsIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
   byId("openJetBrainsIntegration").disabled = busy;
   byId("openJetBrainsIntegration").setAttribute("aria-busy", String(busy));
-  byId("confirmJetBrainsIntegration").textContent = busy ? "Saving…" : action;
+  byId("confirmJetBrainsIntegration").textContent = busy ? "正在保存…" : action;
   byId("confirmJetBrainsIntegration").disabled = busy || connected === null;
   byId("openJetBrainsIntegration").className = connected && !busy ? "danger-button" : "primary-button";
   byId("confirmJetBrainsIntegration").className = connected ? "danger-button" : "primary-button";
   byId("jetBrainsIntegrationDescription").textContent = connected
-    ? "Remove the Claude Code (FCC) agent, including its custom settings. Finish any configuration edits first."
-    : "Add Claude Code (FCC) using JetBrains' installed Claude Agent. Start that agent once before connecting, and finish any configuration edits.";
+    ? "移除 Claude Code (FCC) 代理及其自定义设置。请先完成所有配置编辑。"
+    : "使用 JetBrains 已安装的 Claude Agent 添加 Claude Code (FCC)。连接前请先启动一次该代理，并完成所有配置编辑。";
   const files = byId("jetBrainsIntegrationFiles");
   files.replaceChildren();
   if (paths) {
@@ -2380,8 +2380,8 @@ byId("confirmJetBrainsIntegration").addEventListener("click", async () => {
     jetBrainsIntegration.update = null;
     jetBrainsIntegrationDialog.close();
     integrationMessage("jetBrainsIntegrationMessage", disconnect
-      ? "Agent removed. Reopen JetBrains to disconnect."
-      : "Settings saved. Reopen JetBrains, select Claude Code (FCC), and start a new chat.");
+      ? "代理已移除，重新打开 JetBrains 即可断开。"
+      : "设置已保存。重新打开 JetBrains，选择 Claude Code (FCC) 并新建对话。");
   } catch (error) {
     integrationMessage("jetBrainsIntegrationDialogMessage", error.message, true);
     integrationMessage("jetBrainsIntegrationMessage", error.message, true);
@@ -2407,19 +2407,19 @@ function renderClaudeDesktopIntegration() {
   const { connected, paths, disconnectPending } = claudeDesktopIntegration;
   const busy = claudeDesktopIntegration.busy || integrationUpdating(claudeDesktopIntegration, "claude-desktop");
   const disconnect = disconnectPending || connected;
-  const action = disconnectPending ? "Retry disconnect" : connected ? "Disconnect" : "Connect";
-  byId("openClaudeDesktopIntegration").textContent = busy ? "Loading…" : connected === null && !disconnectPending ? "Retry" : action;
+  const action = disconnectPending ? "重试断开" : connected ? "Disconnect" : "Connect";
+  byId("openClaudeDesktopIntegration").textContent = busy ? "加载中…" : connected === null && !disconnectPending ? "Retry" : action;
   byId("openClaudeDesktopIntegration").disabled = busy;
   byId("openClaudeDesktopIntegration").setAttribute("aria-busy", String(busy));
-  byId("confirmClaudeDesktopIntegration").textContent = busy ? "Saving…" : action;
+  byId("confirmClaudeDesktopIntegration").textContent = busy ? "正在保存…" : action;
   byId("confirmClaudeDesktopIntegration").disabled = busy || (connected === null && !disconnectPending);
   byId("openClaudeDesktopIntegration").className = disconnect && !busy ? "danger-button" : "primary-button";
   byId("confirmClaudeDesktopIntegration").className = disconnect ? "danger-button" : "primary-button";
   byId("claudeDesktopIntegrationDescription").textContent = disconnectPending
-    ? "Finish removing FCC's configuration. Fully quit Claude Desktop before retrying, then reopen it."
+    ? "请完成 FCC 配置的移除：重试前先完全退出 Claude Desktop，再重新打开。"
     : connected
-    ? "Remove FCC's configuration and return to normal Claude sign-in. Fully quit Claude Desktop first, then reopen it."
-    : "Set FCC as Claude Desktop's gateway. Fully quit Claude Desktop before connecting, then reopen it.";
+    ? "移除 FCC 配置，恢复 Claude 正常登录。请先完全退出 Claude Desktop 再重新打开。"
+    : "把 FCC 设为 Claude Desktop 的网关。连接前请完全退出 Claude Desktop，再重新打开。";
   const files = byId("claudeDesktopIntegrationFiles");
   files.replaceChildren();
   if (paths) {
@@ -2483,8 +2483,8 @@ byId("confirmClaudeDesktopIntegration").addEventListener("click", async () => {
     claudeDesktopIntegration.update = null;
     claudeDesktopIntegrationDialog.close();
     integrationMessage("claudeDesktopIntegrationMessage", disconnect
-      ? "Settings removed. Reopen Claude Desktop to disconnect."
-      : "Settings saved. Reopen Claude Desktop to connect.");
+      ? "设置已移除，重新打开 Claude Desktop 即可断开。"
+      : "设置已保存，重新打开 Claude Desktop 即可连接。");
   } catch (error) {
     if (disconnect) {
       try {
@@ -2530,16 +2530,16 @@ function renderDshDesktopIntegration() {
   byId("retryDshDesktopIntegration").hidden = dshDesktopIntegration.update?.state !== "failed";
   byId("retryDshDesktopIntegration").disabled = busy || updating;
   const action = connected === null ? "Retry" : connected ? "Disconnect" : "Connect";
-  byId("openDshDesktopIntegration").textContent = busy ? "Loading…" : action;
+  byId("openDshDesktopIntegration").textContent = busy ? "加载中…" : action;
   byId("openDshDesktopIntegration").disabled = busy;
   byId("openDshDesktopIntegration").setAttribute("aria-busy", String(busy));
-  byId("confirmDshDesktopIntegration").textContent = busy ? "Saving…" : action;
+  byId("confirmDshDesktopIntegration").textContent = busy ? "正在保存…" : action;
   byId("confirmDshDesktopIntegration").disabled = busy || connected === null;
   byId("openDshDesktopIntegration").className = connected && !busy ? "danger-button" : "primary-button";
   byId("confirmDshDesktopIntegration").className = connected ? "danger-button" : "primary-button";
   byId("dshDesktopIntegrationDescription").textContent = connected
-    ? "Remove FCC's Desktop connection. Existing FCC sessions need another model selected to continue."
-    : "Install and open DSH Desktop once, then connect FCC as the default for new sessions.";
+    ? "移除 FCC 的 Desktop 连接。现有 FCC 会话需另选模型才能继续。"
+    : "先安装并打开一次 DSH Desktop，再把 FCC 设为新会话的默认选项。";
   const files = byId("dshDesktopIntegrationFiles");
   files.replaceChildren();
   if (paths) {
@@ -2599,8 +2599,8 @@ byId("confirmDshDesktopIntegration").addEventListener("click", async () => {
     applyDshDesktopStatus(result);
     dshDesktopIntegrationDialog.close();
     integrationMessage("dshDesktopIntegrationMessage", result.connected
-      ? "Connected. New DSH sessions use FCC. Reopen DSH if it does not reload the changes."
-      : "DSH Desktop is disconnected. Select another model in existing DSH sessions.");
+      ? "已连接，新建的 DSH 会话将使用 FCC。若未自动生效，请重新打开 DSH。"
+      : "DSH Desktop 已断开，请在现有 DSH 会话中选择其他模型。");
   } catch (error) {
     if (!current()) return;
     try {

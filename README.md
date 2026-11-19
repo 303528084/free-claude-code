@@ -15,211 +15,212 @@
 [![Formatter: Ruff](https://img.shields.io/badge/Formatter-ruff-bf4b00.svg?style=for-the-badge)](https://github.com/astral-sh/ruff)
 [![Logging: Loguru](https://img.shields.io/badge/logging-loguru-00695c.svg?style=for-the-badge)](https://github.com/Delgan/loguru)
 
-[Quick Start](#quick-start) · [Providers](#choose-a-provider) · [Integrations](#integrations) · [API](#use-the-api-directly) · [Phone](#use-from-your-phone) · [Manage](#manage-your-installation)
+[快速开始](#quick-start) · [选择供应商](#choose-a-provider) · [客户端集成](#integrations) · [API 直连](#use-the-api-directly) · [手机端使用](#use-from-your-phone) · [安装维护](#manage-your-installation)
 
 </div>
 
 <p align="center">
-  <em>Independent open-source project. Not affiliated with or endorsed by Anthropic. Claude and Claude Code are trademarks of Anthropic.</em>
+  <em>独立开源项目，与 Anthropic 无隶属关系，也未获得其背书。Claude 与 Claude Code 是 Anthropic 的商标。</em>
 </p>
 
-## Features
+> **关于本仓库**：这是 [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code) 的**中文汉化分支**（`zh-cn`）。代码功能与上游保持一致并持续跟随上游更新，汉化内容仅存在于本分支，不会回推到上游。英文原版 README 见[上游 main 分支](https://github.com/Alishahryar1/free-claude-code/blob/main/README.md)。
 
-- Route any supported harness to models from any supported provider.
-- 12 supported harnesses: [Claude Code](https://code.claude.com/docs/en/overview), [Codex](https://github.com/openai/codex), [Pi](https://github.com/earendil-works/pi), [OpenCode](https://github.com/anomalyco/opencode), [Cline](https://github.com/cline/cline), [Hermes](https://github.com/NousResearch/hermes-agent), [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness), [Grok Build](https://github.com/xai-org/grok-build), [Muse Code](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2/), [Aider](https://aider.chat/), [Antigravity CLI](https://antigravity.google/docs/getting-started/), or [VS Code Chat](https://code.visualstudio.com/).
-  - Preserved native streaming, tool use, and interleaved thinking for maximum performance.
-  - For Claude Code, route [Fable](https://www.anthropic.com/claude/fable), [Opus](https://www.anthropic.com/claude/opus), [Sonnet](https://www.anthropic.com/claude/sonnet), and [Haiku](https://www.anthropic.com/claude/haiku) to supported models.
-- Use any model through any of four APIs: [Anthropic Messages](https://platform.claude.com/docs/en/api/messages) (`/v1/messages`), [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat/create) (`/v1/chat/completions`), [OpenAI Responses](https://platform.openai.com/docs/api-reference/responses/create) (`/v1/responses`), or [Gemini](https://ai.google.dev/api/generate-content) (`generateContent`). See [Use The API Directly](#use-the-api-directly).
-- 61 supported providers, including free, paid, subscription, and local providers.
-  - 1.3B+ free tokens per month.
-  - FCC follows provider TOS and removes integrations if they stop being allowed.
-- Use through the terminal, desktop apps ([Codex App](https://learn.chatgpt.com/docs/app), [Claude Desktop](https://claude.ai/download), and [DeepSeek Desktop](https://github.com/deepseek-ai/deepseek-harness)), IDE extensions ([VS Code](https://code.visualstudio.com/) and [JetBrains](https://www.jetbrains.com/)), [your phone](#use-from-your-phone) ([Discord](https://discord.com/) and [Telegram](https://telegram.org/)), or your browser through native Code sessions.
-  - Voice notes supported for Discord and Telegram using local [Whisper](https://github.com/openai/whisper) or [NVIDIA NIM](https://docs.nvidia.com/nim/speech/latest/asr/deploy-asr-models/whisper.html).
-- Up to 90% lower token usage using [RTK](https://github.com/rtk-ai/rtk) and [Headroom](https://github.com/headroomlabs-ai/headroom).
-- State-of-the-art reliability features so you can keep coding through provider outages:
-  - Automatic retries.
-  - Configurable rate limits.
-  - Configurable concurrency control.
-  - Automatic model/provider fallback.
-  - Automatic multi-API key fallback.
+<a id="features"></a>
 
-Free-tier availability and limits are controlled by each provider and may change.
+## 功能特性
+
+- 可以把任意受支持的客户端（harness）路由到任意受支持的供应商（provider）提供的模型。
+- 支持 12 种客户端：[Claude Code](https://code.claude.com/docs/en/overview)、[Codex](https://github.com/openai/codex)、[Pi](https://github.com/earendil-works/pi)、[OpenCode](https://github.com/anomalyco/opencode)、[Cline](https://github.com/cline/cline)、[Hermes](https://github.com/NousResearch/hermes-agent)、[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)、[Grok Build](https://github.com/xai-org/grok-build)、[Muse Code](https://research.meta.ai/blog/introducing-muse-code-and-muse-spark-1-2/)、[Aider](https://aider.chat/)、[Antigravity CLI](https://antigravity.google/docs/getting-started/)，以及 [VS Code Chat](https://code.visualstudio.com/)。
+  - 完整保留原生流式输出、工具调用与交错思考，性能不打折。
+  - 对 Claude Code，可把 [Fable](https://www.anthropic.com/claude/fable)、[Opus](https://www.anthropic.com/claude/opus)、[Sonnet](https://www.anthropic.com/claude/sonnet)、[Haiku](https://www.anthropic.com/claude/haiku) 四档分别路由到受支持的模型。
+- 任意模型都可以通过四种 API 调用：[Anthropic Messages](https://platform.claude.com/docs/en/api/messages)（`/v1/messages`）、[OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat/create)（`/v1/chat/completions`）、[OpenAI Responses](https://platform.openai.com/docs/api-reference/responses/create)（`/v1/responses`）或 [Gemini](https://ai.google.dev/api/generate-content)（`generateContent`）。参见 [API 直连](#use-the-api-directly)。
+- 支持 61 家供应商，涵盖免费、付费、订阅制和本地供应商。
+  - 每月 1.3B+ 免费 token 额度。
+  - FCC 遵守各供应商的服务条款（TOS），一旦某项接入不再被允许，会移除该接入。
+- 可在终端、桌面应用（[Codex App](https://learn.chatgpt.com/docs/app)、[Claude Desktop](https://claude.ai/download)、[DeepSeek Desktop](https://github.com/deepseek-ai/deepseek-harness)）、IDE 插件（[VS Code](https://code.visualstudio.com/) 与 [JetBrains](https://www.jetbrains.com/)）、[手机](#use-from-your-phone)（[Discord](https://discord.com/) 与 [Telegram](https://telegram.org/)），或者浏览器里的原生 Code 会话中使用。
+  - Discord 与 Telegram 支持语音消息，可用本地 [Whisper](https://github.com/openai/whisper) 或 [NVIDIA NIM](https://docs.nvidia.com/nim/speech/latest/asr/deploy-asr-models/whisper.html) 转写。
+- 借助 [RTK](https://github.com/rtk-ai/rtk) 与 [Headroom](https://github.com/headroomlabs-ai/headroom)，token 用量最高可降低 90%。
+- 具备业界领先的可靠性特性，供应商故障时也能持续编码：
+  - 自动重试。
+  - 可配置的速率限制。
+  - 可配置的并发控制。
+  - 自动切换模型／供应商。
+  - 多 API Key 自动顺延。
+
+免费额度是否可用以及上限由各供应商自行控制，可能随时变化。
 
 <div align="center">
-  <img src="assets/pic.png" alt="Claude Code running with Free Claude Code" width="700">
-  <p><em>Claude Code running with FCC.</em></p>
+  <img src="assets/pic.png" alt="Claude Code 通过 Free Claude Code 运行" width="700">
+  <p><em>Claude Code 通过 FCC 运行。</em></p>
 </div>
 
 <div align="center">
-  <img src="assets/browser-code-session.png" alt="Native Codex browser session in FCC, showing model controls and a repository exploration" width="700">
-  <p><em>A native Codex session in FCC's browser UI.</em></p>
+  <img src="assets/browser-code-session.png" alt="FCC 中的原生 Codex 浏览器会话，展示模型控制与代码仓库探索" width="700">
+  <p><em>FCC 浏览器界面中的原生 Codex 会话。</em></p>
 </div>
 
-## Quick Start
+<a id="quick-start"></a>
+
+## 快速开始
 
 <a id="install"></a>
 
-### 1. Install
+### 1. 安装
 
-macOS/Linux:
+macOS/Linux：
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh
 ```
 
-Windows PowerShell:
+Windows PowerShell：
 
 ```powershell
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1")))
 ```
 
-When prompted, choose at least one coding agent and optionally enable [RTK](https://github.com/rtk-ai/rtk) + [Headroom](https://github.com/headroomlabs-ai/headroom) token optimization for supported agents.
+按提示选择至少一个编码代理；对受支持的代理，还可选择启用 [RTK](https://github.com/rtk-ai/rtk) + [Headroom](https://github.com/headroomlabs-ai/headroom) 的 token 优化。
 
-### 2. Start FCC
+### 2. 启动 FCC
 
 #### Windows
 
-Open **Free Claude Code** from your desktop or Start menu.
+从桌面或开始菜单打开 **Free Claude Code**。
 
 #### macOS
 
-Open **Free Claude Code** from your desktop or Applications folder.
+从桌面或「应用程序」文件夹打开 **Free Claude Code**。
 
 #### Linux
 
-Run:
+运行：
 
 ```bash
 fcc-server
 ```
 
-FCC opens the Admin UI after starting. On Windows and macOS, use the tray or
-menu-bar icon to open Admin, restart, or quit. When using `fcc-server`, keep its
-terminal open.
+FCC 启动后会自动打开 Admin 管理界面。在 Windows 和 macOS 上，可通过托盘或菜单栏图标打开 Admin、重启或退出。使用 `fcc-server` 时，请保持其终端窗口开启。
 
 <a id="nvidia-nim-provider"></a>
 
-### 3. Configure NVIDIA NIM
+### 3. 配置 NVIDIA NIM
 
-1. Create an API key at [build.nvidia.com/settings/api-keys](https://build.nvidia.com/settings/api-keys).
-2. Open the Admin UI URL from the server log.
-3. Open NVIDIA NIM in **Providers**, click **Add key**, paste the key, and click **Save**.
-4. Leave `MODEL` on the default `nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b`, or search the model dropdown and select another model.
-5. Click **Apply** to save your model selection.
+1. 到 [build.nvidia.com/settings/api-keys](https://build.nvidia.com/settings/api-keys) 创建 API Key。
+2. 从服务端日志中找到 Admin 界面地址并打开。
+3. 在 **Providers** 中打开 NVIDIA NIM，点击 **Add key**，粘贴 Key，然后点击 **Save**。
+4. `MODEL` 保持默认的 `nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b`，或在模型下拉框中搜索并选择其他模型。
+5. 点击 **Apply** 保存模型选择。
 
-To protect the local proxy with a bearer token, enable **Proxy Authentication**
-in Admin.
+如需用 Bearer Token 保护本地代理，请在 Admin 中启用 **Proxy Authentication**。
 
 <div align="center">
-  <img src="assets/admin-page.png" alt="Free Claude Code Admin UI" width="700">
+  <img src="assets/admin-page.png" alt="Free Claude Code Admin 管理界面" width="700">
 </div>
 
-### 4. Run Your Coding Agent
+### 4. 运行你的编码代理
 
-Claude Code:
+Claude Code：
 
 ```bash
 fcc-claude
 ```
 
-Codex:
+Codex：
 
 ```bash
 fcc-codex
 ```
 
-Pi:
+Pi：
 
 ```bash
 fcc-pi
 ```
 
-OpenCode 2:
+OpenCode 2：
 
 ```bash
 fcc-opencode
 ```
 
-Cline:
+Cline：
 
 ```bash
 fcc-cline
 ```
 
-Hermes:
+Hermes：
 
 ```bash
 fcc-hermes
 ```
 
-DeepSeek Harness Web:
+DeepSeek Harness Web：
 
 ```bash
 fcc-dsh
 ```
 
-Grok Build:
+Grok Build：
 
 ```bash
 fcc-grok
 ```
 
-Muse Code:
+Muse Code：
 
 ```bash
 fcc-muse
 ```
 
-Aider:
+Aider：
 
 ```bash
 fcc-aider
 ```
 
-Antigravity CLI:
+Antigravity CLI：
 
 ```bash
 fcc-agy
 ```
 
-Other clients and SDKs can call FCC directly. See [Use The API Directly](#use-the-api-directly).
+其他客户端与 SDK 也可以直接调用 FCC，参见 [API 直连](#use-the-api-directly)。
 
 <a id="model-picker"></a>
 
 <div align="center">
-  <img src="assets/cc-model-picker.png" alt="Claude Code model picker showing FCC models" width="700">
-  <p><em>Select an FCC model from Claude Code's native <code>/model</code> picker.</em></p>
+  <img src="assets/cc-model-picker.png" alt="Claude Code 模型选择器显示 FCC 模型" width="700">
+  <p><em>在 Claude Code 原生 <code>/model</code> 选择器中选中 FCC 模型。</em></p>
 </div>
 
-## Choose A Provider
+<a id="choose-a-provider"></a>
 
-1. Open a provider link below for its key, models, or setup instructions.
-2. In the Admin UI, configure the listed setting. For OpenAI / ChatGPT
-   subscription access, use **Providers → OAuth providers** instead.
-3. Search the `MODEL` dropdown and select a model. If the provider cannot list
-   models, enter `<provider-id>/<exact-provider-model-id>` manually.
-4. Click **Apply**.
+## 选择供应商
 
-Optional: add an ordered **Fallback Models** list under **Model Config**. It
-applies to every connected client. A failed request may reach and consume usage
-from more than one provider before succeeding.
+1. 打开下方对应供应商的链接，查看其 Key、模型或配置说明。
+2. 在 Admin 界面中配置表中列出的设置项。OpenAI / ChatGPT 订阅制接入请走 **Providers → OAuth providers**。
+3. 在 `MODEL` 下拉框中搜索并选择模型。如果供应商无法列出模型，请手动填写 `<provider-id>/<exact-provider-model-id>`。
+4. 点击 **Apply**。
 
-Provider modals support numbered API keys. Use **Add key**, remove rows, or drag their handles to reorder them. FCC uses key 1.
+可选：在 **Model Config** 下添加一个有序的 **Fallback Models**（回退模型）列表。它对所有已连接的客户端生效。一次失败的请求在成功之前，可能已经访问并消耗了多个供应商的额度。
 
-For another API endpoint, open **Providers → Custom providers → Add provider**. Enter its API base URL, optional keys, and API format. Leave **Model IDs** empty to discover models automatically, or enter one upstream model ID per line. Save, then select a model in **Model Config**.
+供应商弹窗支持带编号的多 API Key。可用 **Add key** 新增、删除行，或拖动行手柄调整顺序。FCC 使用 1 号 Key。
+
+如果要接入其他 API 端点，打开 **Providers → Custom providers → Add provider**，填写其 API Base URL、可选的 Key 和 API 格式。**Model IDs** 留空可自动发现模型，或每行填一个上游模型 ID。保存后到 **Model Config** 中选择模型。
 
 <details>
-<summary><strong>Provider catalog</strong></summary>
+<summary><strong>供应商目录</strong></summary>
 
-| Provider | Admin UI setting | Example `MODEL` |
+| 供应商 | Admin 界面配置项 | 示例 `MODEL` |
 | --- | --- | --- |
 | [NVIDIA NIM](https://build.nvidia.com/settings/api-keys) | `NVIDIA_NIM_API_KEY` | `nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b` |
 | [OpenRouter](https://openrouter.ai/keys) | `OPENROUTER_API_KEY` | `open_router/openrouter/free` |
 | [Groq](https://console.groq.com/keys) | `GROQ_API_KEY` | `groq/llama-3.3-70b-versatile` |
 | [ClinePass](https://docs.cline.bot/getting-started/clinepass) | `CLINE_API_KEY` | `cline_pass/cline-pass/kimi-k3` |
-| [OpenAI / ChatGPT](https://learn.chatgpt.com/docs/auth) | Connect ChatGPT in the Admin UI | `openai/<model-id>` |
+| [OpenAI / ChatGPT](https://learn.chatgpt.com/docs/auth) | 在 Admin 界面连接 ChatGPT | `openai/<model-id>` |
 | [OpenAI API](https://platform.openai.com/api-keys) | `OPENAI_API_KEY` | `openai_api/gpt-5.6-sol` |
-| [GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-sdk/auth/authenticate) | Connect GitHub Copilot in the Admin UI | `github_copilot/<model-id>` |
+| [GitHub Copilot](https://docs.github.com/en/copilot/how-tos/copilot-sdk/auth/authenticate) | 在 Admin 界面连接 GitHub Copilot | `github_copilot/<model-id>` |
 | [xAI (Grok)](https://console.x.ai/team/default/api-keys) | `XAI_API_KEY` | `xai/grok-4.5` |
 | [Alibaba Cloud](https://www.alibabacloud.com/help/en/model-studio/get-api-key) | `ALIBABA_CLOUD_API_KEY` | `alibaba_cloud/<model-id>` |
 | [QwenCloud Token Plan](https://home.qwencloud.com/api-keys) | `QWENCLOUD_API_KEY` | `qwencloud/qwen3.7-plus` |
@@ -234,7 +235,7 @@ For another API endpoint, open **Providers → Custom providers → Add provider
 | [ZenMux](https://zenmux.ai/platform/pay-as-you-go) | `ZENMUX_API_KEY` | `zenmux/deepseek/deepseek-v4-flash-free` |
 | [W&B Inference](https://wandb.ai/settings) | `WANDB_API_KEY` | `wandb/openai/gpt-oss-20b` |
 | [Anthropic](https://platform.claude.com/settings/keys) | `ANTHROPIC_API_KEY` | `anthropic/<model-id>` |
-| [Azure OpenAI](https://learn.microsoft.com/azure/foundry/openai/how-to/chatgpt) | `AZURE_OPENAI_API_KEY` and `AZURE_OPENAI_BASE_URL` | `azure_openai/<deployment-name>` |
+| [Azure OpenAI](https://learn.microsoft.com/azure/foundry/openai/how-to/chatgpt) | `AZURE_OPENAI_API_KEY` 与 `AZURE_OPENAI_BASE_URL` | `azure_openai/<deployment-name>` |
 | [Google AI Studio (Gemini)](https://aistudio.google.com/apikey) | `GEMINI_API_KEY` | `gemini/models/gemini-3.1-flash-lite` |
 | [Google Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/openai) | `VERTEX_PROJECT_ID` + ADC | `vertex/google/gemini-3.5-flash` |
 | [DeepSeek](https://platform.deepseek.com/api_keys) | `DEEPSEEK_API_KEY` | `deepseek/deepseek-chat` |
@@ -255,7 +256,7 @@ For another API endpoint, open **Providers → Custom providers → Add provider
 | [Kilo.ai](https://kilo.ai) | `KILO_API_KEY` | `kilo/kilo-auto/free` |
 | [Fireworks AI](https://fireworks.ai/account/api-keys) | `FIREWORKS_API_KEY` | `fireworks/accounts/fireworks/models/llama-v3p3-70b-instruct` |
 | [Novita AI](https://novita.ai/settings/key-management) | `NOVITA_API_KEY` | `novita/deepseek/deepseek-v4-flash-0731` |
-| [Cloudflare Workers AI](https://developers.cloudflare.com/workers-ai/) | `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` | `cloudflare/@cf/moonshotai/kimi-k2.6` |
+| [Cloudflare Workers AI](https://developers.cloudflare.com/workers-ai/) | `CLOUDFLARE_API_TOKEN` 与 `CLOUDFLARE_ACCOUNT_ID` | `cloudflare/@cf/moonshotai/kimi-k2.6` |
 | [Z.ai Coding Plan](https://z.ai/manage-apikey/apikey-list) | `ZAI_API_KEY` | `zai/glm-5.2` |
 | [Z.ai API (pay as you go)](https://z.ai/manage-apikey/apikey-list) | `ZAI_API_KEY` | `zai_api/glm-4.7-flash` |
 | [TokenRouter](https://www.tokenrouter.com/) | `TOKENROUTER_API_KEY` | `tokenrouter/moonshotai/kimi-k3-free` |
@@ -278,67 +279,64 @@ For another API endpoint, open **Providers → Custom providers → Add provider
 </details>
 
 <details>
-<summary><strong>Provider-specific setup</strong></summary>
+<summary><strong>各供应商专项配置</strong></summary>
 
-- OpenAI / ChatGPT uses your ChatGPT subscription rather than an API key. Connect from
-  **Providers → OAuth providers → OpenAI / ChatGPT → Connect** in the Admin UI
-  and finish signing in through your browser. Restart an already-running agent after connecting.
-- Anthropic uses a separately billed API key. Add it under
-  **Providers → Cloud providers → Anthropic → Configure**, then choose a discovered
-  model. Multi-workspace keys also require `ANTHROPIC_WORKSPACE_ID`.
-- OpenAI API uses a separate Platform API key. Enter it under
-  **Providers → Cloud providers → OpenAI API → Configure**. The model list may
-  include IDs that cannot handle coding requests. Choose a text-generation model.
-- GitHub Copilot uses your signed-in GitHub account and subscription. Install
+- OpenAI / ChatGPT 用的是你的 ChatGPT 订阅，而非 API Key。在 Admin 界面依次打开
+  **Providers → OAuth providers → OpenAI / ChatGPT → Connect**，
+  然后在浏览器中完成登录。连接后请重启已在运行的代理。
+- Anthropic 使用单独计费的 API Key。在
+  **Providers → Cloud providers → Anthropic → Configure** 中添加，然后选择一个已发现的模型。
+  多工作区的 Key 还需要设置 `ANTHROPIC_WORKSPACE_ID`。
+- OpenAI API 使用的是独立的 Platform API Key。在
+  **Providers → Cloud providers → OpenAI API → Configure** 中填写。模型列表中可能
+  包含无法处理编码请求的 ID，请选择文本生成类模型。
+- GitHub Copilot 使用你已登录的 GitHub 账号与订阅。请先把
   [Copilot CLI 1.0.83](https://github.com/github/copilot-cli/releases/tag/v1.0.83)
-  on PATH, then choose **Providers → OAuth providers → GitHub Copilot → Connect**.
-  Finish signing in, then select a `github_copilot/<model-id>` from the model picker.
-  Available models and quotas depend on your subscription and organization policies.
-  Restart an already-running agent after connecting.
-- Azure OpenAI uses the deployment names from your resource. Set
-  `AZURE_OPENAI_BASE_URL` to its complete v1 endpoint, such as
-  `https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/`, and select a
-  deployment that supports Chat Completions. Enter the deployment name as a
-  custom model slug if it does not appear in the model dropdown.
-- Mistral Codestral uses a separate key from Mistral La Plateforme.
-- Kimi Code subscription keys use `kimi_code/`. Kimi API credit keys use
-  `kimi/`. Kimi Code plans are for personal interactive coding-agent use under
-  [Kimi's community guidelines](https://www.kimi.com/code/docs/en/kimi-code/community-guidelines.html).
-- Alibaba Cloud uses a Model Studio pay-as-you-go key and defaults to Singapore.
-  For another region or workspace, set `ALIBABA_CLOUD_BASE_URL` to its
-  [OpenAI-compatible endpoint](https://www.alibabacloud.com/help/en/model-studio/base-url)
-  ending in `/compatible-mode/v1`. The key and endpoint must use the same region.
-- QwenCloud Coding Plan keys use `qwencloud_coding/`. QwenCloud Token Plan keys
-  use `qwencloud/`. The keys and endpoints are not interchangeable. Coding Plan
-  is for local, personal, interactive coding-agent use under the
-  [Coding Plan terms](https://www.alibabacloud.com/help/en/model-studio/coding-plan).
-- OpenCode Zen and OpenCode Go share `OPENCODE_API_KEY` but use the explicit
-  `opencode_zen/` and `opencode_go/` model prefixes.
-- For Amazon Bedrock, set `BEDROCK_BASE_URL` to the URL for the same region as
-  the API key and select one of the listed models.
-- Vertex AI uses Google Application Default Credentials instead of an API key.
-  Locally, run `gcloud auth application-default login` once. Service-account
-  files and attached service accounts also work. Set `VERTEX_PROJECT_ID`, and
-  optionally change `VERTEX_LOCATION` from its `global` default.
-- Cloudflare requires both its API token and account ID.
-- For Ollama Cloud, use the exact model IDs shown in the model picker. Local
-  Ollama uses the separate `ollama/` prefix.
-- Prefer tool-capable models for coding agents. Local models also need enough context for the agent's system prompt and tool definitions.
+  安装到 PATH，然后选择 **Providers → OAuth providers → GitHub Copilot → Connect**，
+  完成登录后从模型选择器中选择 `github_copilot/<model-id>`。
+  可用模型与配额取决于你的订阅和组织策略。连接后请重启已在运行的代理。
+- Azure OpenAI 使用你资源中的部署名（deployment name）。把
+  `AZURE_OPENAI_BASE_URL` 设置为其完整的 v1 端点，例如
+  `https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/`，并选择支持 Chat Completions 的部署。
+  若该部署没有出现在模型下拉框中，请把部署名作为自定义模型 slug 手动填入。
+- Mistral Codestral 使用与 Mistral La Plateforme 不同的 Key。
+- Kimi Code 订阅 Key 使用 `kimi_code/` 前缀；Kimi API 额度 Key 使用
+  `kimi/` 前缀。Kimi Code 套餐仅供个人交互式编码代理使用，需遵守
+  [Kimi 社区准则](https://www.kimi.com/code/docs/en/kimi-code/community-guidelines.html)。
+- Alibaba Cloud 使用 Model Studio 按量付费 Key，默认区域为新加坡。
+  若使用其他区域或工作区，请把 `ALIBABA_CLOUD_BASE_URL` 设为其
+  [OpenAI 兼容端点](https://www.alibabacloud.com/help/en/model-studio/base-url)
+  （以 `/compatible-mode/v1` 结尾）。Key 与端点必须属于同一区域。
+- QwenCloud Coding Plan 的 Key 使用 `qwencloud_coding/` 前缀；QwenCloud Token Plan 的
+  Key 使用 `qwencloud/` 前缀。两者 Key 与端点不可互换。Coding Plan
+  仅供本地、个人、交互式编码代理使用，需遵守
+  [Coding Plan 条款](https://www.alibabacloud.com/help/en/model-studio/coding-plan)。
+- OpenCode Zen 与 OpenCode Go 共用 `OPENCODE_API_KEY`，但模型前缀必须显式写
+  `opencode_zen/` 或 `opencode_go/`。
+- 使用 Amazon Bedrock 时，把 `BEDROCK_BASE_URL` 设为与 API Key 同一区域的 URL，
+  并从列表中选一个模型。
+- Vertex AI 使用 Google 应用默认凭据（ADC）而非 API Key。本地需先执行一次
+  `gcloud auth application-default login`。也支持服务账号文件与附加服务账号。
+  设置 `VERTEX_PROJECT_ID`，并可选择性修改默认值为 `global` 的 `VERTEX_LOCATION`。
+- Cloudflare 需要同时提供 API Token 与 Account ID。
+- Ollama Cloud 请使用模型选择器中显示的精确模型 ID。本地 Ollama 使用单独的
+  `ollama/` 前缀。
+- 编码代理优先选用支持工具调用的模型。本地模型还需要足够上下文来容纳代理的系统提示与工具定义。
 
 </details>
 
 <details>
-<summary><strong>Local provider setup</strong></summary>
+<summary><strong>本地供应商配置</strong></summary>
 
-FCC automatically discovers models from running local servers at startup. If you start a server later, click **Refresh models** in Admin to add its models to the picker.
+FCC 启动时会自动发现正在运行的本地服务中的模型。如果你之后才启动某个服务，在 Admin 中点击 **Refresh models**，即可把它的模型加入选择器。
 
 ### LM Studio
 
-Start LM Studio's local server, load a tool-capable model, and use the model identifier shown by LM Studio with the `lmstudio/` prefix. The default URL is `http://localhost:1234/v1`.
+启动 LM Studio 的本地服务，加载一个支持工具调用的模型，然后使用 LM Studio 显示的模型标识并加上 `lmstudio/` 前缀。默认地址为 `http://localhost:1234/v1`。
 
 ### llama.cpp
 
-Start `llama-server` with its OpenAI-compatible Chat Completions API and enough context for the model. Use the local model ID with the `llamacpp/` prefix. `LLAMACPP_BASE_URL` defaults to `http://localhost:8080/v1`.
+以 OpenAI 兼容的 Chat Completions API 启动 `llama-server`，并给它足够的上下文。使用本地模型 ID 加 `llamacpp/` 前缀。`LLAMACPP_BASE_URL` 默认为 `http://localhost:8080/v1`。
 
 ### Ollama
 
@@ -347,80 +345,74 @@ ollama pull llama3.1
 ollama serve
 ```
 
-Use the tag shown by `ollama list` with the `ollama/` prefix. `OLLAMA_BASE_URL` defaults to `http://localhost:11434`.
+使用 `ollama list` 显示的 tag 加 `ollama/` 前缀。`OLLAMA_BASE_URL` 默认为 `http://localhost:11434`。
 
-Provider cards show the checked endpoint and response time, with a useful message when a local server is unavailable. After starting the server or correcting its settings, click **Test** to refresh its models.
-
-</details>
-
-<details>
-<summary><strong>Optional model-tier routing</strong></summary>
-
-`MODEL` is the fallback for every request. Select a model for `MODEL_FABLE`, `MODEL_OPUS`, `MODEL_SONNET`, or `MODEL_HAIKU` to override an individual Claude Code tier. Select **None** to use `MODEL`.
-
-In **Admin UI → Model Config**, add **Fallback Models** in the order FCC should try them if the selected model fails. Each fallback has its own reasoning effort: **Inherit**, **Off**, **From client**, **Low**, **Medium**, **High**, **X-High**, or **Max**.
-
-Choose a model, effort, and API key number in the bottom row, then click **+**. **Key 1**, **Key 2**, and so on refer to the current numbered keys in that provider's settings. Edit the selections in place, drag the handle to change the order, or click the red trash button to remove a fallback.
-
-**Inherit** keeps the original request's resolved reasoning setting. **From client** uses the effort or token budget sent by your coding agent, bypassing the global or tier setting. You can select the same model with another key number.
+供应商卡片会显示检测到的端点与响应时间；本地服务不可用时会给出提示。启动服务或改正其配置后，点击 **Test** 刷新其模型列表。
 
 </details>
 
 <details>
-<summary><strong>Reasoning control</strong></summary>
+<summary><strong>可选的模型档位路由</summary>
 
-Open **Admin UI → Model Config → Model Routing** and choose an effort beside each model. **Default Effort** starts at **From client**. Fable, Opus, Sonnet, and Haiku start at **Inherit**.
+`MODEL` 是所有请求的兜底。为 `MODEL_FABLE`、`MODEL_OPUS`、`MODEL_SONNET` 或 `MODEL_HAIKU` 选择模型，可单独覆盖 Claude Code 的某一档。选择 **None** 表示仍使用 `MODEL`。
 
-| Selection | Behavior |
+在 **Admin UI → Model Config** 中按 FCC 的重试顺序添加 **Fallback Models**。每个回退项都有各自的推理强度：**Inherit**、**Off**、**From client**、**Low**、**Medium**、**High**、**X-High** 或 **Max**。
+
+在底部一行选择模型、推理强度和 API Key 编号，然后点击 **+**。**Key 1**、**Key 2** 等指的是该供应商设置中当前带编号的 Key。可直接就地修改选择、拖动行手柄改变顺序，或点击红色垃圾桶按钮删除某个回退项。
+
+**Inherit** 沿用原始请求已解析出的推理设置；**From client** 使用你的编码代理发来的推理强度或 token 预算，绕过全局或档位设置。同一个模型可以用不同的 Key 编号重复添加。
+
+</details>
+
+<details>
+<summary><strong>推理强度控制</strong></summary>
+
+打开 **Admin UI → Model Config → Model Routing**，为每个模型选择推理强度。**Default Effort** 初始为 **From client**；Fable、Opus、Sonnet、Haiku 初始为 **Inherit**。
+
+| 选项 | 行为 |
 | --- | --- |
-| **From client** | Use the effort sent by your coding agent. If none is sent, keep the provider default. |
-| **Off** | Request reasoning to be disabled. |
-| **Low**, **Medium**, **High**, **X-High**, or **Max** | Override the client with the selected reasoning level. |
-| **Inherit** | Tier overrides use Default Effort. Fallbacks keep the original request's resolved effort. |
+| **From client** | 使用编码代理发来的推理强度；若客户端未发送，则保留供应商默认值。 |
+| **Off** | 请求关闭推理。 |
+| **Low**、**Medium**、**High**、**X-High** 或 **Max** | 用所选强度覆盖客户端设置。 |
+| **Inherit** | 档位覆盖项沿用 Default Effort；回退项沿用原始请求已解析的强度。 |
 
 </details>
 
 <a id="integrations"></a>
 <a id="connect-your-client"></a>
 
-## Integrations
+## 客户端集成
 
-FCC launchers automatically start the server.
+FCC 的启动器会自动启动服务端。
 
-For editor and app integrations, install the client, start FCC, then open
-**Admin UI → Integrations** and click **Connect** on its card.
+对于编辑器与应用类集成：先安装对应客户端、启动 FCC，然后打开 **Admin UI → Integrations**，在对应卡片上点击 **Connect**。
 
-- **Claude Code in VS Code**: Install the [Claude Code extension](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code).
-- **VS Code Chat**: Install the latest [VS Code](https://code.visualstudio.com/), connect, and select an FCC model in its built-in Chat model picker.
-- **Claude Desktop**: Install [Claude Desktop](https://claude.ai/download). Fully quit it before connecting or disconnecting, then reopen it. Disconnect returns to normal Claude sign-in.
-- **Codex in VS Code and App**: Install the [Codex extension](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt) or Codex App.
-- **DeepSeek Harness Desktop**: Install and open the app once before connecting. Start a new session to use FCC models.
-- **Claude Code in JetBrains ACP**: Install Claude Agent in JetBrains AI Assistant and start it once, then click **Connect** in FCC. Reopen the IDE, select **Claude Code (FCC)**, and start a new chat. After JetBrains updates the agent, restart FCC before starting a new chat. Requires a local IDE in its standard installation locations.
+- **VS Code 中的 Claude Code**：安装 [Claude Code 扩展](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)。
+- **VS Code Chat**：安装最新版 [VS Code](https://code.visualstudio.com/)，连接后在自带 Chat 的模型选择器中选择 FCC 模型。
+- **Claude Desktop**：安装 [Claude Desktop](https://claude.ai/download)。连接或断开前请先完全退出，之后再重新打开。断开后恢复为正常的 Claude 登录。
+- **VS Code 与 App 中的 Codex**：安装 [Codex 扩展](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt) 或 Codex App。
+- **DeepSeek Harness Desktop**：连接前先安装并打开一次该应用。新建会话即可使用 FCC 模型。
+- **JetBrains ACP 中的 Claude Code**：在 JetBrains AI Assistant 中安装 Claude Agent 并启动一次，然后在 FCC 中点击 **Connect**。重新打开 IDE，选择 **Claude Code (FCC)** 并新建对话。JetBrains 更新该代理后，需重启 FCC 再新建对话。要求 IDE 安装在标准安装位置。
 
-Reload VS Code or restart the app/IDE after connecting. In Codex and Claude Desktop, select an FCC
-model from the model picker. Reload or restart the client when FCC reports updated settings. Use
-**Disconnect** on the same card to remove the integration.
+连接后请重载 VS Code，或重启对应应用／IDE。在 Codex 与 Claude Desktop 中，从模型选择器中选择 FCC 模型。当 FCC 提示设置已更新时，重载或重启客户端。在相同卡片上点击 **Disconnect** 可移除集成。
 
-To complete Claude Code onboarding separately, open **Admin UI → Integrations →
-Claude Code onboarding** and click **Complete onboarding**. Connecting Claude Code
-in VS Code also completes onboarding.
+如需单独完成 Claude Code 的首次引导，打开 **Admin UI → Integrations →
+Claude Code onboarding** 并点击 **Complete onboarding**。在 VS Code 中连接 Claude Code 也会同时完成该引导。
 
-Run FCC on the same computer and in the same user environment as the client you
-are configuring.
+请确保 FCC 与你要配置的客户端运行在同一台电脑、同一个用户环境下。
 
 <a id="use-the-api-directly"></a>
 
-## Use The API Directly
+## API 直连
 
-Any client or SDK for these APIs can call FCC. Set the base URL to
-`http://127.0.0.1:8082/v1` for OpenAI clients and `http://127.0.0.1:8082` for
-Anthropic and Gemini clients.
-Every FCC model works on every endpoint. If Proxy
-Authentication is enabled, use its token as the client's API key, or add
-`-H "Authorization: Bearer <token>"` to each `curl` request.
-List the available models with `curl "http://127.0.0.1:8082/v1/models?view=messages"`.
+任何支持这些 API 的客户端或 SDK 都可以直接调用 FCC。OpenAI 类客户端把 Base URL 设为
+`http://127.0.0.1:8082/v1`；Anthropic 与 Gemini 类客户端设为 `http://127.0.0.1:8082`。
+每个 FCC 模型在所有端点上都能用。若启用了 Proxy Authentication，
+请把它的 token 作为客户端的 API Key，或在每个 `curl` 请求中加上
+`-H "Authorization: Bearer <token>"`。
+用 `curl "http://127.0.0.1:8082/v1/models?view=messages"` 列出可用模型。
 
-[`POST /v1/messages`](https://platform.claude.com/docs/en/api/messages):
+[`POST /v1/messages`](https://platform.claude.com/docs/en/api/messages)：
 
 ```bash
 curl http://127.0.0.1:8082/v1/messages \
@@ -432,7 +424,7 @@ curl http://127.0.0.1:8082/v1/messages \
   }'
 ```
 
-[`POST /v1/chat/completions`](https://platform.openai.com/docs/api-reference/chat/create):
+[`POST /v1/chat/completions`](https://platform.openai.com/docs/api-reference/chat/create)：
 
 ```bash
 curl http://127.0.0.1:8082/v1/chat/completions \
@@ -443,7 +435,7 @@ curl http://127.0.0.1:8082/v1/chat/completions \
   }'
 ```
 
-[`POST /v1/responses`](https://platform.openai.com/docs/api-reference/responses/create):
+[`POST /v1/responses`](https://platform.openai.com/docs/api-reference/responses/create)：
 
 ```bash
 curl http://127.0.0.1:8082/v1/responses \
@@ -454,7 +446,7 @@ curl http://127.0.0.1:8082/v1/responses \
   }'
 ```
 
-[`POST /v1/models/{model}:generateContent`](https://ai.google.dev/api/generate-content):
+[`POST /v1/models/{model}:generateContent`](https://ai.google.dev/api/generate-content)：
 
 ```bash
 curl http://127.0.0.1:8082/v1/models/nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b:generateContent \
@@ -462,169 +454,171 @@ curl http://127.0.0.1:8082/v1/models/nvidia_nim/nvidia/nemotron-3-ultra-550b-a55
   -d '{"contents": [{"role": "user", "parts": [{"text": "Hello!"}]}]}'
 ```
 
-Responses replies always stream. To stream Messages or Chat Completions replies, add
-`"stream": true`. For Gemini, call `:streamGenerateContent?alt=sse` instead of
-`:generateContent`.
+Responses 的回复始终为流式。要让 Messages 或 Chat Completions 也流式返回，请加上
+`"stream": true`。Gemini 请调用 `:streamGenerateContent?alt=sse` 而不是 `:generateContent`。
 
 <a id="use-from-your-phone"></a>
 <a id="optional-integrations"></a>
 
-## Use From Your Phone
+## 手机端使用
 
-Run coding tasks from Discord or Telegram, and send voice notes. Configure them
-in **Admin UI → Messaging**, then click **Apply**.
+在 Discord 或 Telegram 里跑编码任务，并可发送语音消息。在 **Admin UI → Messaging** 中配置，然后点击 **Apply**。
 
 <details>
-<summary><strong>Discord bot</strong></summary>
+<summary><strong>Discord 机器人</strong></summary>
 
-1. Create a bot in the [Discord Developer Portal](https://discord.com/developers/applications).
-2. Enable **Message Content Intent** and invite it with read, send,
-   message-history, and **Manage Messages** permissions so `/clear` can remove
-   user prompts.
-3. Set **Messaging Platform** to **discord**.
-4. Enter **Discord Bot Token**, **Allowed Discord Channels**, and an absolute **Allowed Directory**.
-5. Apply the settings and restart the server if requested.
+1. 在 [Discord Developer Portal](https://discord.com/developers/applications) 创建机器人。
+2. 开启 **Message Content Intent**，并以读取、发送、读取消息历史及
+   **Manage Messages** 权限邀请它加入服务器，这样 `/clear` 才能删除
+   用户消息。
+3. 把 **Messaging Platform** 设为 **discord**。
+4. 填入 **Discord Bot Token**、**Allowed Discord Channels** 和一个绝对路径的 **Allowed Directory**。
+5. 应用设置；如提示需要，重启服务端。
 
 </details>
 
 <details>
-<summary><strong>Telegram bot</strong></summary>
+<summary><strong>Telegram 机器人</strong></summary>
 
-1. Create a bot with [@BotFather](https://t.me/BotFather).
-2. Get your numeric user ID from [@userinfobot](https://t.me/userinfobot).
-   In groups, grant the bot permission to delete messages.
-3. Set **Messaging Platform** to **telegram**.
-4. Enter **Telegram Bot Token**, **Allowed Telegram User ID**, and an absolute **Allowed Directory**.
-5. Apply the settings and restart the server if requested.
+1. 通过 [@BotFather](https://t.me/BotFather) 创建机器人。
+2. 从 [@userinfobot](https://t.me/userinfobot) 获取你的数字用户 ID。
+   在群组中使用时，请授予机器人删除消息的权限。
+3. 把 **Messaging Platform** 设为 **telegram**。
+4. 填入 **Telegram Bot Token**、**Allowed Telegram User ID** 和一个绝对路径的 **Allowed Directory**。
+5. 应用设置；如提示需要，重启服务端。
 
 </details>
 
-### Messaging commands
+### 消息命令
 
-| Usage | Behavior |
+| 用法 | 行为 |
 | --- | --- |
-| `/stats` | Show session state. |
-| Standalone `/stop` | Cancel all work. |
-| Reply with `/stop` | Cancel only the selected request while other queued requests continue. |
-| Standalone `/clear` | Clear all FCC conversations and their messages in this chat. |
-| Reply with `/clear` | Delete the selected message and the chain of replies to it. Keep other conversations. |
+| `/stats` | 显示会话状态。 |
+| 单独发送 `/stop` | 取消全部任务。 |
+| 回复某条消息并带 `/stop` | 只取消被回复的那条请求，其他排队请求继续执行。 |
+| 单独发送 `/clear` | 清空本聊天中所有 FCC 会话及其消息。 |
+| 回复某条消息并带 `/clear` | 删除被回复的那条消息及其后续回复链，保留其他会话。 |
 
 <details>
-<summary><strong>Voice notes</strong></summary>
+<summary><strong>语音消息</summary>
 
-NVIDIA NIM transcription support is included in every installation. In **Admin UI → Messaging → Voice**, enable voice notes, select `nvidia_nim`, and choose a supported model. Configure your **NVIDIA NIM API key** on the Providers page.
+所有安装方式都内置 NVIDIA NIM 转写支持。在 **Admin UI → Messaging → Voice** 中启用语音消息，
+选择 `nvidia_nim` 并挑一个受支持的模型。**NVIDIA NIM API key** 在 Providers 页面配置。
 
-For local Whisper on CPU or CUDA, re-run the installer with the local voice option:
+如需在 CPU 或 CUDA 上使用本地 Whisper，请带本地语音选项重跑安装脚本：
 
-macOS/Linux:
+macOS/Linux：
 
-Local Whisper on CPU or CUDA:
+CPU 或 CUDA 上的本地 Whisper：
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh -s -- --voice-local
 ```
 
-Local Whisper with CUDA 13.0:
+CUDA 13.0 的本地 Whisper：
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.sh" | sh -s -- --voice-local --torch-backend cu130
 ```
 
-Windows PowerShell:
+Windows PowerShell：
 
-Local Whisper on CPU or CUDA:
+CPU 或 CUDA 上的本地 Whisper：
 
 ```powershell
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal
 ```
 
-Local Whisper with CUDA 13.0:
+CUDA 13.0 的本地 Whisper：
 
 ```powershell
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal -TorchBackend cu130
 ```
 
-After installing local support, restart `fcc-server`. In **Admin UI → Messaging → Voice**, enable voice notes, select `cpu` or `cuda`, and choose the Whisper model. Local gated models need `HUGGINGFACE_API_KEY`.
+安装本地支持后，重启 `fcc-server`。在 **Admin UI → Messaging → Voice** 中启用语音消息，
+选择 `cpu` 或 `cuda`，并选择 Whisper 模型。本地受限（gated）模型需要 `HUGGINGFACE_API_KEY`。
 
 </details>
 
-## Manage Your Installation
+<a id="manage-your-installation"></a>
 
-Run `fcc-server --version` to check the installed version without starting FCC.
+## 安装维护
 
-### Update
+运行 `fcc-server --version` 可在不启动 FCC 的情况下查看已安装版本。
 
-Stop all running FCC commands, then run:
+### 更新
+
+停止所有正在运行的 FCC 命令，然后执行：
 
 ```sh
 fcc-update
 ```
 
-`fcc-update` installs the latest FCC release unless you already have it.
+`fcc-update` 会安装最新的 FCC 发行版（已是最新则跳过）。
 
-If `fcc-update` is unavailable or fails, try running the [install command](#install) again.
+如果 `fcc-update` 不可用或失败，可再执行一次[安装命令](#install)。
 
-To reinstall FCC or change optional components while already up to date, run the [installer](#install) directly.
+若已是最新版本，但仍想重装 FCC 或调整可选组件，请直接运行[安装脚本](#install)。
 
-For local voice support, include `--voice-local` (macOS/Linux) or `-VoiceLocal` (Windows), plus your `--torch-backend` or `-TorchBackend` option if used.
+需要本地语音支持时，加上 `--voice-local`（macOS/Linux）或 `-VoiceLocal`（Windows），如使用还需带上 `--torch-backend` 或 `-TorchBackend` 选项。
 
-### Muse Code on native Windows
+### 原生 Windows 上的 Muse Code
 
-To install or update only Muse Code:
+仅安装或更新 Muse Code：
 
 ```powershell
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install-muse.ps1")))
 ```
 
-To remove the Muse Code copy installed by FCC, keeping its data:
+移除 FCC 安装的 Muse Code 副本但保留其数据：
 
 ```powershell
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall-muse.ps1")))
 ```
 
-Uninstalling FCC leaves Muse Code installed.
+卸载 FCC 时不会连带卸载 Muse Code。
 
-### Uninstall
+### 卸载
 
-Stop every running FCC command and quit connected desktop/editor apps before uninstalling.
+卸载前请停止所有正在运行的 FCC 命令，并退出已连接的桌面／编辑器应用。
 
-**Removes**
+**会删除**
 
-- Free Claude Code, including its desktop launcher and commands
+- Free Claude Code，包括其桌面启动器与命令
 - `~/.fcc/`
 
-**Keeps**
+**会保留**
 
-- uv and Python
-- Your coding agents, RTK, and Headroom
+- uv 与 Python
+- 你的编码代理、RTK 与 Headroom
 
-macOS/Linux:
+macOS/Linux：
 
 ```bash
 curl -fsSL "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall.sh" | sh
 ```
 
-Windows PowerShell:
+Windows PowerShell：
 
 ```powershell
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/uninstall.ps1")))
 ```
 
-## Project Links
+## 项目链接
 
-For a problem after installation, run the command below and paste its output into your bug report.
+安装后遇到问题，请运行下面的命令，并把输出粘贴到问题反馈中。
 
 ```bash
 fcc-doctor
 ```
 
-- [Report bugs or request features](https://github.com/Alishahryar1/free-claude-code/issues)
-- [Contributing guide](CONTRIBUTING.md)
+- [反馈 Bug 或提功能需求](https://github.com/Alishahryar1/free-claude-code/issues)
+- [贡献指南](CONTRIBUTING.md)
 
-## Maintainers
+## 维护者
 
-See [MAINTAINERS.md](MAINTAINERS.md) for the project's maintainers and their areas of responsibility.
+项目维护者及其负责领域见 [MAINTAINERS.md](MAINTAINERS.md)。
 
-## License
+## 许可证
 
-GNU Affero General Public License version 3 only (`AGPL-3.0-only`). See [LICENSE](LICENSE) for details.
+GNU Affero General Public License version 3 only（`AGPL-3.0-only`）。详见 [LICENSE](LICENSE)。

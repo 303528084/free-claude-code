@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Free Claude Code Admin</title>
+    <title>Free Claude Code 管理台</title>
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/admin/assets/__FCC_VERSION__/admin.css" />
     <link rel="stylesheet" href="/admin/assets/__FCC_VERSION__/code_sessions.css" />
@@ -18,22 +18,22 @@
             href="https://github.com/Alishahryar1/free-claude-code"
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Open Free Claude Code on GitHub"
+            aria-label="在 GitHub 上打开 Free Claude Code"
           >
             <img src="/admin/assets/__FCC_VERSION__/app-icon.svg" alt="" />
           </a>
           <div>
             <h1>Free Claude Code</h1>
-            <p>Server Control · v__FCC_VERSION__</p>
+            <p>服务控制 · v__FCC_VERSION__</p>
           </div>
         </div>
-        <nav id="sectionNav" class="section-nav" aria-label="Admin views"></nav>
+        <nav id="sectionNav" class="section-nav" aria-label="管理视图"></nav>
       </aside>
 
       <main class="main">
         <header class="topbar">
           <div class="page-heading">
-            <h2 id="pageTitle">Providers</h2>
+            <h2 id="pageTitle">供应商</h2>
             <span id="startupMessage" class="startup-message" role="status" hidden></span>
           </div>
         </header>
@@ -44,7 +44,7 @@
             <div
               id="providersSections"
               class="form-sections"
-              aria-label="Runtime configuration"
+              aria-label="运行时配置"
             ></div>
           </section>
 
@@ -52,7 +52,7 @@
             <div
               id="modelConfigSections"
               class="form-sections"
-              aria-label="Model configuration"
+              aria-label="模型配置"
             ></div>
           </section>
 
@@ -60,7 +60,7 @@
             <div
               id="messagingSections"
               class="form-sections"
-              aria-label="Messaging configuration"
+              aria-label="消息配置"
             ></div>
           </section>
 
@@ -69,167 +69,167 @@
               <div class="section-heading">
                 <div>
                   <h3>VS Code Chat</h3>
-                  <p>Use FCC models in VS Code's built-in chat and agent mode.</p>
+                  <p>在 VS Code 内置聊天与代理模式中使用 FCC 模型。</p>
                 </div>
               </div>
               <p id="vscodeChatIntegrationMessage" class="message-area" role="status" hidden></p>
               <div class="integration-actions">
-                <button id="openVSCodeChatIntegration" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
-                <button id="retryVSCodeChatIntegration" class="secondary-button" type="button" hidden>Retry</button>
+                <button id="openVSCodeChatIntegration" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
+                <button id="retryVSCodeChatIntegration" class="secondary-button" type="button" hidden>重试</button>
               </div>
             </article>
             <dialog id="vscodeChatIntegrationDialog" class="integration-dialog" aria-labelledby="vscodeChatIntegrationTitle" aria-describedby="vscodeChatIntegrationDescription">
               <div class="section-heading">
                 <h3 id="vscodeChatIntegrationTitle">VS Code Chat</h3>
-                <button id="closeVSCodeChatIntegration" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <button id="closeVSCodeChatIntegration" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="vscodeChatIntegrationDescription">Add FCC models to VS Code Chat. Your selected models stay unchanged.</p>
+              <p id="vscodeChatIntegrationDescription">把 FCC 模型添加到 VS Code Chat，已选模型保持不变。</p>
               <div class="integration-files">
-                <h4>Files to modify</h4>
+                <h4>将要修改的文件</h4>
                 <ul id="vscodeChatIntegrationFiles"></ul>
               </div>
-              <button id="confirmVSCodeChatIntegration" class="primary-button" type="button">Connect</button>
+              <button id="confirmVSCodeChatIntegration" class="primary-button" type="button">连接</button>
               <p id="vscodeChatIntegrationDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
             <article class="provider-strip integration-card">
               <div class="section-heading">
                 <div>
-                  <h3>Claude Code in VS Code</h3>
-                  <p>Use FCC's models in the Claude Code extension for VS Code.</p>
+                  <h3>VS Code 中的 Claude Code</h3>
+                  <p>在 VS Code 的 Claude Code 扩展中使用 FCC 的模型。</p>
                 </div>
               </div>
               <p id="claudeIntegrationMessage" class="message-area" role="status" hidden></p>
-              <button id="openClaudeIntegration" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
+              <button id="openClaudeIntegration" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
             </article>
             <dialog id="claudeIntegrationDialog" class="integration-dialog" aria-labelledby="claudeIntegrationTitle" aria-describedby="claudeIntegrationDescription">
               <div class="section-heading">
-                <h3 id="claudeIntegrationTitle">Claude Code in VS Code</h3>
-                <button id="closeClaudeIntegration" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <h3 id="claudeIntegrationTitle">VS Code 中的 Claude Code</h3>
+                <button id="closeClaudeIntegration" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="claudeIntegrationDescription">Will set FCC's URL and token, enable model discovery, skip VS Code login, and complete Claude onboarding.</p>
+              <p id="claudeIntegrationDescription">将写入 FCC 的地址与 token，启用模型发现，跳过 VS Code 登录，并完成 Claude 首次引导。</p>
               <div class="integration-files">
-                <strong>Files to modify</strong>
+                <strong>将要修改的文件</strong>
                 <ul id="claudeIntegrationFiles"></ul>
               </div>
-              <button id="confirmClaudeIntegration" class="primary-button" type="button">Connect</button>
+              <button id="confirmClaudeIntegration" class="primary-button" type="button">连接</button>
               <p id="claudeIntegrationDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
             <article class="provider-strip integration-card">
               <div class="section-heading">
                 <div>
-                  <h3>Claude Code onboarding</h3>
-                  <p>Complete Claude Code's first-time setup for this user.</p>
+                  <h3>Claude Code 首次引导</h3>
+                  <p>为当前用户完成 Claude Code 的首次设置。</p>
                 </div>
               </div>
               <p id="claudeOnboardingMessage" class="message-area" role="status" hidden></p>
-              <button id="openClaudeOnboarding" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
+              <button id="openClaudeOnboarding" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
             </article>
             <dialog id="claudeOnboardingDialog" class="integration-dialog" aria-labelledby="claudeOnboardingTitle" aria-describedby="claudeOnboardingDescription">
               <div class="section-heading">
-                <h3 id="claudeOnboardingTitle">Claude Code onboarding</h3>
-                <button id="closeClaudeOnboarding" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <h3 id="claudeOnboardingTitle">Claude Code 首次引导</h3>
+                <button id="closeClaudeOnboarding" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="claudeOnboardingDescription">Mark Claude Code onboarding as completed for this user.</p>
+              <p id="claudeOnboardingDescription">Mark Claude Code 首次引导 as completed for this user.</p>
               <div class="integration-files">
-                <strong>Files to modify</strong>
+                <strong>将要修改的文件</strong>
                 <ul id="claudeOnboardingFiles"></ul>
               </div>
-              <button id="confirmClaudeOnboarding" class="primary-button" type="button">Complete onboarding</button>
+              <button id="confirmClaudeOnboarding" class="primary-button" type="button">完成引导</button>
               <p id="claudeOnboardingDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
             <article class="provider-strip integration-card">
               <div class="section-heading">
                 <div>
-                  <h3>Codex in VS Code and App</h3>
-                  <p>Use FCC's models in the Codex VS Code extension and desktop app.</p>
+                  <h3>VS Code 与 App 中的 Codex</h3>
+                  <p>在 Codex 的 VS Code 扩展与桌面应用中使用 FCC 的模型。</p>
                 </div>
               </div>
               <p id="codexIntegrationMessage" class="message-area" role="status" hidden></p>
-              <button id="openCodexIntegration" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
+              <button id="openCodexIntegration" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
             </article>
             <dialog id="codexIntegrationDialog" class="integration-dialog" aria-labelledby="codexIntegrationTitle" aria-describedby="codexIntegrationDescription">
               <div class="section-heading">
-                <h3 id="codexIntegrationTitle">Codex in VS Code and App</h3>
-                <button id="closeCodexIntegration" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <h3 id="codexIntegrationTitle">VS Code 与 App 中的 Codex</h3>
+                <button id="closeCodexIntegration" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="codexIntegrationDescription">Configure Codex to use FCC. Your selected model stays unchanged.</p>
+              <p id="codexIntegrationDescription">配置 Codex 使用 FCC，已选模型保持不变。</p>
               <div class="integration-files">
-                <strong>Files to modify</strong>
+                <strong>将要修改的文件</strong>
                 <ul id="codexIntegrationFiles"></ul>
               </div>
-              <button id="confirmCodexIntegration" class="primary-button" type="button">Connect</button>
+              <button id="confirmCodexIntegration" class="primary-button" type="button">连接</button>
               <p id="codexIntegrationDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
             <article class="provider-strip integration-card">
               <div class="section-heading">
                 <div>
-                  <h3>Claude Code in JetBrains ACP</h3>
-                  <p>Use FCC's models in Claude Code through JetBrains ACP.</p>
+                  <h3>JetBrains ACP 中的 Claude Code</h3>
+                  <p>通过 JetBrains ACP 在 Claude Code 中使用 FCC 的模型。</p>
                 </div>
               </div>
               <p id="jetBrainsIntegrationMessage" class="message-area" role="status" hidden></p>
-              <button id="openJetBrainsIntegration" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
+              <button id="openJetBrainsIntegration" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
             </article>
             <dialog id="jetBrainsIntegrationDialog" class="integration-dialog" aria-labelledby="jetBrainsIntegrationTitle" aria-describedby="jetBrainsIntegrationDescription">
               <div class="section-heading">
-                <h3 id="jetBrainsIntegrationTitle">Claude Code in JetBrains ACP</h3>
-                <button id="closeJetBrainsIntegration" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <h3 id="jetBrainsIntegrationTitle">JetBrains ACP 中的 Claude Code</h3>
+                <button id="closeJetBrainsIntegration" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="jetBrainsIntegrationDescription">Route Claude Code in JetBrains through your FCC server.</p>
+              <p id="jetBrainsIntegrationDescription">让 JetBrains 中的 Claude Code 走你的 FCC 服务端。</p>
               <div class="integration-files">
-                <strong>Files to modify</strong>
+                <strong>将要修改的文件</strong>
                 <ul id="jetBrainsIntegrationFiles"></ul>
               </div>
-              <button id="confirmJetBrainsIntegration" class="primary-button" type="button">Connect</button>
+              <button id="confirmJetBrainsIntegration" class="primary-button" type="button">连接</button>
               <p id="jetBrainsIntegrationDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
             <article class="provider-strip integration-card">
               <div class="section-heading">
                 <div>
-                  <h3>Claude Code in App</h3>
-                  <p>Use FCC's models in the Claude desktop app.</p>
+                  <h3>App 中的 Claude Code</h3>
+                  <p>在 Claude 桌面应用中使用 FCC 的模型。</p>
                 </div>
               </div>
               <p id="claudeDesktopIntegrationMessage" class="message-area" role="status" hidden></p>
-              <button id="openClaudeDesktopIntegration" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
+              <button id="openClaudeDesktopIntegration" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
             </article>
             <dialog id="claudeDesktopIntegrationDialog" class="integration-dialog" aria-labelledby="claudeDesktopIntegrationTitle" aria-describedby="claudeDesktopIntegrationDescription">
               <div class="section-heading">
-                <h3 id="claudeDesktopIntegrationTitle">Claude Code in App</h3>
-                <button id="closeClaudeDesktopIntegration" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <h3 id="claudeDesktopIntegrationTitle">App 中的 Claude Code</h3>
+                <button id="closeClaudeDesktopIntegration" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="claudeDesktopIntegrationDescription">Set FCC as Claude Desktop's gateway. Fully quit Claude Desktop before connecting, then reopen it.</p>
+              <p id="claudeDesktopIntegrationDescription">把 FCC 设为 Claude Desktop 的网关。连接前请完全退出 Claude Desktop，再重新打开。</p>
               <div class="integration-files">
-                <strong>Files to modify</strong>
+                <strong>将要修改的文件</strong>
                 <ul id="claudeDesktopIntegrationFiles"></ul>
               </div>
-              <button id="confirmClaudeDesktopIntegration" class="primary-button" type="button">Connect</button>
+              <button id="confirmClaudeDesktopIntegration" class="primary-button" type="button">连接</button>
               <p id="claudeDesktopIntegrationDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
             <article class="provider-strip integration-card">
               <div class="section-heading">
                 <div>
                   <h3>DeepSeek Harness Desktop</h3>
-                  <p>Use FCC's models in the DeepSeek Harness desktop app.</p>
+                  <p>在 DeepSeek Harness 桌面应用中使用 FCC 的模型。</p>
                 </div>
               </div>
               <p id="dshDesktopIntegrationMessage" class="message-area" role="status" hidden></p>
               <div class="integration-actions">
-                <button id="openDshDesktopIntegration" class="primary-button" type="button" aria-busy="true" disabled>Loading…</button>
-                <button id="retryDshDesktopIntegration" class="secondary-button" type="button" hidden>Retry update</button>
+                <button id="openDshDesktopIntegration" class="primary-button" type="button" aria-busy="true" disabled>加载中…</button>
+                <button id="retryDshDesktopIntegration" class="secondary-button" type="button" hidden>重试更新</button>
               </div>
             </article>
             <dialog id="dshDesktopIntegrationDialog" class="integration-dialog" aria-labelledby="dshDesktopIntegrationTitle" aria-describedby="dshDesktopIntegrationDescription">
               <div class="section-heading">
                 <h3 id="dshDesktopIntegrationTitle">DeepSeek Harness Desktop</h3>
-                <button id="closeDshDesktopIntegration" class="ghost-button" type="button" aria-label="Close" autofocus>×</button>
+                <button id="closeDshDesktopIntegration" class="ghost-button" type="button" aria-label="关闭" autofocus>×</button>
               </div>
-              <p id="dshDesktopIntegrationDescription">Install and open DSH Desktop once, then connect FCC as the default for new sessions.</p>
+              <p id="dshDesktopIntegrationDescription">先安装并打开一次 DSH Desktop，再把 FCC 设为新会话的默认选项。</p>
               <div class="integration-files">
-                <strong>Files to modify</strong>
+                <strong>将要修改的文件</strong>
                 <ul id="dshDesktopIntegrationFiles"></ul>
               </div>
-              <button id="confirmDshDesktopIntegration" class="primary-button" type="button">Connect</button>
+              <button id="confirmDshDesktopIntegration" class="primary-button" type="button">连接</button>
               <p id="dshDesktopIntegrationDialogMessage" class="message-area error" role="alert" hidden></p>
             </dialog>
           </section>
@@ -242,19 +242,19 @@
 
       <footer class="action-bar">
         <div class="action-meta">
-          <strong id="dirtyState">No changes</strong>
+          <strong id="dirtyState">无改动</strong>
           <span id="configPath"></span>
         </div>
         <div id="messageArea" class="message-area"></div>
         <div class="action-buttons">
-          <button id="applyButton" class="primary-button" type="button" disabled>Apply</button>
+          <button id="applyButton" class="primary-button" type="button" disabled>应用</button>
         </div>
       </footer>
     </div>
     <dialog id="providerDialog" class="integration-dialog provider-dialog" aria-labelledby="providerDialogTitle">
       <div class="section-heading">
         <h3 id="providerDialogTitle"></h3>
-        <button id="closeProviderDialog" class="ghost-button" type="button" aria-label="Close provider settings">&#x2715;</button>
+        <button id="closeProviderDialog" class="ghost-button" type="button" aria-label="关闭供应商设置">&#x2715;</button>
       </div>
       <div id="providerDialogBody">
         <div id="providerDialogActions" class="provider-actions"></div>
@@ -264,8 +264,8 @@
       </div>
       <div id="providerMessage" class="message-area" role="status"></div>
       <div class="provider-dialog-footer">
-        <button id="cancelProviderDialog" class="secondary-button" type="button">Cancel</button>
-        <button id="saveProvider" class="primary-button" type="button" disabled>Save</button>
+        <button id="cancelProviderDialog" class="secondary-button" type="button">取消</button>
+        <button id="saveProvider" class="primary-button" type="button" disabled>保存</button>
       </div>
     </dialog>
     <script src="/admin/assets/__FCC_VERSION__/form_controls.js"></script>

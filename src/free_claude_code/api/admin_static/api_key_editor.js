@@ -41,8 +41,8 @@ window.FccApiKeyEditor = class {
     });
     this.empty = document.createElement("div");
     this.empty.className = "field-description";
-    this.empty.textContent = "No keys configured.";
-    this.add = this.button("Add key", "Add key", () => {
+    this.empty.textContent = "未配置密钥。";
+    this.add = this.button("添加密钥", "添加密钥", () => {
       if (!this.editable()) return;
       this.picked = null;
       this.entries.push({ value: "" });
@@ -100,14 +100,14 @@ window.FccApiKeyEditor = class {
     this.entries.forEach((entry, index) => {
       const value = entry.value.trim();
       if (!value && entry.reference === undefined) {
-        const input = this.showResult(index, "Enter a key or remove this row.", true);
+        const input = this.showResult(index, "请输入密钥或删除该行。", true);
         first ||= input;
       } else if (value) {
         if (seen.has(value)) {
           const previous = seen.get(value);
-          const input = this.showResult(previous, `Duplicates Key ${index + 1}.`, true);
+          const input = this.showResult(previous, `与密钥 ${index + 1} 重复。`, true);
           first ||= input;
-          this.showResult(index, `Duplicates Key ${previous + 1}.`, true);
+          this.showResult(index, `与密钥 ${previous + 1} 重复。`, true);
         } else seen.set(value, index);
       }
     });
@@ -122,7 +122,7 @@ window.FccApiKeyEditor = class {
     this.changed();
     this.render();
     this.rows.children[destination].querySelector(".api-key-handle").focus();
-    this.announcement.textContent = `Key moved to position ${destination + 1} of ${this.entries.length}.`;
+    this.announcement.textContent = `密钥已移动到第 ${destination + 1} 位（共 ${this.entries.length} 个）。`;
   }
 
   keyboard(event, entry) {
@@ -132,10 +132,10 @@ window.FccApiKeyEditor = class {
       event.preventDefault();
       if (this.picked) {
         this.picked = null;
-        this.announcement.textContent = `Key dropped at position ${index + 1}.`;
+        this.announcement.textContent = `密钥已放置到第 ${index + 1} 位。`;
       } else {
         this.picked = { entry, order: [...this.entries] };
-        this.announcement.textContent = `Picked up Key ${index + 1}. Use arrow keys to move, Space to drop, or Escape to cancel.`;
+        this.announcement.textContent = `已拿起密钥 ${index + 1}。用方向键移动，空格放置，Esc 取消。`;
       }
     } else if (this.picked?.entry === entry && ["ArrowUp", "ArrowDown", "Escape"].includes(event.key)) {
       event.preventDefault();
@@ -146,7 +146,7 @@ window.FccApiKeyEditor = class {
         this.changed();
         this.render();
         this.rows.children[this.entries.indexOf(entry)].querySelector(".api-key-handle").focus();
-        this.announcement.textContent = "Move cancelled.";
+        this.announcement.textContent = "移动已取消。";
       } else this.move(entry, Math.max(0, Math.min(this.entries.length - 1, index + (event.key === "ArrowUp" ? -1 : 1))));
     }
   }
@@ -171,7 +171,7 @@ window.FccApiKeyEditor = class {
       const number = document.createElement("span");
       number.className = "api-key-number";
       number.textContent = index + 1;
-      const handle = this.button("", `Move Key ${index + 1}`);
+      const handle = this.button("", `移动密钥 ${index + 1}`);
       handle.classList.add("api-key-handle");
       handle.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="8" cy="6" r="1.5"/><circle cx="16" cy="6" r="1.5"/><circle cx="8" cy="12" r="1.5"/><circle cx="16" cy="12" r="1.5"/><circle cx="8" cy="18" r="1.5"/><circle cx="16" cy="18" r="1.5"/></svg>';
       handle.draggable = !this.field.locked;
@@ -193,11 +193,11 @@ window.FccApiKeyEditor = class {
       input.setAttribute("autocorrect", "off");
       input.spellcheck = false;
       input.disabled = !!this.field.locked;
-      input.setAttribute("aria-label", `Key ${index + 1}`);
-      input.placeholder = entry.reference === undefined ? "Enter API key" : "Configured - enter a new key to replace";
+      input.setAttribute("aria-label", `密钥 ${index + 1}`);
+      input.placeholder = entry.reference === undefined ? "输入 API 密钥" : "已配置 - 输入新密钥以替换";
       input.value = entry.value;
       input.addEventListener("input", () => { entry.value = input.value; this.changed(); });
-      const remove = this.button("Remove", `Remove Key ${index + 1}`, () => {
+      const remove = this.button("删除", `删除密钥 ${index + 1}`, () => {
         if (!this.editable()) return;
         this.picked = null;
         this.entries.splice(this.entries.indexOf(entry), 1);

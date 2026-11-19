@@ -149,8 +149,8 @@
       ? `${compactTokens(used)} / ${compactTokens(maximum)} (${percentage}%)`
       : compactTokens(used);
     const description = knownMaximum
-      ? `Context used: ${exactUsed} of ${maximum.toLocaleString("en-US")} tokens (${percentage}%)`
-      : `Context used: ${exactUsed} tokens`;
+      ? `已用上下文：${exactUsed} / ${maximum.toLocaleString("en-US")} tokens（${percentage}%）`
+      : `已用上下文：${exactUsed} tokens`;
     node.title = description;
     node.setAttribute("aria-label", description);
     node.hidden = false;
@@ -227,7 +227,7 @@
     const previousRevision = records.get(data.session_id)?.session?.revision;
     let outputChanged = false;
     if (type === "session.deleted") {
-      removeDeletedSession(data.session_id, "Session deleted.");
+      removeDeletedSession(data.session_id, "会话已删除。");
     } else {
       outputChanged = merge(data) && type === "item.updated";
       if (type === "session.notice" && data.session_id === selected)
@@ -349,7 +349,7 @@
       if (token !== viewToken || connection !== syncToken || selected !== id)
         return;
       if (error.status === 404) {
-        removeDeletedSession(id, "This session was deleted.");
+        removeDeletedSession(id, "该会话已删除。");
         render();
         return;
       }
@@ -481,7 +481,7 @@
     }
     render();
   }
-  function restart(message = "Reconnecting…") {
+  function restart(message = "正在重连…") {
     if (feed) feed.close();
     feed = null;
     connected = false;
@@ -580,7 +580,7 @@
       }
     }
     if (missing) {
-      notice = "This session was deleted.";
+      notice = "该会话已删除。";
       render();
     }
     connect();
@@ -737,7 +737,7 @@
   function newSession() {
     const id = crypto.randomUUID();
     dialog(
-      "New code session",
+      "新建代码会话",
       (form, context) => {
         const harness = element("select");
         harness.append(new Option("Codex", "codex"));
@@ -755,7 +755,7 @@
         const lineBreakNotice = element("p", "", "code-notice");
         lineBreakNotice.id = `${folder.id}-notice`;
         folder.setAttribute("aria-describedby", lineBreakNotice.id);
-        const manual = button("Enter path manually", () => {
+        const manual = button("手动输入路径", () => {
           setFolder("");
           folder.focus();
         });
@@ -767,10 +767,10 @@
           folder.value = path.replaceAll("\r", "␍").replaceAll("\n", "␊");
           manual.hidden = !hasLineBreaks;
           lineBreakNotice.textContent = hasLineBreaks
-            ? "Line breaks in this folder name are shown as ␍ and ␊."
+            ? "文件夹名中的换行以 ␍ 和 ␊ 显示。"
             : "";
         }
-        const browse = button("Browse…", async () => {
+        const browse = button("浏览…", async () => {
           if (!context.isOpen() || context.isBusy()) return;
           const initial = readFolder();
           context.setBusy(true);
@@ -800,13 +800,13 @@
         form.append(
           element(
             "p",
-            "Choose an existing folder on the computer running FCC. You can also enter its path manually.",
+            "在运行 FCC 的电脑上选择一个已有文件夹，也可以手动输入路径。",
             "code-notice",
           ),
         );
         return readFolder;
       },
-      "Create session",
+      "创建会话",
       async (readFolder, context) => {
         await api(`${base}/sessions`, {
           method: "POST",
@@ -860,17 +860,17 @@
   }
   function selectionError(record) {
     if (!record?.session) return "";
-    if (providerDraft) return "Choose a model for the selected provider.";
-    if (!catalogLoaded) return catalogPhase === "starting" ? "Models are loading…" : "Model list unavailable.";
+    if (providerDraft) return "为所选供应商选择一个模型。";
+    if (!catalogLoaded) return catalogPhase === "starting" ? "模型加载中…" : "模型列表不可用。";
     const model = catalog.find((model) => model.id === record.session.model);
     if (!model) return catalogProviders[record.session.provider_id] === "starting"
-      ? "Models for the selected provider are loading…"
-      : "Selected model is unavailable. Choose another model.";
+      ? "正在加载所选供应商的模型…"
+      : "所选模型不可用，请另选。";
     if (
       record.session.reasoning_effort &&
       !model.reasoning_efforts.includes(record.session.reasoning_effort)
     )
-      return "Selected effort is unavailable. Choose another effort.";
+      return "所选推理强度不可用，请另选。";
     return "";
   }
 
@@ -894,16 +894,16 @@
       return;
     }
     dialog(
-      "Delete session?",
+      "删除会话？",
       (form) => {
         form.append(
           element(
             "p",
-            "This deletes the conversation from FCC and Codex history. Your project files stay in place.",
+            "这会从 FCC 与 Codex 历史中删除该对话，项目文件保持原样。",
           ),
         );
       },
-      "Delete session",
+      "删除会话",
       () =>
         api(`${base}/sessions/${id}?expected_revision=${revision}`, {
           method: "DELETE",
@@ -1002,10 +1002,10 @@
         "codeMode",
         "Mode",
         [
-          ["config", "Use config"],
+          ["config", "使用配置"],
           ["ask", "Ask"],
           ["auto_review", "Auto-review"],
-          ["full_access", "Full access"],
+          ["full_access", "完全访问"],
         ],
         record.session?.mode || "config",
         (mode) => {
@@ -1013,7 +1013,7 @@
         },
       );
       modeControl.select.title =
-        "Use config uses this session's original configured permission selection.";
+        "「使用配置」表示沿用该会话最初配置的权限选项。";
       controls.append(
         providerControl.group,
         modelControl.group,
@@ -1046,10 +1046,10 @@
       const deletionGroup = element("div");
       deletionGroup.append(deletion, deletionMessage);
       const header = UI.header(
-        "← Code sessions",
+        "← 代码会话",
         () => navigate(null),
-        record.session?.title || "Code session",
-        "Code title",
+        record.session?.title || "代码会话",
+        "会话标题",
         (title) => {
           if (
             selected === id &&
@@ -1065,7 +1065,7 @@
       transcript.id = "codeTranscript";
       transcript.setAttribute("aria-label", "Conversation");
       const older = button(
-        "Load older messages",
+        "加载更早的消息",
         async () => {
           const oldHeight = transcript.scrollHeight,
             top = transcript.scrollTop;
@@ -1083,7 +1083,7 @@
         "secondary-button session-older",
       );
       older.id = "codeOlder";
-      const activity = element("div", "Thinking…", "code-activity");
+      const activity = element("div", "思考中…", "code-activity");
       activity.id = "codeActivity";
       activity.setAttribute("role", "status");
       activity.hidden = true;
@@ -1091,7 +1091,7 @@
       const composer = UI.composer(
         "code",
         saved(id).draft || "",
-        "Ask Codex to work on this folder…",
+        "让 Codex 在这个文件夹里工作…",
         (value) => {
           save(id, { ...saved(id), draft: value });
           renderControls();
@@ -1109,14 +1109,14 @@
       root.append(UI.shell(header, message, transcript, composer));
       UI.resizeComposer(composer.querySelector("textarea"));
     } else {
-      const create = button("New code session", newSession, "primary-button");
+      const create = button("新建代码会话", newSession, "primary-button");
       create.id = "codeNew";
       const header = UI.libraryHeader(
-        "Code sessions",
-        "Work with Codex in a project folder.",
+        "代码会话",
+        "在项目文件夹中与 Codex 协作。",
         create,
       );
-      const search = UI.search("Search titles and folders", query, (value) => {
+      const search = UI.search("搜索标题和文件夹", query, (value) => {
         query = value;
         visibleIds = [];
         nextCursor = null;
@@ -1125,7 +1125,7 @@
         void refreshLibrary();
       });
       const more = button(
-        "Load more sessions",
+        "加载更多会话",
         async () => {
           libraryLoading = true;
           render();
@@ -1157,7 +1157,7 @@
       notice ||
       availabilityNotice ||
       syncNotice ||
-      (!connected ? "Connecting…" : !synchronized ? "Synchronizing…" : "");
+      (!connected ? "正在连接…" : !synchronized ? "同步中…" : "");
     message.hidden = !message.textContent;
     if (!selected) {
       const library = root.querySelector("#codeLibrary");
@@ -1192,9 +1192,9 @@
             "div",
             synchronized
               ? query
-                ? "No matching sessions."
-                : "Start your first code session."
-              : "Loading sessions…",
+                ? "没有匹配的会话。"
+                : "开始你的第一个代码会话。"
+              : "正在加载会话…",
             "session-empty",
           ),
         );
@@ -1245,7 +1245,7 @@
       status.className = `session-generation-status ${run.status}`;
       status.textContent =
         run.error ||
-        (run.status === "interrupted" ? "Turn stopped." : "This turn failed.");
+        (run.status === "interrupted" ? "已停止本轮。" : "本轮失败。");
     }
     renderActivity(outputChanged);
     if (bottom) transcript.scrollTop = transcript.scrollHeight;
@@ -1274,7 +1274,7 @@
     send.hidden = isBusy;
     stop.hidden = !isBusy;
     stop.disabled = !connected || record?.run?.stop_requested;
-    send.textContent = saved(selected).pending ? "Retry Send" : "Send";
+    send.textContent = saved(selected).pending ? "重试发送" : "Send";
     send.classList.toggle("startup-busy", selectionLoading(record));
     send.setAttribute("aria-busy", String(selectionLoading(record)));
     send.disabled =
@@ -1292,9 +1292,9 @@
     const deletion = root.querySelector("#codeDelete");
     deletion.textContent =
       record?.session?.status === "delete_uncertain"
-        ? "Check deletion"
+        ? "正在检查删除状态"
         : record?.session?.status === "deleting"
-          ? "Deleting…"
+          ? "正在删除…"
           : "Delete";
     deletion.disabled =
       !synchronized ||
@@ -1325,7 +1325,7 @@
       providerDraft ? "" : record?.session?.model_name || "",
       disabled,
     );
-    modelControl.input.placeholder = "Choose a model";
+    modelControl.input.placeholder = "选择模型";
     harnessControl.update(
       harnesses.map((harness) => [harness.id, harness.name]),
       record?.session?.harness || "codex",
@@ -1407,7 +1407,7 @@
         (childReview || item.kind === "auto_review") &&
         !item.complete &&
         !active
-          ? `${childReview ? "Sub-agent " : ""}Auto-review: Result unavailable`
+          ? `${childReview ? "子代理 " : ""}自动评审：结果不可用`
           : item.title || "Tool";
     }
     const content = node.querySelector(".code-prose"),
@@ -1447,12 +1447,12 @@
       prompt.error ||
       (!records.get(selected)?.activePrompts.get(prompt.id)?.active &&
       ["pending", "answering"].includes(prompt.status)
-        ? "No longer active"
+        ? "已不再活跃"
         : "") ||
       {
-        answering: "Answer sent…",
+        answering: "答案已发送…",
         resolved: "Resolved",
-        expired: "No longer active",
+        expired: "已不再活跃",
       }[prompt.status] ||
       "";
   }
@@ -1510,12 +1510,12 @@
       });
       const scope = element("select");
       scope.append(
-        new Option("This turn", "turn"),
-        new Option("This session", "session"),
+        new Option("本轮", "turn"),
+        new Option("本次会话", "session"),
       );
-      label(form, "Allow for", scope);
+      label(form, "允许时长", scope);
       actions.append(
-        button("Allow selected", () => {
+        button("允许所选", () => {
           void answer({
             selected: checks
               .filter((input) => input.checked)
@@ -1563,7 +1563,7 @@
             other = element("input");
             other.type = question.secret ? "password" : "text";
             other.autocomplete = "off";
-            label(field, "Your answer", other);
+            label(field, "你的回答", other);
             other.addEventListener("input", () => {
               radio.checked = true;
             });
@@ -1581,12 +1581,12 @@
         input.type = question.secret ? "password" : "text";
         input.required = true;
         input.autocomplete = "off";
-        label(field, question.header || "Your answer", input);
+        label(field, question.header || "你的回答", input);
         return () => [question.id, [input.value]];
       });
       actions.append(
         button(
-          "Submit answers",
+          "提交答案",
           () => {
             if (form.reportValidity())
               void answer({
@@ -1602,20 +1602,20 @@
         try {
           const url = new URL(prompt.form.url);
           if (["https:", "http:"].includes(url.protocol)) {
-            const link = element("a", "Open tool request");
+            const link = element("a", "打开工具请求");
             link.href = url.href;
             link.target = "_blank";
             link.rel = "noopener noreferrer";
             form.append(link);
           } else throw new Error();
         } catch {
-          form.append(element("p", "This tool supplied an unsupported link."));
+          form.append(element("p", "该工具提供了不受支持的链接。"));
         }
       } else if (prompt.form.unsupported)
         form.append(
           element(
             "p",
-            "This tool's form cannot be displayed. Decline or cancel this request.",
+            "无法显示该工具的表单，请拒绝或取消此请求。",
           ),
         );
       else
@@ -1623,7 +1623,7 @@
           const input = element(field.options?.length ? "select" : "input");
           if (field.options?.length) {
             input.multiple = field.type === "array";
-            if (!input.multiple) input.append(new Option("Choose…", ""));
+            if (!input.multiple) input.append(new Option("选择…", ""));
             field.options.forEach((option, index) =>
               input.append(new Option(option.label, String(index))),
             );
@@ -1685,7 +1685,7 @@
           ),
         );
       choice("Decline", { action: "decline" });
-      choice("Cancel request", { action: "cancel" });
+      choice("取消请求", { action: "cancel" });
     }
     form.append(actions);
   }
