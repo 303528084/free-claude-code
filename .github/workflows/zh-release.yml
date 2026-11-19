@@ -1,0 +1,130 @@
+name: 汉化版发布
+
+# 只在 zh-cn 分支上打汉化版发布包：
+#   - 构建 wheel + sdist，并在 wheel 内校验中文界面文案
+#   - 用 gh 建 tag（zh-v<上游版本>-<汉化修订>）并上传到 GitHub Releases
+# 不推送 PyPI：PyPI 上的 free-claude-code 属于上游，汉化包只走本仓库的 Releases。
+
+on:
+  workflow_dispatch:
+    inputs:
+      zh_revision:
+        description: 同一上游版本的汉化修订号（第几版汉化）
+        required: false
+        default: "1"
+        type: string
+      dry_run:
+        description: 只构建并上传 artifact，不创建 Release
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: zh-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: 构建并发布汉化版
+    if: github.ref == 'refs/heads/zh-cn'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Set up CI environment
+        id: environment
+        uses: ./.github/actions/ci-environment
+        with:
+          runner-label: ubuntu-latest
+          sync-dependencies: "false"
+
+      - name: 计算版本与标签
+        env:
+          ZH_REVISION: ${{ inputs.zh_revision }}
+        run: |
+          set -euo pipefail
+          base="$(git describe --tags --abbrev=0 --match 'v*')"
+          base_version="${base#v}"
+          revision="${ZH_REVISION:-1}"
+          if ! [[ "$revision" =~ ^[1-9][0-9]*$ ]]; then
+            echo "汉化修订号必须是正整数：$revision" >&2
+            exit 1
+          fi
+          {
+            echo "BASE_VERSION=$base_version"
+            echo "VERSION=${base_version}+zh.${revision}"
+            echo "TAG=zh-v${base_version}-${revision}"
+          } >> "$GITHUB_ENV"
+          echo "上游版本 $base_version，汉化修订 $revision"
+
+      - name: 确认汉化文案已全部落盘
+        env:
+          CI_PYTHON: ${{ steps.environment.outputs.python-version }}
+        run: uv run --no-project --python "$CI_PYTHON" python zh/check_release_ready.py
+
+      - name: 构建发行包
+        env:
+          CI_PYTHON: ${{ steps.environment.outputs.python-version }}
+        run: |
+          set -euo pipefail
+          SETUPTOOLS_SCM_PRETEND_VERSION="$VERSION" \
+            uv build --no-sources --out-dir dist
+          ls -l dist
+
+      - name: 校验构建产物
+        env:
+          CI_PYTHON: ${{ steps.environment.outputs.python-version }}
+        run: uv run --no-project --python "$CI_PYTHON" python zh/check_release_ready.py "$VERSION" dist
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: zh-release-${{ env.TAG }}
+          path: dist/*
+          if-no-files-found: error
+
+      - name: 创建 GitHub Release
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZH_REVISION_INPUT: ${{ inputs.zh_revision }}
+        run: |
+          set -euo pipefail
+          notes="$RUNNER_TEMP/notes.md"
+          cat > "$notes" <<NOTES
+          基于上游 **$BASE_VERSION** 的汉化版本（汉化修订 $ZH_REVISION_INPUT）。
+
+          ## 汉化内容
+
+          - 文档：README、CONTRIBUTING、MAINTAINERS
+          - Admin 管理界面：页面、按钮、提示、无障碍标签
+          - Admin 界面中的后端下发文案：区块名、字段名与说明、推理强度档位、本地服务状态
+
+          ## 与上游的关系
+
+          - 源码同步自上游 \`Alishahryar1/free-claude-code\` 的 \`main\`，汉化改动只存在于本仓库的 \`zh-cn\` 分支，不回推上游。
+          - 本包未发布到 PyPI（PyPI 上的同名项目属于上游），仅通过本 Release 分发。
+
+          ## 安装
+
+          需要 Python 3.14.10（与上游一致）：
+
+          \`\`\`
+          pip install free_claude_code-$VERSION-py3-none-any.whl
+          \`\`\`
+
+          安装后可执行 \`fcc-server\`，在浏览器打开 Admin 界面即为中文。
+          NOTES
+          gh release create "$TAG" \
+            --title "汉化版 v$BASE_VERSION（汉化修订 $ZH_REVISION_INPUT）" \
+            --notes-file "$notes" \
+            "dist/free_claude_code-$VERSION-py3-none-any.whl" \
+            "dist/free_claude_code-$VERSION.tar.gz"

@@ -25,6 +25,20 @@ pwsh -File zh/sync_upstream.ps1 -Push
 
 上游新增的界面文案若不在 `strings.json` 中，脚本会在末尾以 `[待补译]` 列出；把这些条目补进 `strings.json` 后重跑即可。
 
+## 发布汉化版
+
+汉化版的发布走 `.github/workflows/zh-release.yml`（只在 `zh-cn` 分支上跑），与上游的 `Post merge` 发布流程完全分开：
+
+- 版本号 = 上游最近标签 + 汉化修订，例如上游 `v6.19.40` 的第 1 版汉化为 `6.19.40+zh.1`，标签 `zh-v6.19.40-1`。
+- 构建前会重跑一遍翻译套用并要求工作区干净（有未汉化的英文文案就直接失败），构建后再校验 wheel 内确实含中文界面文案。
+- 产物：wheel + sdist，上传到本仓库的 GitHub Releases；**不推送 PyPI**（PyPI 上的 `free-claude-code` 属于上游）。
+- 手动触发：仓库 Actions 页面选「汉化版发布」→ Run workflow，可选 `zh_revision`（汉化修订号）与 `dry_run`（只构建、不发 Release）。
+
+```powershell
+# 本地预检：确认所有界面文案都已汉化、且工作区干净
+python zh/check_release_ready.py
+```
+
 ## 覆盖范围
 
 - 文档：`README.md`、`CONTRIBUTING.md`、`MAINTAINERS.md`
