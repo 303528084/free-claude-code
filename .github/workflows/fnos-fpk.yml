@@ -218,6 +218,14 @@ jobs:
           gh release view "$ZH_TAG" > /dev/null 2>&1 || \
             gh release create "$ZH_TAG" --title "汉化版 v$(echo "$ZH_VERSION" | cut -d+ -f1)（汉化修订 $ZH_REVISION_INPUT）" --notes-file "$notes"
           gh release upload "$ZH_TAG" "$FPK" --clobber
+          # 已存在的 Release：把 FPK 说明段追加进去（先剥掉上一版同段落，避免重跑叠加）
+          base="$RUNNER_TEMP/release-base.md"
+          gh release view "$ZH_TAG" --json body -q .body 2>/dev/null | \
+            awk '/<!-- fpk:begin -->/{s=1} !s{print} /<!-- fpk:end -->/{s=0}' > "$base" || true
+          merged="$RUNNER_TEMP/release-merged.md"
+          { cat "$base"; echo; echo '<!-- fpk:begin -->'; cat "$notes"; echo '<!-- fpk:end -->'; } > "$merged"
+          gh release edit "$ZH_TAG" --notes-file "$merged"
+          echo "已更新 Release 说明"
           echo "已上传 $FPK 到 Release $ZH_TAG"
 
       - name: 汇总
