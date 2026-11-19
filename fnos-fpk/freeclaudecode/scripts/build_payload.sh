@@ -72,6 +72,39 @@ rm -rf "$PKG_DIR/app/runtime/python/include" \
        "$PKG_DIR/app/runtime/python/share/man"
 find "$PKG_DIR/app/runtime/python" "$PKG_DIR/app/venv" -name '__pycache__' -type d -prune -exec rm -rf {} + 2>/dev/null || true
 
+# 静态库、标准库测试用例、打包/构建工具：运行期完全用不到，白白撑大包
+rm -f  "$PKG_DIR/app/runtime/python/lib/libpython"*.a
+rm -rf "$PKG_DIR/app/runtime/python/lib/python3.14/test" \
+       "$PKG_DIR/app/runtime/python/lib/python3.14/idlelib" \
+       "$PKG_DIR/app/runtime/python/lib/python3.14/turtledemo" \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/pip" \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/pip"* \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/setuptools" \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/setuptools"* \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/pkg_resources" \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/wheel" \
+       "$PKG_DIR/app/venv/lib/python3.14/site-packages/_distutils_hack"
+find "$PKG_DIR/app/venv/lib/python3.14/site-packages" -type d -name 'licenses' -prune -exec rm -rf {} + 2>/dev/null || true
+find "$PKG_DIR/app/venv/lib/python3.14/site-packages" -maxdepth 1 -name '*.dist-info' -type d -exec sh -c 'rm -rf "$1/RECORD" 2>/dev/null || true' _ {} \;
+
+# 非 ASCII 文件名（例如 setuptools 造的 venv/bin/𝜋thon）在 fnOS 解包器上会导致整包解压失败，必须清掉
+echo "==> 清理非 ASCII 条目"
+badfile="$BUILD/non-ascii.txt"
+mkdir -p "$BUILD"
+find "$PKG_DIR/app" -print 2>/dev/null | LC_ALL=C grep '[^ -~]' > "$badfile" || true
+if [ -s "$badfile" ]; then
+  echo "    发现 $(wc -l < "$badfile") 个，逐个删除："
+  sort -r "$badfile" | while IFS= read -r f; do echo "      $f"; rm -rf -- "$f"; done
+fi
+if find "$PKG_DIR/app" -print 2>/dev/null | LC_ALL=C grep -q '[^ -~]'; then
+  echo "    仍有非 ASCII 条目，判定为失败" >&2
+  find "$PKG_DIR/app" -print 2>/dev/null | LC_ALL=C grep '[^ -~]' | head -n 50 >&2
+  exit 1
+fi
+echo "    已无非 ASCII 条目"
+
+echo "载荷体积："
+
 echo "载荷体积："
 du -sh "$PKG_DIR/app/runtime/python" "$PKG_DIR/app/venv"
 echo "完成：fnpack build --directory $PKG_DIR"

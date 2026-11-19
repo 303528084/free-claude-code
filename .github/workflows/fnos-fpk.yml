@@ -150,6 +150,15 @@ jobs:
           echo "FPK=$fpk" >> "$GITHUB_ENV"
           echo "产物 $fpk，$(numfmt --to=iec "$size")"
 
+      - name: 只保留 ASCII 且带版本号的文件名
+        run: |
+          set -euo pipefail
+          # fnpack 产物名是固定的 <appname>.fpk；另存一份带版本号的，避免下载页看不出是哪个版本
+          final="$RUNNER_TEMP/${APPNAME}-${VERSION}.fpk"
+          cp "$FPK" "$final"
+          ls -lh "$final"
+          echo "FPK_FINAL=$final" >> "$GITHUB_ENV"
+
       - name: 冒烟检查（包结构）
         run: |
           set -euo pipefail
@@ -206,7 +215,7 @@ jobs:
 
           ## 安装
 
-          应用中心 → 手动安装 → 选择 \`freeclaudecode.fpk\`；
+          应用中心 → 手动安装 → 选择 \`${APPNAME}-${VERSION}.fpk\`；
           安装向导里填 API 令牌（≥32 位）并选择是否允许局域网客户端直连。
 
           ## 注意
@@ -217,7 +226,9 @@ jobs:
           NOTES
           gh release view "$ZH_TAG" > /dev/null 2>&1 || \
             gh release create "$ZH_TAG" --title "汉化版 v$(echo "$ZH_VERSION" | cut -d+ -f1)（汉化修订 $ZH_REVISION_INPUT）" --notes-file "$notes"
-          gh release upload "$ZH_TAG" "$FPK" --clobber
+          gh release upload "$ZH_TAG" "$FPK_FINAL" --clobber
+          # 旧的无版本号资产清掉，避免下载页同时挂两个同名内容的包
+          gh release delete-asset "$ZH_TAG" "${APPNAME}.fpk" -y 2>/dev/null || true
           # 已存在的 Release：把 FPK 说明段追加进去（先剥掉上一版同段落，避免重跑叠加）
           base="$RUNNER_TEMP/release-base.md"
           gh release view "$ZH_TAG" --json body -q .body 2>/dev/null | \
@@ -226,7 +237,7 @@ jobs:
           { cat "$base"; echo; echo '<!-- fpk:begin -->'; cat "$notes"; echo '<!-- fpk:end -->'; } > "$merged"
           gh release edit "$ZH_TAG" --notes-file "$merged"
           echo "已更新 Release 说明"
-          echo "已上传 $FPK 到 Release $ZH_TAG"
+          echo "已上传 $FPK_FINAL 到 Release $ZH_TAG"
 
       - name: 汇总
         run: |
