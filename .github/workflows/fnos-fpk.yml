@@ -154,19 +154,19 @@ jobs:
         run: |
           set -euo pipefail
           file "$FPK"
-          echo "包内条目数：$(tar -tzf "$FPK" | wc -l)"
-          echo "--- 一级条目 ---"
-          tar -tzf "$FPK" | awk -F/ 'NF<=2' | head -n 40
-          echo "--- app/ 子目录统计 ---"
-          tar -tzf "$FPK" | grep '^app/' | cut -d/ -f1-2 | sort | uniq -c | sort -rn | head -n 15
-          echo "--- 关键时刻检查 ---"
           list="$(tar -tzf "$FPK")"
-          for f in manifest cmd/main app/ui/config; do
-            echo "$list" | grep -qx "$f" || { echo "缺少必要文件：$f" >&2; exit 1; }
+          echo "包内条目数：$(echo "$list" | wc -l)"
+          echo "$list" | head -n 25
+          for f in manifest cmd/main config/privilege config/resource wizard/install ICON.PNG ICON_256.PNG app.tgz; do
+            echo "$list" | grep -qx "$f" || { echo "缺少必要条目：$f" >&2; exit 1; }
           done
-          for f in app/venv/bin/fcc-server app/runtime/python/bin/python3 app/shim/gateway_shim.py; do
-            if echo "$list" | grep -qx "$f"; then echo "OK  $f"; else echo "WARN 缺少 $f（安装后服务起不来）"; fi
+          echo "--- app.tgz 内部（载荷是否打进去了）---"
+          applist="$(tar -xzf "$FPK" -O app.tgz | tar -tzf - | sed 's#^\./##')"
+          echo "app.tgz 内条目数：$(echo "$applist" | wc -l)"
+          for f in ui/config ui/images/icon_64.png shim/gateway_shim.py venv/bin/fcc-server runtime/python/bin/python3; do
+            if echo "$applist" | grep -qx "$f"; then echo "OK   $f"; else echo "MISS $f" >&2; missing=1; fi
           done
+          [ -z "${missing:-}" ] || { echo "载荷不完整，安装后服务会起不来" >&2; exit 1; }
 
       - name: 上传构建产物（artifact）
         uses: actions/upload-artifact@v4
