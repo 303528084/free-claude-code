@@ -136,8 +136,14 @@ jobs:
         run: |
           set -euo pipefail
           cd "$PKG_DIR/.."
+          # fnOS 解包时不是以 root 跑 tar 的：条目属主若不是 root，chown 会失败并让 tar 非零退出，
+          # 应用中心就报「解压 app.tgz 失败」。所以把属主统一成 root:root 再打。
+          sudo chown -R root:root "./${APPNAME}"
+          sudo find "./${APPNAME}" -type d -exec chmod 755 {} +
+          # 入口脚本必须有可执行位（Windows 上检出的文件会丢）
+          sudo chmod 755 "./${APPNAME}"/cmd/* "./${APPNAME}"/scripts/*.sh 2>/dev/null || true
           # shellcheck disable=SC2086
-          fnpack build --directory "./${APPNAME}" $SIGN_ARGS
+          sudo fnpack build --directory "./${APPNAME}" $SIGN_ARGS
           fpk="$(find . -maxdepth 3 -name '*.fpk' | head -n 1)"
           [ -n "$fpk" ] || { echo "没找到 fnpack 产物"; ls -la; exit 1; }
           fpk="$(realpath "$fpk")"
@@ -178,6 +184,12 @@ jobs:
             if grep -qF -- "$f" "$applist"; then echo "OK   $f"; else echo "MISS $f" >&2; missing=1; fi
           done
           [ -z "${missing:-}" ] || { echo "载荷不完整，安装后服务会起不来" >&2; exit 1; }
+
+          echo "--- 属主与可执行位（fnOS 解包靠 root:root 才不报错）---"
+          badowner=$(tar -xzf "$FPK" -O app.tgz | tar -tvzf - | awk '$2 != "root/root" {print}' | head -n 20 || true)
+          if [ -n "$badowner" ]; then echo "app.tgz 里有非 root:root 条目：" >&2; echo "$badowner" >&2; exit 1; fi
+          echo "app.tgz 内所有条目均为 root:root"
+          tar -tvzf "$FPK" | grep -E ' cmd/main$' | sed 's/^/cmd\/main：/'
 
       - name: 上传构建产物（artifact）
         uses: actions/upload-artifact@v4
