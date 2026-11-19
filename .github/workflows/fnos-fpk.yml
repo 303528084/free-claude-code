@@ -113,11 +113,31 @@ jobs:
           sudo env WHEEL_URL="$WHEEL_URL" bash "$PKG_DIR/scripts/build_payload.sh"
           sudo chown -R "$(id -u):$(id -g)" "$PKG_DIR" "/var/apps/${APPNAME}"
 
+      - name: 配置开发者证书（可选）
+        id: cert
+        env:
+          FNPACK_KEY_B64: ${{ secrets.FNPACK_DEV_KEY_B64 }}
+          FNPACK_CRT_B64: ${{ secrets.FNPACK_DEV_CRT_B64 }}
+        run: |
+          set -euo pipefail
+          if [ -n "${FNPACK_KEY_B64:-}" ] && [ -n "${FNPACK_CRT_B64:-}" ]; then
+            printf '%s' "$FNPACK_KEY_B64" | base64 -d > "$RUNNER_TEMP/developer.key"
+            printf '%s' "$FNPACK_CRT_B64" | base64 -d > "$RUNNER_TEMP/developer.crt"
+            chmod 600 "$RUNNER_TEMP/developer.key"
+            echo "SIGN_ARGS=--key $RUNNER_TEMP/developer.key --cert $RUNNER_TEMP/developer.crt" >> "$GITHUB_ENV"
+            echo "签名方式：使用仓库 Secrets 里的开发者证书" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "SIGN_ARGS=--nosign" >> "$GITHUB_ENV"
+            echo "SIGNED=false" >> "$GITHUB_ENV"
+            echo "签名方式：**--nosign（未签名，仅供本地调试安装）**。要正式分发，请在仓库 Secrets 里配 \`FNPACK_DEV_KEY_B64\` 与 \`FNPACK_DEV_CRT_B64\`（分别是 developer.key / developer.crt 的 base64）。" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: 打包 FPK
         run: |
           set -euo pipefail
           cd "$PKG_DIR/.."
-          fnpack build --directory "./${APPNAME}"
+          # shellcheck disable=SC2086
+          fnpack build --directory "./${APPNAME}" $SIGN_ARGS
           fpk="$(find . -maxdepth 3 -name '*.fpk' | head -n 1)"
           [ -n "$fpk" ] || { echo "没找到 fnpack 产物"; ls -la; exit 1; }
           ls -lh "$fpk"
@@ -168,8 +188,14 @@ jobs:
           ZH_TAG: ${{ env.TAG }}
           ZH_VERSION: ${{ env.VERSION }}
           ZH_REVISION_INPUT: ${{ inputs.zh_revision }}
+          SIGNED: ${{ env.SIGNED }}
         run: |
           set -euo pipefail
+          if [ "${SIGNED:-true}" = "false" ]; then
+            SIG_NOTE="未签名（fnpack --nosign），仅供本地调试安装"
+          else
+            SIG_NOTE="已使用开发者证书签名"
+          fi
           notes="$RUNNER_TEMP/fpk-notes.md"
           cat > "$notes" <<NOTES
           汉化版 **$ZH_VERSION**（汉化修订 $ZH_REVISION_INPUT）的飞牛 fnOS 原生应用包。
@@ -189,6 +215,7 @@ jobs:
           ## 注意
 
           - 仅 x86_64 设备
+          - 签名：$SIG_NOTE
           - 管理页面只对 NAS 管理员可见；局域网端口上的 /admin 仍会 403
           NOTES
           gh release view "$ZH_TAG" > /dev/null 2>&1 || \
