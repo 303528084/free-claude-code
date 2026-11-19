@@ -45,7 +45,19 @@ def apply_quoted(path: pathlib.Path, pairs: dict) -> tuple[int, int]:
 
 
 EN_SENTENCE = re.compile(r'"((?:[^"\\\n]){4,140})"|`((?:[^`\\\n]){4,140})`')
-CSS_LIKE = re.compile(r"[<>{}$=;/()\[\]]|noopener|username|textarea|button|input|select|use strict")
+CSS_LIKE = re.compile(
+    r"[<>{}$=;/()\[\]]"
+    r"|^[a-z0-9]+(?:-[a-z0-9]+)+$"      # kebab-case 类名
+    r"|noopener|use strict"
+)
+# 有意保留英文的名称（API 类型、产品名等）
+KEEP_EN = {
+    "Anthropic Messages",
+    "Chat Completions",
+    "Claude Code",
+    "Codex",
+    "Free Claude Code",
+}
 
 
 def report_untranslated() -> int:
@@ -63,6 +75,8 @@ def report_untranslated() -> int:
             if re.search(r"[\u4e00-\u9fff]", s):
                 continue
             if CSS_LIKE.search(s):
+                continue
+            if s.strip() in KEEP_EN:
                 continue
             found.append(s)
         if found:
