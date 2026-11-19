@@ -140,6 +140,7 @@ jobs:
           fnpack build --directory "./${APPNAME}" $SIGN_ARGS
           fpk="$(find . -maxdepth 3 -name '*.fpk' | head -n 1)"
           [ -n "$fpk" ] || { echo "没找到 fnpack 产物"; ls -la; exit 1; }
+          fpk="$(realpath "$fpk")"
           ls -lh "$fpk"
           size=$(stat -c %s "$fpk")
           if [ "$size" -lt 50000000 ]; then
