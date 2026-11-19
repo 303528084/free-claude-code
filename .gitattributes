@@ -1,3 +1,13 @@
 src/free_claude_code/core/data/cl100k_base.tiktoken -text linguist-vendored=true
 scripts/update/fcc-update text eol=lf
 scripts/update/*.cmd text eol=crlf
+
+# 飞牛 FPK 包：脚本必须保持 LF（飞牛设备是 Linux，CRLF 会让 cmd/* 直接失效）
+fnos-fpk/freeclaudecode/cmd/* text eol=lf
+fnos-fpk/freeclaudecode/scripts/* text eol=lf
+fnos-fpk/freeclaudecode/app/shim/*.py text eol=lf
+fnos-fpk/freeclaudecode/config/* text eol=lf
+fnos-fpk/freeclaudecode/wizard/* text eol=lf
+fnos-fpk/freeclaudecode/app/ui/config text eol=lf
+fnos-fpk/freeclaudecode/manifest text eol=lf
+fnos-fpk/freeclaudecode/*.md text eol=lf
