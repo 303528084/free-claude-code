@@ -116,7 +116,6 @@
       "Token-budget thinking": "Token 预算思考",
       "Undo removal": "撤销删除",
       "Will set FCC's URL and token, enable model discovery, skip VS Code login, and complete Claude onboarding.": "将写入 FCC 的地址与 token，启用模型发现，跳过 VS Code 登录，并完成 Claude 首次引导。",
-      "Close and reopen this modal to load saved settings before saving again.": "请关闭并重新打开此弹窗以载入已保存的设置，然后再保存。",
       "Process env": "进程环境变量",
       "process env": "进程环境变量"
     },
