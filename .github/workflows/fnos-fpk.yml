@@ -77,24 +77,27 @@ jobs:
         run: |
           set -euo pipefail
           if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
-            TAG="${GITHUB_REF_NAME}"
-            echo "使用推送的标签：$TAG"
-            echo "TAG=$TAG" >> "$GITHUB_ENV"
+            echo "TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+            echo "使用推送的标签：${GITHUB_REF_NAME}"
             exit 0
           fi
-          base="$(git describe --tags --abbrev=0 --match 'v*')"
+          base="$(git describe --tags --abbrev=0 --match 'v*')" || {
+            echo "仓库里没有 v* 标签，无法推导上游版本" >&2
+            exit 1
+          }
           base_version="${base#v}"
           revision="${ZH_REVISION:-1}"
           if ! [[ "$revision" =~ ^[1-9][0-9]*$ ]]; then
             echo "汉化修订号必须是正整数：$revision" >&2
             exit 1
           fi
+          tag="zh-v${base_version}-${revision}"
           {
             echo "BASE_VERSION=$base_version"
             echo "VERSION=${base_version}+zh.${revision}"
-            echo "TAG=zh-v${base_version}-${revision}"
+            echo "TAG=${tag}"
           } >> "$GITHUB_ENV"
-          echo "目标标签 $TAG（上游版本 $base_version，汉化修订 $revision）"
+          echo "目标标签 ${tag}（上游版本 ${base_version}，汉化修订 ${revision}）"
 
       - name: 装配运行时载荷
         env:
