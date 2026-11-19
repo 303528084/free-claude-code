@@ -56,6 +56,10 @@ else {
 if ($Push) {
     Write-Host "==> 推送到 origin（zh-cn）"
     git push origin zh-cn
+    if ($Mirror) {
+        Write-Host "==> 推送到 origin（upstream-sync 镜像）"
+        git push origin upstream-sync:upstream-sync
+    }
 }
 
 Write-Host "==> 完成：zh-cn 当前 HEAD = $((git rev-parse --short HEAD).Trim())，上游 = $target"

@@ -37,6 +37,7 @@ pwsh -File zh/sync_upstream.ps1 -Push
 
 ## 分支约定
 
-- `upstream-sync`：上游镜像分支，始终等于 `upstream/main`，可用于对照英文原文。
-- `zh-cn`：汉化分支，跟随上游更新，但内容不回推上游。
+- `upstream-sync`：上游镜像分支，始终等于 `upstream/main`，可用于对照英文原文；`origin` 上同名分支只跟随上游，不加任何汉化。
+- `zh-cn`：汉化分支，跟随上游更新，但内容不回推上游；`origin` 的默认分支即为此分支。
+- `origin` 上原本的 `main` 已删除（其内容与 `upstream-sync` 完全一致），重命名后不在 fork 上保留同名旧分支。
 - `upstream` 的 push 地址已设为 `DISABLED`，误用 `git push upstream` 也不会写入上游仓库。
