@@ -76,6 +76,8 @@ def report_untranslated() -> int:
                 continue
             if CSS_LIKE.search(s):
                 continue
+            if all(re.fullmatch(r"[a-z0-9-]+", t) for t in s.split()):
+                continue
             if s.strip() in KEEP_EN:
                 continue
             found.append(s)
