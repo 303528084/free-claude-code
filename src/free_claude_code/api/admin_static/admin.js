@@ -417,7 +417,7 @@ function updateProviderCard(provider) {
   if (oauth) populateConnectedAccountActions(provider, status, actions);
   if (provider.kind === "custom" || provider.settings_keys?.length) {
     const edit = oauth || configured;
-    const settings = authButton(edit ? "Edit" : "Configure", () => openProviderDialog(provider.provider_id), edit ? "secondary-button" : "primary-button");
+    const settings = authButton(edit ? "编辑" : "配置", () => openProviderDialog(provider.provider_id), edit ? "secondary-button" : "primary-button");
     settings.dataset.providerSettings = "true";
     settings.setAttribute("aria-haspopup", "dialog");
     settings.setAttribute("aria-controls", "providerDialog");
@@ -548,7 +548,7 @@ function renderProviderDialogActions(provider) {
   actions.replaceChildren();
   const oauth = provider.kind === "connected_account";
   if (!oauth && !provider.missing_configuration_keys.length) {
-    const button = authButton(provider.kind === "local" ? "Test" : "刷新模型", (target) => testProvider(provider.provider_id, target), "secondary-button");
+    const button = authButton(provider.kind === "local" ? "测试" : "刷新模型", (target) => testProvider(provider.provider_id, target), "secondary-button");
     button.dataset.startupProvider = provider.provider_id;
     if (state.providerChecks.get(provider.provider_id)?.status === "checking") {
       button.dataset.operationBusy = "true";
@@ -608,18 +608,18 @@ function populateConnectedAccountActions(provider, status, actions) {
     return;
   }
   if (status.connected) {
-    actions.appendChild(authButton("Disconnect", () => disconnectConnectedAccount(providerId), "danger-button"));
+    actions.appendChild(authButton("断开", () => disconnectConnectedAccount(providerId), "danger-button"));
     return;
   }
   const modes = Array.isArray(status.supported_login_modes) ? status.supported_login_modes : [];
   const defaultMode = status.default_login_mode;
   if (!["browser", "device"].includes(defaultMode) || !modes.includes(defaultMode)) {
-    actions.appendChild(authButton("Retry", () => refreshConnectedAccount(provider)));
+    actions.appendChild(authButton("重试", () => refreshConnectedAccount(provider)));
     return;
   }
   actions.appendChild(
     authButton(
-      "Connect",
+      "连接",
       (button) => startConnectedAccountLogin(providerId, defaultMode, button),
     ),
   );
@@ -997,12 +997,12 @@ function renderField(field) {
     const removeButton = document.createElement("button");
     removeButton.type = "button";
     removeButton.className = "ghost-button secret-remove";
-    removeButton.textContent = "Remove";
+    removeButton.textContent = "移除";
     removeButton.addEventListener("click", () => {
       const removing = input.dataset.remove !== "true";
       input.dataset.remove = removing ? "true" : "false";
       input.readOnly = removing;
-      removeButton.textContent = removing ? "撤销删除" : "Remove";
+      removeButton.textContent = removing ? "撤销删除" : "移除";
       clearCredentialError(input);
       updateDirtyState();
     });
@@ -1460,12 +1460,12 @@ function setApplying(applying) {
   byId("providerDialogBody").inert = applying || !!state.restart;
   byId("closeProviderDialog").disabled = applying;
   byId("cancelProviderDialog").disabled = applying;
-  byId("saveProvider").textContent = applying ? "正在保存…" : "Save";
+  byId("saveProvider").textContent = applying ? "正在保存…" : "保存";
   byId("saveProvider").classList.toggle("startup-busy", applying);
   byId("saveProvider").setAttribute("aria-busy", String(applying));
   byId("applyButton").textContent = state.restart
     ? applying ? "正在重连…" : "Reconnect"
-    : applying ? "正在应用…" : "Apply";
+    : applying ? "正在应用…" : "应用";
   updateDirtyState();
 }
 
@@ -1766,7 +1766,7 @@ async function refreshModelOptions(button) {
   const original = button.textContent;
   button.dataset.operationBusy = "true";
   button.disabled = true;
-  button.textContent = "Refreshing";
+  button.textContent = "刷新中";
   try {
     const result = await loadModelOptions(true);
     const failedProviders = result.failed_providers || [];
@@ -1867,7 +1867,7 @@ const claudeOnboardingPath = "/admin/api/integrations/claude-onboarding";
 function renderClaudeOnboarding() {
   const { completed, busy, paths, checkRequest } = claudeOnboarding;
   const button = byId("openClaudeOnboarding");
-  button.textContent = busy ? checkRequest ? "加载中…" : "正在保存…" : completed === null ? "Retry" : completed ? "Completed" : "完成引导";
+  button.textContent = busy ? checkRequest ? "加载中…" : "正在保存…" : completed === null ? "重试" : completed ? "已完成" : "完成引导";
   button.disabled = busy || completed === true;
   button.setAttribute("aria-busy", String(busy));
   const action = byId("confirmClaudeOnboarding");
@@ -2012,8 +2012,8 @@ function refreshIntegrationUpdates(previous, current) {
 function renderClaudeIntegration() {
   const { connected, paths } = claudeIntegration;
   const busy = claudeIntegration.busy || integrationUpdating(claudeIntegration, "claude-vscode");
-  const action = connected ? "Disconnect" : "Connect";
-  byId("openClaudeIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
+  const action = connected ? "断开" : "连接";
+  byId("openClaudeIntegration").textContent = busy ? "加载中…" : connected === null ? "重试" : action;
   byId("openClaudeIntegration").disabled = busy;
   byId("openClaudeIntegration").setAttribute("aria-busy", String(busy));
   byId("confirmClaudeIntegration").textContent = busy ? "正在保存…" : action;
@@ -2111,8 +2111,8 @@ function renderVSCodeChatIntegration() {
   const busy = vscodeChatIntegration.busy || integrationUpdating(vscodeChatIntegration, "vscode-chat");
   byId("retryVSCodeChatIntegration").hidden = connected === null || vscodeChatIntegration.update?.state !== "failed";
   byId("retryVSCodeChatIntegration").disabled = busy;
-  const action = connected ? "Disconnect" : "Connect";
-  byId("openVSCodeChatIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
+  const action = connected ? "断开" : "连接";
+  byId("openVSCodeChatIntegration").textContent = busy ? "加载中…" : connected === null ? "重试" : action;
   byId("openVSCodeChatIntegration").disabled = busy;
   byId("openVSCodeChatIntegration").setAttribute("aria-busy", String(busy));
   byId("confirmVSCodeChatIntegration").textContent = busy ? "正在保存…" : action;
@@ -2213,8 +2213,8 @@ function renderCodexIntegration() {
   const catalogError = "无法准备 Codex 模型目录，请刷新模型后重试。";
   if (unavailable) integrationMessage("codexIntegrationMessage", catalogError, true);
   else if (byId("codexIntegrationMessage").textContent === catalogError) integrationMessage("codexIntegrationMessage", "");
-  const action = connected ? "Disconnect" : "Connect";
-  byId("openCodexIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
+  const action = connected ? "断开" : "连接";
+  byId("openCodexIntegration").textContent = busy ? "加载中…" : connected === null ? "重试" : action;
   byId("openCodexIntegration").disabled = busy;
   byId("openCodexIntegration").setAttribute("aria-busy", String(busy));
   byId("confirmCodexIntegration").textContent = busy ? "正在保存…" : action;
@@ -2310,8 +2310,8 @@ const jetBrainsIntegrationPath = "/admin/api/integrations/jetbrains-acp";
 function renderJetBrainsIntegration() {
   const { connected, paths } = jetBrainsIntegration;
   const busy = jetBrainsIntegration.busy || integrationUpdating(jetBrainsIntegration, "jetbrains-acp");
-  const action = connected ? "Disconnect" : "Connect";
-  byId("openJetBrainsIntegration").textContent = busy ? "加载中…" : connected === null ? "Retry" : action;
+  const action = connected ? "断开" : "连接";
+  byId("openJetBrainsIntegration").textContent = busy ? "加载中…" : connected === null ? "重试" : action;
   byId("openJetBrainsIntegration").disabled = busy;
   byId("openJetBrainsIntegration").setAttribute("aria-busy", String(busy));
   byId("confirmJetBrainsIntegration").textContent = busy ? "正在保存…" : action;
@@ -2407,8 +2407,8 @@ function renderClaudeDesktopIntegration() {
   const { connected, paths, disconnectPending } = claudeDesktopIntegration;
   const busy = claudeDesktopIntegration.busy || integrationUpdating(claudeDesktopIntegration, "claude-desktop");
   const disconnect = disconnectPending || connected;
-  const action = disconnectPending ? "重试断开" : connected ? "Disconnect" : "Connect";
-  byId("openClaudeDesktopIntegration").textContent = busy ? "加载中…" : connected === null && !disconnectPending ? "Retry" : action;
+  const action = disconnectPending ? "重试断开" : connected ? "断开" : "连接";
+  byId("openClaudeDesktopIntegration").textContent = busy ? "加载中…" : connected === null && !disconnectPending ? "重试" : action;
   byId("openClaudeDesktopIntegration").disabled = busy;
   byId("openClaudeDesktopIntegration").setAttribute("aria-busy", String(busy));
   byId("confirmClaudeDesktopIntegration").textContent = busy ? "正在保存…" : action;
@@ -2529,7 +2529,7 @@ function renderDshDesktopIntegration() {
   const busy = dshDesktopIntegration.busy || (updating && !connected);
   byId("retryDshDesktopIntegration").hidden = dshDesktopIntegration.update?.state !== "failed";
   byId("retryDshDesktopIntegration").disabled = busy || updating;
-  const action = connected === null ? "Retry" : connected ? "Disconnect" : "Connect";
+  const action = connected === null ? "重试" : connected ? "断开" : "连接";
   byId("openDshDesktopIntegration").textContent = busy ? "加载中…" : action;
   byId("openDshDesktopIntegration").disabled = busy;
   byId("openDshDesktopIntegration").setAttribute("aria-busy", String(busy));

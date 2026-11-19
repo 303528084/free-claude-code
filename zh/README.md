@@ -6,8 +6,8 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `strings.json` | 英文 → 中文对照表，分三类：`string_literals`（JS 中的引号字符串）、`template_literals`（含 `${}` 的模板字符串片段）、`html_literals`（`index.html` 中的文本与属性） |
-| `apply_translations.py` | 读取对照表，把尚未翻译的英文文案替换成中文；可重复执行（幂等），执行后会列出仍疑似英文的界面文案供补译 |
+| `strings.json` | 英文 → 中文对照表，分四类：`string_literals`（JS 中的引号字符串）、`template_literals`（含 `${}` 的模板字符串片段）、`html_literals`（`index.html` 中的文本与属性）、`python_literals`（后端下发的界面文案，按文件分 `literals` 与 `fragments`，后者专供 f-string 片段） |
+| `apply_translations.py` | 读取对照表，把尚未翻译的英文文案替换成中文；可重复执行（幂等）。JS/HTML 用引号匹配，Python 用 AST 定位字符串常量（能处理跨行隐式拼接与 f-string 片段）；执行后会列出仍疑似英文的界面文案供补译 |
 | `sync_upstream.ps1` | 拉取上游 → 合并进 `zh-cn` → 自动重跑 `apply_translations.py` → 有变更则提交 |
 
 ## 日常同步
@@ -29,8 +29,11 @@ pwsh -File zh/sync_upstream.ps1 -Push
 
 - 文档：`README.md`、`CONTRIBUTING.md`、`MAINTAINERS.md`
 - Admin 管理界面：`src/free_claude_code/api/admin_static/` 下的 `index.html`、`admin.js`、`code_sessions.js`、`session_ui.js`、`api_key_editor.js`
+- Admin 界面中的后端下发文案：`config/admin/manifest.py`、`config/admin/provider_manifest.py`（区块名、字段名、字段说明、推理强度档位等）以及 `api/admin_routes.py` 里的本地服务可用性提示
 
-未覆盖：由后端 `config/admin/manifest.py`、`provider_manifest.py` 下发的表单字段名与字段说明，以及命令行输出，仍为英文。
+未覆盖：命令行输出、日志与配置错误信息，仍为英文。
+
+刻意保留英文：`Anthropic Messages`、`Chat Completions`、`Claude Code`、`Codex`、`Free Claude Code`、`None`（模型选项值），以及 API/Token/OAuth 等协议与产品名。
 
 ## 分支约定
 

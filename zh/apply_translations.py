@@ -1,3 +1,4 @@
+import ast
 import json
 import pathlib
 import re
@@ -12,7 +13,8 @@ def apply_pairs(path: pathlib.Path, pairs) -> tuple[int, int]:
     text = path.read_text(encoding="utf-8")
     applied = 0
     missing = 0
-    for old, new in pairs:
+    # 长串优先，避免短串先替换导致长串再也匹配不上
+    for old, new in sorted(pairs, key=lambda p: len(p[0]), reverse=True):
         if new in text:
             continue
         if old in text:
@@ -50,13 +52,59 @@ CSS_LIKE = re.compile(
     r"|^[a-z0-9]+(?:-[a-z0-9]+)+$"      # kebab-case 类名
     r"|noopener|use strict"
 )
-# 有意保留英文的名称（API 类型、产品名等）
+# 有意保留英文的名称（API 类型、产品名、品牌与专有名词）
 KEEP_EN = {
     "Anthropic Messages",
     "Chat Completions",
     "Claude Code",
     "Codex",
     "Free Claude Code",
+    # 单词级
+    "Anthropic",
+    "Claude",
+    "OpenAI",
+    "Azure",
+    "Google",
+    "Vertex",
+    "Bedrock",
+    "Mistral",
+    "NVIDIA",
+    "Discord",
+    "Telegram",
+    "Slack",
+    "Gemini",
+    "Copilot",
+    "FCC",
+    "None",
+    "Fable",
+    "Opus",
+    "Sonnet",
+    "Haiku",
+    "JetBrains",
+    "DeepSeek",
+    "GitHub",
+    "OAuth",
+    "API",
+    "Token",
+    "URL",
+    "JSON",
+    "HTTP",
+    "HTTPS",
+}
+
+# 单个大写开头的英文词（按钮、字段名等短标签）
+EN_WORD = re.compile(r'"([A-Z][A-Za-z\-]{2,24})"')
+# 只有出现在“给用户看”的上下文里才当界面文案
+UI_HINT = re.compile(
+    r"textContent|innerText|innerHTML|\.label|label:|title:|setAttribute\s*\(\s*\"aria-label\""
+    r"|placeholder|button\(|choice\(|heading|optionLabel|ariaLabel|document\.title"
+    r"|el\(\"button\"|createElement\(\"button\""
+)
+# 这些单词是数据键 / 方法名 / 快捷键，不是界面文案
+NOT_TEXT = {
+    "GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS",
+    "Enter", "Escape", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+    "AbortError", "MODEL", "Default", "Auto-review",
 }
 
 
@@ -81,12 +129,77 @@ def report_untranslated() -> int:
             if s.strip() in KEEP_EN:
                 continue
             found.append(s)
+        for line in text.splitlines():
+            if not UI_HINT.search(line):
+                continue
+            for m in EN_WORD.finditer(line):
+                w = m.group(1)
+                if w in KEEP_EN or w in NOT_TEXT:
+                    continue
+                if re.search(r"[<>{}$=;/()\[\]]", w):
+                    continue
+                found.append(w)
         if found:
             total += len(found)
             print(f"[待补译] {name}:")
             for s in sorted(set(found)):
                 print("   ", s)
     return total
+
+
+def quote_literal(value: str) -> str:
+    if '"' in value and "'" not in value:
+        return f"'{value}'"
+    return '"' + value.replace('"', '\\"') + '"'
+
+
+def apply_python(path: pathlib.Path, spec: dict) -> tuple[int, list]:
+    """用 AST 定位字符串常量，按整段替换（可处理跨行隐式拼接与 f-string 片段）。"""
+    literals = spec.get("literals", {})
+    fragments = spec.get("fragments", {})
+    src = path.read_text(encoding="utf-8")
+    tree = ast.parse(src)
+    parent = {}
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            parent[child] = node
+
+    lines = src.splitlines(keepends=True)
+
+    def offset(lineno: int, col: int) -> int:
+        return sum(len(line) for line in lines[: lineno - 1]) + col
+
+    edits = []
+    for node in ast.walk(tree):
+        if not (isinstance(node, ast.Constant) and isinstance(node.value, str)):
+            continue
+        joined = isinstance(parent.get(node), ast.JoinedStr)
+        mapping = fragments if joined else literals
+        zh = mapping.get(node.value)
+        if zh is None:
+            continue
+        if joined:
+            new_text = zh.replace("{", "{{").replace("}", "}}")
+        else:
+            new_text = quote_literal(zh)
+        edits.append((node.lineno, node.col_offset, node.end_lineno, node.end_col_offset, new_text))
+
+    for lineno, col, end_lineno, end_col, new_text in sorted(edits, reverse=True):
+        start = offset(lineno, col)
+        end = offset(end_lineno, end_col)
+        src = src[:start] + new_text + src[end:]
+        lines = src.splitlines(keepends=True)
+
+    ast.parse(src)
+    path.write_text(src, encoding="utf-8")
+
+    # 复核：重新解析，看还有哪些英文常量未被替换
+    leftover = []
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            if node.value in literals or node.value in fragments:
+                leftover.append(node.value)
+    return len(edits), leftover
 
 
 def main() -> int:
@@ -110,6 +223,14 @@ def main() -> int:
         if p.exists():
             a, m = apply_quoted(p, pairs)
             print(f"str  {name}: applied {a}, unmatched {m}")
+
+    for rel, spec in data.get("python_literals", {}).items():
+        p = ROOT / rel
+        if p.exists():
+            a, leftover = apply_python(p, spec)
+            print(f"py   {rel}: applied {a}, leftover {len(leftover)}")
+            for s in leftover:
+                print(f"   [待补译] {s}")
 
     left = report_untranslated()
     print(f"\n剩余疑似英文界面文案: {left}")

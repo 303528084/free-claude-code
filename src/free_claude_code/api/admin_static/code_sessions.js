@@ -684,7 +684,7 @@
     node.setAttribute("aria-labelledby", heading.id);
     form.append(heading);
     const actions = element("div", undefined, "code-actions");
-    const cancel = button("Cancel", close);
+    const cancel = button("取消", close);
     const confirm = button(actionLabel, () => {}, "primary-button");
     confirm.type = "submit";
     const context = {
@@ -1036,7 +1036,7 @@
         reasoningControl.select,
       ])
         control.setAttribute("aria-describedby", selectionMessage.id);
-      const deletion = button("Delete", remove, "danger-button");
+      const deletion = button("删除", remove, "danger-button");
       deletion.id = "codeDelete";
       const deletionMessage = element("div", "", "code-control-error");
       deletionMessage.id = "codeDeletionError";
@@ -1063,7 +1063,7 @@
       header.append(element("p", "", "code-folder"));
       const transcript = element("div", undefined, "session-transcript");
       transcript.id = "codeTranscript";
-      transcript.setAttribute("aria-label", "Conversation");
+      transcript.setAttribute("aria-label", "对话");
       const older = button(
         "加载更早的消息",
         async () => {
@@ -1274,7 +1274,7 @@
     send.hidden = isBusy;
     stop.hidden = !isBusy;
     stop.disabled = !connected || record?.run?.stop_requested;
-    send.textContent = saved(selected).pending ? "重试发送" : "Send";
+    send.textContent = saved(selected).pending ? "重试发送" : "发送";
     send.classList.toggle("startup-busy", selectionLoading(record));
     send.setAttribute("aria-busy", String(selectionLoading(record)));
     send.disabled =
@@ -1295,7 +1295,7 @@
         ? "正在检查删除状态"
         : record?.session?.status === "deleting"
           ? "正在删除…"
-          : "Delete";
+          : "删除";
     deletion.disabled =
       !synchronized ||
       !record?.loaded ||
@@ -1524,7 +1524,7 @@
           });
         }),
       );
-      choice("Decline", { selected: [], scope: "turn" });
+      choice("拒绝", { selected: [], scope: "turn" });
     } else if (prompt.kind === "questions") {
       const readers = prompt.form.questions.map((question) => {
         const field = element("fieldset");
@@ -1671,7 +1671,7 @@
       if (!prompt.form.unsupported)
         actions.append(
           button(
-            "Submit",
+            "提交",
             () => {
               if (form.reportValidity())
                 void answer({
@@ -1684,7 +1684,7 @@
             "primary-button",
           ),
         );
-      choice("Decline", { action: "decline" });
+      choice("拒绝", { action: "decline" });
       choice("取消请求", { action: "cancel" });
     }
     form.append(actions);

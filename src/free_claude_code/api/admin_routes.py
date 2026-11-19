@@ -71,7 +71,7 @@ LOCAL_PROVIDER_PATHS = {
     "ollama": "/api/tags",
 }
 _LOCAL_PROVIDER_CHECK_FAILURE_MESSAGE = (
-    "Could not connect. Verify the URL and that the local provider is running."
+    "无法连接。请检查地址，并确认本地服务正在运行。"
 )
 
 
@@ -549,7 +549,7 @@ async def _check_local_provider(
         return {
             "provider_id": provider_id,
             "status": "missing_url",
-            "label": "Missing URL",
+            "label": "缺少地址",
             "base_url": base_url,
             "probe_path": path,
             "latency_ms": None,
@@ -565,7 +565,7 @@ async def _check_local_provider(
         return {
             "provider_id": provider_id,
             "status": "reachable" if ok else "offline",
-            "label": "Reachable" if ok else "Offline",
+            "label": "可访问" if ok else "离线",
             "base_url": base_url,
             "status_code": response.status_code,
             "probe_path": path,
@@ -582,7 +582,7 @@ async def _check_local_provider(
         return {
             "provider_id": provider_id,
             "status": "offline",
-            "label": "Offline",
+            "label": "离线",
             "base_url": base_url,
             "message": message,
             "probe_path": path,
@@ -595,19 +595,19 @@ def _local_provider_failure(exc: Exception) -> tuple[str, str]:
     if isinstance(exc, httpx.TimeoutException):
         return (
             "timeout",
-            "The local provider availability check timed out. Check that its server is responsive and retry.",
+            "本地服务可用性检查超时。请确认服务是否响应后重试。",
         )
     if isinstance(exc, (httpx.ConnectError, httpx.ProxyError)):
         return "connection_error", _LOCAL_PROVIDER_CHECK_FAILURE_MESSAGE
     if isinstance(exc, (httpx.InvalidURL, httpx.UnsupportedProtocol)):
         return (
             "invalid_url",
-            "Check the local provider's HTTP or HTTPS base URL and port.",
+            "请检查本地服务的 HTTP/HTTPS 地址与端口。",
         )
     if isinstance(exc, httpx.RequestError):
         return (
             "transport_error",
-            "The connection ended before the availability check completed. Retry and check the local server logs.",
+            "连接在可用性检查完成前中断。请重试并查看本地服务日志。",
         )
     return "unexpected_error", _LOCAL_PROVIDER_CHECK_FAILURE_MESSAGE
 

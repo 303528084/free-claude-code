@@ -19,336 +19,284 @@ class ProviderFieldOverride(TypedDict, total=False):
 
 _PROVIDER_FIELD_OVERRIDES: dict[str, ProviderFieldOverride] = {
     "ANTHROPIC_API_KEY": {
-        "description": "Anthropic API access with separate usage billing. Messages requests use Anthropic tools and client thinking controls. Native fallback uses other Anthropic models. FCC local web tools apply to compatibility routes.",
+        "description": "Anthropic API 访问，单独计费。Messages 请求使用 Anthropic 工具与客户端思考控制，原生回退仅使用其他 Anthropic 模型；FCC 的本地网页工具作用于兼容路由。",
     },
     "OPENAI_API_KEY": {
-        "label": "OpenAI API Keys",
-        "description": "API key for the OpenAI Platform. Separate from ChatGPT sign-in.",
+        "label": "OpenAI API 密钥",
+        "description": "OpenAI Platform 的 API 密钥，与 ChatGPT 登录相互独立。",
     },
     "OPENAI_PROXY": {
         "description": (
-            "Optional network proxy. Leave blank unless you use one. "
-            "Used for OpenAI sign-in and ChatGPT Codex requests. "
-            "Changing it restarts FCC."
+            "可选的网络代理，不使用请留空。用于 OpenAI 登录与 ChatGPT Codex 请求；修改后会重启 FCC。"
         ),
         "restart_required": True,
     },
     "AZURE_OPENAI_API_KEY": {
-        "description": "API key for the Azure OpenAI resource.",
+        "description": "Azure OpenAI 资源的 API 密钥。",
     },
     "AZURE_OPENAI_BASE_URL": {
         "description": (
-            "Resource-specific OpenAI v1 base URL, for example "
-            "https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/."
+            "资源专属的 OpenAI v1 接口地址，例如 https://YOUR-RESOURCE-NAME.openai.azure.com/openai/v1/。"
         ),
     },
     "NVIDIA_NIM_API_KEY": {
-        "label": "NVIDIA NIM API Keys",
-        "description": "Used by NVIDIA NIM chat and optional NIM voice transcription.",
+        "label": "NVIDIA NIM API 密钥",
+        "description": "用于 NVIDIA NIM 对话，以及可选的 NIM 语音转写。",
     },
     "MISTRAL_API_KEY": {
-        "label": "Mistral API Keys",
+        "label": "Mistral API 密钥",
         "description": (
-            "Mistral La Plateforme (api.mistral.ai); Experiment plan is free tier with rate limits."
+            "Mistral La Plateforme（api.mistral.ai）；Experiment 套餐为免费档，但有速率限制。"
         ),
     },
     "CODESTRAL_API_KEY": {
-        "label": "Codestral API Keys",
+        "label": "Codestral API 密钥",
         "description": (
-            "Mistral Codestral endpoint (codestral.mistral.ai); distinct from Mistral "
-            "La Plateforme ``MISTRAL_API_KEY``. See Mistral docs for coding/FIM domains."
+            "Mistral Codestral 端点（codestral.mistral.ai），与 Mistral La Plateforme 的 ``MISTRAL_API_KEY`` 相互独立。编码与 FIM 领域说明见 Mistral 文档。"
         ),
     },
     "OPENCODE_API_KEY": {
-        "label": "OpenCode API Keys",
+        "label": "OpenCode API 密钥",
         "description": (
-            "OpenCode Zen curated gateway (opencode.ai/zen/v1) and OpenCode Go subscription "
-            "gateway (opencode.ai/zen/go/v1); single key from opencode.ai/auth."
+            "同时用于 OpenCode Zen 精选网关（opencode.ai/zen/v1）与 OpenCode Go 订阅网关（opencode.ai/zen/go/v1）；密钥在 opencode.ai/auth 获取。"
         ),
     },
     "AI_GATEWAY_API_KEY": {
-        "label": "Vercel AI Gateway API Keys",
+        "label": "Vercel AI Gateway API 密钥",
         "description": (
-            "Vercel AI Gateway API key for the OpenAI-compatible endpoint at "
-            "ai-gateway.vercel.sh/v1."
+            "Vercel AI Gateway 的 OpenAI 兼容端点密钥，端点 ai-gateway.vercel.sh/v1。"
         ),
     },
     "AWS_BEARER_TOKEN_BEDROCK": {
-        "label": "Amazon Bedrock API Keys",
+        "label": "Amazon Bedrock API 密钥",
         "description": (
-            "Amazon Bedrock bearer API key for the region-specific Mantle "
-            "OpenAI-compatible endpoint."
+            "Amazon Bedrock 的 Bearer API 密钥，用于对应区域的 Mantle OpenAI 兼容端点。"
         ),
     },
     "BEDROCK_BASE_URL": {
         "description": (
-            "Amazon Bedrock Mantle OpenAI base URL for the same region as the "
-            "API key and selected models."
+            "Amazon Bedrock Mantle 的 OpenAI 兼容接口地址，需与 API 密钥及所选模型同区域。"
         ),
     },
     "HUGGINGFACE_API_KEY": {
-        "label": "Hugging Face API Keys",
+        "label": "Hugging Face API 密钥",
         "description": (
-            "Hugging Face token with Inference Providers permission; also used "
-            "for local Whisper model downloads when voice notes need gated models."
+            "具备 Inference Providers 权限的 Hugging Face Token；当语音消息需要下载受限 Whisper 模型时也会使用。"
         ),
     },
     "COHERE_API_KEY": {
-        "label": "Cohere API Keys",
-        "description": "Cohere API key for the OpenAI-compatible Compatibility API.",
+        "label": "Cohere API 密钥",
+        "description": "Cohere 的 OpenAI 兼容 Compatibility API 密钥。",
     },
     "ZAI_API_KEY": {
-        "label": "Z.ai API Keys",
+        "label": "Z.ai API 密钥",
         "description": (
-            "Shared Z.ai key for Coding Plan (zai/...) and the general API "
-            "(zai_api/...). The selected model prefix chooses Coding Plan quota "
-            "or pay-as-you-go balance."
+            "Z.ai Coding Plan（zai/...）与通用 API（zai_api/...）共用同一密钥；模型前缀决定使用 Coding Plan 额度还是按量付费余额。"
         ),
     },
     "FIREWORKS_API_KEY": {
-        "label": "Fireworks API Keys",
-        "description": "Fireworks AI inference API key.",
+        "label": "Fireworks API 密钥",
+        "description": "Fireworks AI 推理 API 密钥。",
     },
     "NOVITA_API_KEY": {
-        "label": "Novita AI API Keys",
+        "label": "Novita AI API 密钥",
         "description": (
-            "Novita AI OpenAI-compatible API key (create at "
-            "[novita.ai/settings/key-management](https://novita.ai/settings/key-management))."
+            "Novita AI 的 OpenAI 兼容 API 密钥（在 [novita.ai/settings/key-management](https://novita.ai/settings/key-management) 创建）。"
         ),
     },
     "MINIMAX_API_KEY": {
-        "label": "MiniMax API Keys",
+        "label": "MiniMax API 密钥",
         "description": (
-            "MiniMax API key for the OpenAI-compatible Chat Completions API at "
-            "free_claude_code.api.minimax.io/v1."
+            "MiniMax 的 OpenAI 兼容 Chat Completions API 密钥，端点位于 free_claude_code.api.minimax.io/v1。"
         ),
     },
     "KIMI_CODE_API_KEY": {
-        "label": "Kimi Code API Keys",
+        "label": "Kimi Code API 密钥",
         "description": (
-            "Personal Kimi Code subscription key from kimi.com/code/console; "
-            "separate from KIMI_API_KEY credits on the Kimi API platform."
+            "个人 Kimi Code 订阅密钥，来自 kimi.com/code/console；与 Kimi API 平台上的 KIMI_API_KEY 额度相互独立。"
         ),
     },
     "CLOUDFLARE_API_TOKEN": {
-        "label": "Cloudflare API Tokens",
+        "label": "Cloudflare API Token",
         "description": (
-            "Cloudflare API token for account-scoped AI REST requests. "
-            "Use with CLOUDFLARE_ACCOUNT_ID."
+            "用于账号级 AI REST 请求的 Cloudflare API Token，需与 CLOUDFLARE_ACCOUNT_ID 一起使用。"
         ),
     },
     "GEMINI_API_KEY": {
-        "label": "Gemini API Keys",
+        "label": "Gemini API 密钥",
         "description": (
-            "Google AI Studio Gemini API key (Google AI Studio / Gemini API "
-            "[OpenAI-compatible](https://ai.google.dev/gemini-api/docs/openai)); "
-            "free tier has per-model rate limits and data may be used for improvement "
-            "outside the UK/CH/EEA/EU."
+            "Google AI Studio 的 Gemini API 密钥（Google AI Studio / Gemini API，[OpenAI 兼容](https://ai.google.dev/gemini-api/docs/openai)）；免费档按模型限流，且在英/瑞/欧洲经济区/欧盟以外地区数据可能被用于改进产品。"
         ),
     },
     "GROQ_API_KEY": {
-        "label": "Groq API Keys",
+        "label": "Groq API 密钥",
         "description": (
-            "GroqCloud OpenAI-compatible API key ([console.groq.com/keys]("
-            "https://console.groq.com/keys)); see Groq "
-            "[OpenAI compatibility docs](https://console.groq.com/docs/openai)."
+            "GroqCloud 的 OpenAI 兼容 API 密钥（[console.groq.com/keys](https://console.groq.com/keys)）；参见 Groq 的 [OpenAI 兼容文档](https://console.groq.com/docs/openai)。"
         ),
     },
     "CLINE_API_KEY": {
-        "label": "Cline API Keys",
+        "label": "Cline API 密钥",
         "description": (
-            "Subscribe to ClinePass, then create a programmatic API key under "
-            "Settings > API Keys at app.cline.bot. This is not the Cline CLI's "
-            "managed account token."
+            "先订阅 ClinePass，然后在 app.cline.bot 的 Settings > API Keys 下创建编程调用用 API 密钥。它不是 Cline CLI 的托管账号 Token。"
         ),
     },
     "XAI_API_KEY": {
-        "label": "xAI API Keys",
+        "label": "xAI API 密钥",
         "description": (
-            "xAI OpenAI-compatible API key for Grok chat and image-understanding "
-            "models."
+            "xAI 的 OpenAI 兼容 API 密钥，用于 Grok 对话与图像理解模型。"
         ),
     },
     "ALIBABA_CLOUD_API_KEY": {
         "description": (
-            "Alibaba Cloud Model Studio pay-as-you-go API key. Use a key from "
-            "the same region as the base URL."
+            "阿里云百炼（Model Studio）按量付费 API 密钥，请使用与接口地址同区域的密钥。"
         ),
     },
     "ALIBABA_CLOUD_BASE_URL": {
         "description": (
-            "Optional Model Studio OpenAI-compatible base URL ending in "
-            "/compatible-mode/v1. Defaults to Singapore. Set your regional "
-            "or workspace URL when using a key from another region."
+            "可选的百炼 OpenAI 兼容接口地址，以 /compatible-mode/v1 结尾。默认新加坡区域；使用其他区域的密钥时，请填写对应区域或工作区的地址。"
         ),
     },
     "QWENCLOUD_API_KEY": {
-        "label": "QwenCloud Token Plan API Keys",
+        "label": "QwenCloud Token Plan API 密钥",
         "description": (
-            "Dedicated QwenCloud Token Plan key (sk-sp-...). Token Plan, Coding "
-            "Plan, and pay-as-you-go keys use separate endpoints and cannot be "
-            "mixed."
+            "QwenCloud Token Plan 专用密钥（sk-sp-...）。Token Plan、Coding Plan 与按量付费的密钥走不同端点，不可混用。"
         ),
     },
     "QWENCLOUD_CODING_API_KEY": {
-        "label": "QwenCloud Coding Plan API Keys",
+        "label": "QwenCloud Coding Plan API 密钥",
         "description": (
-            "Dedicated QwenCloud Coding Plan key (sk-sp-...) for personal, "
-            "interactive coding-agent use. Token Plan, Coding Plan, and "
-            "pay-as-you-go keys use separate endpoints and cannot be mixed."
+            "QwenCloud Coding Plan 专用密钥（sk-sp-...），供个人交互式编码代理使用。Token Plan、Coding Plan 与按量付费的密钥走不同端点，不可混用。"
         ),
     },
     "TOGETHER_API_KEY": {
-        "label": "Together AI API Keys",
+        "label": "Together AI API 密钥",
         "description": (
-            "Together AI OpenAI-compatible API key for serverless and dedicated "
-            "chat models."
+            "Together AI 的 OpenAI 兼容 API 密钥，用于其无服务器与专属对话模型。"
         ),
     },
     "DEEPINFRA_API_KEY": {
-        "label": "DeepInfra API Keys",
+        "label": "DeepInfra API 密钥",
         "description": (
-            "DeepInfra API key for OpenAI-compatible chat and reasoning models."
+            "DeepInfra API 密钥，用于其 OpenAI 兼容的对话与推理模型。"
         ),
     },
     "SILICONFLOW_API_KEY": {
-        "label": "SiliconFlow API Keys",
+        "label": "SiliconFlow API 密钥",
         "description": (
-            "SiliconFlow API key for OpenAI-compatible chat, reasoning, and "
-            "vision models."
+            "SiliconFlow API 密钥，用于其 OpenAI 兼容的对话、推理与视觉模型。"
         ),
     },
     "NEBIUS_API_KEY": {
-        "label": "Nebius Token Factory API Keys",
+        "label": "Nebius Token Factory API 密钥",
         "description": (
-            "Nebius Token Factory API key for OpenAI-compatible chat, reasoning, "
-            "and tool-capable models."
+            "Nebius Token Factory API 密钥，用于其 OpenAI 兼容的对话、推理及支持工具调用的模型。"
         ),
     },
     "OPPER_API_KEY": {
-        "label": "Opper API Keys",
+        "label": "Opper API 密钥",
         "description": (
-            "Opper gateway key for OpenAI-compatible chat, reasoning and "
-            "tool-capable models across its EU-hosted model pools."
+            "Opper 网关密钥，用于其托管在欧盟的模型池中 OpenAI 兼容的对话、推理及支持工具调用的模型。"
         ),
     },
     "SCW_SECRET_KEY": {
-        "label": "Scaleway API Keys",
+        "label": "Scaleway API 密钥",
         "description": (
-            "Scaleway Generative APIs secret key for OpenAI-compatible chat and "
-            "tool-capable models."
+            "Scaleway 生成式 API 的 Secret Key，用于其 OpenAI 兼容的对话及支持工具调用的模型。"
         ),
     },
     "CHUTES_API_KEY": {
-        "label": "Chutes API Keys",
+        "label": "Chutes API 密钥",
         "description": (
-            "Chutes API key for OpenAI-compatible chat, reasoning, and "
-            "tool-capable models."
+            "Chutes API 密钥，用于其 OpenAI 兼容的对话、推理及支持工具调用的模型。"
         ),
     },
     "FEATHERLESS_API_KEY": {
-        "label": "Featherless AI API Keys",
+        "label": "Featherless AI API 密钥",
         "description": (
-            "Featherless AI API key for plan-available OpenAI-compatible chat, "
-            "reasoning, and tool-capable models."
+            "Featherless AI API 密钥，用于套餐内可用的 OpenAI 兼容对话、推理及支持工具调用的模型。"
         ),
     },
     "SAMBANOVA_API_KEY": {
-        "label": "SambaNova API Keys",
+        "label": "SambaNova API 密钥",
         "description": (
-            "SambaNova Cloud OpenAI-compatible API key (create at "
-            "[cloud.sambanova.ai/apis](https://cloud.sambanova.ai/apis))."
+            "SambaNova Cloud 的 OpenAI 兼容 API 密钥（在 [cloud.sambanova.ai/apis](https://cloud.sambanova.ai/apis) 创建）。"
         ),
     },
     "CEREBRAS_API_KEY": {
-        "label": "Cerebras API Keys",
+        "label": "Cerebras API 密钥",
         "description": (
-            "Cerebras Inference API key (create in [Cloud Console](https://cloud.cerebras.ai)); "
-            "see [Quickstart](https://inference-docs.cerebras.ai/quickstart) and "
-            "[OpenAI compatibility](https://inference-docs.cerebras.ai/resources/openai)."
+            "Cerebras Inference API 密钥（在 [Cloud Console](https://cloud.cerebras.ai) 创建）；参考[快速开始](https://inference-docs.cerebras.ai/quickstart)与 [OpenAI 兼容说明](https://inference-docs.cerebras.ai/resources/openai)。"
         ),
     },
     "OLLAMA_API_KEY": {
         "description": (
-            "Ollama API key for direct OpenAI-compatible Cloud access at ollama.com/v1."
+            "Ollama API 密钥，用于直连 Ollama Cloud 的 OpenAI 兼容端点 ollama.com/v1。"
         ),
     },
     "TOKENROUTER_API_KEY": {
-        "label": "TokenRouter API Keys",
+        "label": "TokenRouter API 密钥",
         "description": (
-            "TokenRouter OpenAI-compatible gateway API key for api.tokenrouter.com/v1."
+            "TokenRouter 的 OpenAI 兼容网关密钥，端点 api.tokenrouter.com/v1。"
         ),
     },
     "NARAROUTE_API_KEY": {
-        "label": "NaraRoute API Keys",
+        "label": "NaraRoute API 密钥",
         "description": (
-            "NaraRoute OpenAI-compatible gateway API key for router.bynara.id/v1. "
-            "Keys begin with sk-nry-; create one at router.bynara.id/keys."
+            "NaraRoute 的 OpenAI 兼容网关密钥，端点 router.bynara.id/v1。密钥以 sk-nry- 开头；可在 router.bynara.id/keys 创建。"
         ),
     },
     "LIGHTNING_API_KEY": {
-        "label": "Lightning AI API Keys",
+        "label": "Lightning AI API 密钥",
         "description": (
-            "Lightning AI Model APIs key for the OpenAI-compatible endpoint at "
-            "lightning.ai/api/v1. Create one on lightning.ai under Model APIs."
+            "Lightning AI Model APIs 密钥，端点 lightning.ai/api/v1。可在 lightning.ai 的 Model APIs 页面创建。"
         ),
     },
     "ORCAROUTER_API_KEY": {
-        "label": "OrcaRouter API Keys",
+        "label": "OrcaRouter API 密钥",
         "description": (
-            "OrcaRouter OpenAI-compatible multi-provider gateway API key for "
-            "api.orcarouter.ai/v1. Keys begin with sk-orca-; create one at "
-            "www.orcarouter.ai/console."
+            "OrcaRouter 多供应商 OpenAI 兼容网关密钥，端点 api.orcarouter.ai/v1。密钥以 sk-orca- 开头；可在 www.orcarouter.ai/console 创建。"
         ),
     },
     "ATLASCLOUD_API_KEY": {
-        "label": "Atlas Cloud API Keys",
+        "label": "Atlas Cloud API 密钥",
         "description": (
-            "Atlas Cloud OpenAI-compatible multi-provider gateway API key for "
-            "api.atlascloud.ai/v1; create one at console.atlascloud.ai/api-keys."
+            "Atlas Cloud 多供应商 OpenAI 兼容网关密钥，端点 api.atlascloud.ai/v1；可在 console.atlascloud.ai/api-keys 创建。"
         ),
     },
     "XKIRO_API_KEY": {
-        "label": "xKiro API Keys",
+        "label": "xKiro API 密钥",
         "description": (
-            "xKiro API key for api.xkiro.com/v1. "
-            "Create one at xkiro.com/dashboard/api/keys."
+            "xKiro API 密钥，端点 api.xkiro.com/v1。可在 xkiro.com/dashboard/api/keys 创建。"
         ),
     },
     "AGNES_API_KEY": {
-        "label": "Agnes AI API Keys",
+        "label": "Agnes AI API 密钥",
         "description": (
-            "Agnes AI OpenAI-compatible API key for apihub.agnes-ai.com/v1."
+            "Agnes AI 的 OpenAI 兼容 API 密钥，端点 apihub.agnes-ai.com/v1。"
         ),
     },
     "ZENMUX_API_KEY": {
-        "label": "ZenMux API Keys",
+        "label": "ZenMux API 密钥",
         "description": (
-            "ZenMux OpenAI-compatible gateway API key for zenmux.ai/api/v1. "
-            "Create one at zenmux.ai/platform/pay-as-you-go."
+            "ZenMux 的 OpenAI 兼容网关密钥，端点 zenmux.ai/api/v1。可在 zenmux.ai/platform/pay-as-you-go 创建。"
         ),
     },
     "WANDB_API_KEY": {
-        "label": "W&B Inference API Keys",
+        "label": "W&B Inference API 密钥",
         "description": (
-            "W&B API key for Serverless Inference at api.inference.wandb.ai/v1. "
-            "Create one in [W&B User Settings](https://wandb.ai/settings)."
+            "W&B Serverless Inference 的 API 密钥，端点 api.inference.wandb.ai/v1。可在 [W&B 用户设置](https://wandb.ai/settings) 创建。"
         ),
     },
     "EXPLABS_API_KEY": {
-        "label": "Experiential Labs API Keys",
+        "label": "Experiential Labs API 密钥",
         "description": (
-            "Experiential Labs OpenAI-compatible gateway API key for "
-            "api.experientiallabs.ai/v1. Keys look like xpl_ followed by 40 "
-            "hex characters; mint one at platform.experientiallabs.ai/settings/api-keys."
+            "Experiential Labs 的 OpenAI 兼容网关密钥，端点 api.experientiallabs.ai/v1。密钥形如 xpl_ 加 40 位十六进制字符；可在 platform.experientiallabs.ai/settings/api-keys 创建。"
         ),
     },
     "CHEAPER_INFERENCE_API_KEY": {
-        "label": "Cheaper Inference API Keys",
+        "label": "Cheaper Inference API 密钥",
         "description": (
-            "Cheaper Inference OpenAI-compatible gateway API key for "
-            "api.cheaperinference.com/v1. "
-            "Keys start with ci_live_; create one at cheaperinference.com/signup."
+            "Cheaper Inference 的 OpenAI 兼容网关密钥，端点 api.cheaperinference.com/v1。密钥以 ci_live_ 开头；可在 cheaperinference.com/signup 创建。"
         ),
     },
 }
@@ -361,11 +309,11 @@ def provider_field_specs() -> tuple[ConfigFieldSpec, ...]:
         *_credential_field_specs(),
         ConfigFieldSpec(
             key="ANTHROPIC_WORKSPACE_ID",
-            label="Anthropic Workspace ID",
+            label="Anthropic 工作区 ID",
             section_id="providers",
             settings_attr="anthropic_workspace_id",
             provider_ids=("anthropic",),
-            description="Optional for workspace-scoped keys. Required for multi-workspace API keys.",
+            description="工作区级密钥可选；多工作区 API 密钥必填。",
         ),
         *_cloudflare_account_field_specs(),
         *_vertex_field_specs(),
@@ -387,7 +335,7 @@ def _credential_field_specs() -> tuple[ConfigFieldSpec, ...]:
             _with_override(
                 ConfigFieldSpec(
                     key=descriptor.credential_env,
-                    label=f"{descriptor.display_name} API Keys",
+                    label=f"{descriptor.display_name} API 密钥",
                     section_id="providers",
                     field_type="api_key_list",
                     settings_attr=descriptor.credential_attr,
@@ -413,7 +361,7 @@ def _base_url_field_specs() -> tuple[ConfigFieldSpec, ...]:
             _with_override(
                 ConfigFieldSpec(
                     key=key,
-                    label=f"{descriptor.display_name} Base URL",
+                    label=f"{descriptor.display_name} 接口地址",
                     section_id="providers",
                     settings_attr=descriptor.base_url_attr,
                     provider_ids=(descriptor.provider_id,),
@@ -427,12 +375,12 @@ def _cloudflare_account_field_specs() -> tuple[ConfigFieldSpec, ...]:
     return (
         ConfigFieldSpec(
             key="CLOUDFLARE_ACCOUNT_ID",
-            label="Cloudflare Account ID",
+            label="Cloudflare 账号 ID",
             section_id="providers",
             settings_attr="cloudflare_account_id",
             provider_ids=("cloudflare",),
             description=(
-                "Cloudflare account ID used to build the /accounts/{id}/ai/v1 endpoint."
+                "用于拼接 /accounts/{id}/ai/v1 端点的 Cloudflare 账号 ID。"
             ),
         ),
     )
@@ -442,24 +390,22 @@ def _vertex_field_specs() -> tuple[ConfigFieldSpec, ...]:
     return (
         ConfigFieldSpec(
             key="VERTEX_PROJECT_ID",
-            label="Google Cloud Project ID",
+            label="Google Cloud 项目 ID",
             section_id="providers",
             settings_attr="vertex_project_id",
             provider_ids=("vertex",),
             description=(
-                "Google Cloud project used for Vertex AI. Authentication uses "
-                "Application Default Credentials (ADC)."
+                "用于 Vertex AI 的 Google Cloud 项目。认证使用应用默认凭据（ADC）。"
             ),
         ),
         ConfigFieldSpec(
             key="VERTEX_LOCATION",
-            label="Vertex AI Location",
+            label="Vertex AI 区域",
             section_id="providers",
             settings_attr="vertex_location",
             provider_ids=("vertex",),
             description=(
-                "Use global for the global Vertex AI endpoint or a region such as "
-                "us-central1."
+                "填 global 使用 Vertex AI 全球端点，或填写 us-central1 之类的区域。"
             ),
         ),
     )
@@ -474,8 +420,8 @@ def _proxy_field_specs() -> tuple[ConfigFieldSpec, ...]:
             _with_override(
                 ConfigFieldSpec(
                     key=_settings_env_key(descriptor.proxy_attr),
-                    label=f"{descriptor.display_name} Proxy",
-                    description="Optional network proxy. Leave blank unless you use one",
+                    label=f"{descriptor.display_name} 代理",
+                    description="可选的网络代理，不使用请留空",
                     section_id="providers",
                     field_type="secret",
                     settings_attr=descriptor.proxy_attr,

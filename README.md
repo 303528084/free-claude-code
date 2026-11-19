@@ -107,11 +107,11 @@ FCC 启动后会自动打开 Admin 管理界面。在 Windows 和 macOS 上，�
 
 1. 到 [build.nvidia.com/settings/api-keys](https://build.nvidia.com/settings/api-keys) 创建 API Key。
 2. 从服务端日志中找到 Admin 界面地址并打开。
-3. 在 **Providers** 中打开 NVIDIA NIM，点击 **Add key**，粘贴 Key，然后点击 **Save**。
+3. 在 **供应商** 中打开 NVIDIA NIM，点击 **添加密钥**，粘贴 Key，然后点击 **保存**。
 4. `MODEL` 保持默认的 `nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b`，或在模型下拉框中搜索并选择其他模型。
-5. 点击 **Apply** 保存模型选择。
+5. 点击 **应用** 保存模型选择。
 
-如需用 Bearer Token 保护本地代理，请在 Admin 中启用 **Proxy Authentication**。
+如需用 Bearer Token 保护本地代理，请在 Admin 中启用 **要求 API 认证**。
 
 <div align="center">
   <img src="assets/admin-page.png" alt="Free Claude Code Admin 管理界面" width="700">
@@ -199,18 +199,18 @@ fcc-agy
 ## 选择供应商
 
 1. 打开下方对应供应商的链接，查看其 Key、模型或配置说明。
-2. 在 Admin 界面中配置表中列出的设置项。OpenAI / ChatGPT 订阅制接入请走 **Providers → OAuth providers**。
+2. 在 Admin 界面中配置表中列出的设置项。OpenAI / ChatGPT 订阅制接入请走 **供应商 → OAuth 供应商**。
 3. 在 `MODEL` 下拉框中搜索并选择模型。如果供应商无法列出模型，请手动填写 `<provider-id>/<exact-provider-model-id>`。
-4. 点击 **Apply**。
+4. 点击 **应用**。
 
-可选：在 **Model Config** 下添加一个有序的 **Fallback Models**（回退模型）列表。它对所有已连接的客户端生效。一次失败的请求在成功之前，可能已经访问并消耗了多个供应商的额度。
+可选：在 **模型配置** 下添加一个有序的 **回退模型**列表。它对所有已连接的客户端生效。一次失败的请求在成功之前，可能已经访问并消耗了多个供应商的额度。
 
-供应商弹窗支持带编号的多 API Key。可用 **Add key** 新增、删除行，或拖动行手柄调整顺序。FCC 使用 1 号 Key。
+供应商弹窗支持带编号的多 API Key。可用 **添加密钥** 新增、删除行，或拖动行手柄调整顺序。FCC 使用 1 号 Key。
 
-如果要接入其他 API 端点，打开 **Providers → Custom providers → Add provider**，填写其 API Base URL、可选的 Key 和 API 格式。**Model IDs** 留空可自动发现模型，或每行填一个上游模型 ID。保存后到 **Model Config** 中选择模型。
+如果要接入其他 API 端点，打开 **供应商 → 自定义供应商 → 添加供应商**，填写其 API Base URL、可选的 Key 和 API 格式。**模型 ID** 留空可自动发现模型，或每行填一个上游模型 ID。保存后到 **模型配置** 中选择模型。
 
 <details>
-<summary><strong>供应商目录</strong></summary>
+<summary><strong>供应商目录</strong></strong></summary>
 
 | 供应商 | Admin 界面配置项 | 示例 `MODEL` |
 | --- | --- | --- |
@@ -279,7 +279,7 @@ fcc-agy
 </details>
 
 <details>
-<summary><strong>各供应商专项配置</strong></summary>
+<summary><strong>各供应商专项配置</strong></strong></summary>
 
 - OpenAI / ChatGPT 用的是你的 ChatGPT 订阅，而非 API Key。在 Admin 界面依次打开
   **Providers → OAuth providers → OpenAI / ChatGPT → Connect**，
@@ -326,9 +326,9 @@ fcc-agy
 </details>
 
 <details>
-<summary><strong>本地供应商配置</strong></summary>
+<summary><strong>本地供应商配置</strong></strong></summary>
 
-FCC 启动时会自动发现正在运行的本地服务中的模型。如果你之后才启动某个服务，在 Admin 中点击 **Refresh models**，即可把它的模型加入选择器。
+FCC 启动时会自动发现正在运行的本地服务中的模型。如果你之后才启动某个服务，在 Admin 中点击 **刷新模型**，即可把它的模型加入选择器。
 
 ### LM Studio
 
@@ -347,34 +347,34 @@ ollama serve
 
 使用 `ollama list` 显示的 tag 加 `ollama/` 前缀。`OLLAMA_BASE_URL` 默认为 `http://localhost:11434`。
 
-供应商卡片会显示检测到的端点与响应时间；本地服务不可用时会给出提示。启动服务或改正其配置后，点击 **Test** 刷新其模型列表。
+供应商卡片会显示检测到的端点与响应时间；本地服务不可用时会给出提示。启动服务或改正其配置后，点击 **测试** 刷新其模型列表。
 
 </details>
 
 <details>
-<summary><strong>可选的模型档位路由</summary>
+<summary><strong>可选的模型档位路由</strong></summary>
 
 `MODEL` 是所有请求的兜底。为 `MODEL_FABLE`、`MODEL_OPUS`、`MODEL_SONNET` 或 `MODEL_HAIKU` 选择模型，可单独覆盖 Claude Code 的某一档。选择 **None** 表示仍使用 `MODEL`。
 
-在 **Admin UI → Model Config** 中按 FCC 的重试顺序添加 **Fallback Models**。每个回退项都有各自的推理强度：**Inherit**、**Off**、**From client**、**Low**、**Medium**、**High**、**X-High** 或 **Max**。
+在 **Admin UI → 模型配置** 中按 FCC 的重试顺序添加 **回退模型**。每个回退项都有各自的推理强度：**继承**、**关闭**、**跟随客户端**、**低**、**中**、**高**、**极高** 或 **最大**。
 
-在底部一行选择模型、推理强度和 API Key 编号，然后点击 **+**。**Key 1**、**Key 2** 等指的是该供应商设置中当前带编号的 Key。可直接就地修改选择、拖动行手柄改变顺序，或点击红色垃圾桶按钮删除某个回退项。
+在底部一行选择模型、推理强度和 API Key 编号，然后点击 **+**。**密钥 1**、**密钥 2** 等指的是该供应商设置中当前带编号的 Key。可直接就地修改选择、拖动行手柄改变顺序，或点击红色垃圾桶按钮删除某个回退项。
 
-**Inherit** 沿用原始请求已解析出的推理设置；**From client** 使用你的编码代理发来的推理强度或 token 预算，绕过全局或档位设置。同一个模型可以用不同的 Key 编号重复添加。
+**继承** 沿用原始请求已解析出的推理设置；**跟随客户端** 使用你的编码代理发来的推理强度或 token 预算，绕过全局或档位设置。同一个模型可以用不同的 Key 编号重复添加。
 
 </details>
 
 <details>
-<summary><strong>推理强度控制</strong></summary>
+<summary><strong>推理强度控制</strong></strong></summary>
 
-打开 **Admin UI → Model Config → Model Routing**，为每个模型选择推理强度。**Default Effort** 初始为 **From client**；Fable、Opus、Sonnet、Haiku 初始为 **Inherit**。
+打开 **Admin UI → 模型配置 → 模型路由**，为每个模型选择推理强度。**默认推理强度** 初始为 **跟随客户端**；Fable、Opus、Sonnet、Haiku 初始为 **继承**。
 
 | 选项 | 行为 |
 | --- | --- |
-| **From client** | 使用编码代理发来的推理强度；若客户端未发送，则保留供应商默认值。 |
-| **Off** | 请求关闭推理。 |
-| **Low**、**Medium**、**High**、**X-High** 或 **Max** | 用所选强度覆盖客户端设置。 |
-| **Inherit** | 档位覆盖项沿用 Default Effort；回退项沿用原始请求已解析的强度。 |
+| **跟随客户端** | 使用编码代理发来的推理强度；若客户端未发送，则保留供应商默认值。 |
+| **关闭** | 请求关闭推理。 |
+| **低**、**中**、**高**、**极高** 或 **最大** | 用所选强度覆盖客户端设置。 |
+| **继承** | 档位覆盖项沿用默认推理强度；回退项沿用原始请求已解析的强度。 |
 
 </details>
 
@@ -385,19 +385,18 @@ ollama serve
 
 FCC 的启动器会自动启动服务端。
 
-对于编辑器与应用类集成：先安装对应客户端、启动 FCC，然后打开 **Admin UI → Integrations**，在对应卡片上点击 **Connect**。
+对于编辑器与应用类集成：先安装对应客户端、启动 FCC，然后打开 **Admin UI → 集成**，在对应卡片上点击 **连接**。
 
 - **VS Code 中的 Claude Code**：安装 [Claude Code 扩展](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code)。
 - **VS Code Chat**：安装最新版 [VS Code](https://code.visualstudio.com/)，连接后在自带 Chat 的模型选择器中选择 FCC 模型。
 - **Claude Desktop**：安装 [Claude Desktop](https://claude.ai/download)。连接或断开前请先完全退出，之后再重新打开。断开后恢复为正常的 Claude 登录。
 - **VS Code 与 App 中的 Codex**：安装 [Codex 扩展](https://marketplace.visualstudio.com/items?itemName=openai.chatgpt) 或 Codex App。
 - **DeepSeek Harness Desktop**：连接前先安装并打开一次该应用。新建会话即可使用 FCC 模型。
-- **JetBrains ACP 中的 Claude Code**：在 JetBrains AI Assistant 中安装 Claude Agent 并启动一次，然后在 FCC 中点击 **Connect**。重新打开 IDE，选择 **Claude Code (FCC)** 并新建对话。JetBrains 更新该代理后，需重启 FCC 再新建对话。要求 IDE 安装在标准安装位置。
+- **JetBrains ACP 中的 Claude Code**：在 JetBrains AI Assistant 中安装 Claude Agent 并启动一次，然后在 FCC 中点击 **连接**。重新打开 IDE，选择 **Claude Code (FCC)** 并新建对话。JetBrains 更新该代理后，需重启 FCC 再新建对话。要求 IDE 安装在标准安装位置。
 
-连接后请重载 VS Code，或重启对应应用／IDE。在 Codex 与 Claude Desktop 中，从模型选择器中选择 FCC 模型。当 FCC 提示设置已更新时，重载或重启客户端。在相同卡片上点击 **Disconnect** 可移除集成。
+连接后请重载 VS Code，或重启对应应用／IDE。在 Codex 与 Claude Desktop 中，从模型选择器中选择 FCC 模型。当 FCC 提示设置已更新时，重载或重启客户端。在相同卡片上点击 **断开** 可移除集成。
 
-如需单独完成 Claude Code 的首次引导，打开 **Admin UI → Integrations →
-Claude Code onboarding** 并点击 **Complete onboarding**。在 VS Code 中连接 Claude Code 也会同时完成该引导。
+如需单独完成 Claude Code 的首次引导，打开 **Admin UI → 集成 → Claude Code 首次引导** 并点击 **完成引导**。在 VS Code 中连接 Claude Code 也会同时完成该引导。
 
 请确保 FCC 与你要配置的客户端运行在同一台电脑、同一个用户环境下。
 
@@ -407,7 +406,7 @@ Claude Code onboarding** 并点击 **Complete onboarding**。在 VS Code 中连�
 
 任何支持这些 API 的客户端或 SDK 都可以直接调用 FCC。OpenAI 类客户端把 Base URL 设为
 `http://127.0.0.1:8082/v1`；Anthropic 与 Gemini 类客户端设为 `http://127.0.0.1:8082`。
-每个 FCC 模型在所有端点上都能用。若启用了 Proxy Authentication，
+每个 FCC 模型在所有端点上都能用。若启用了**要求 API 认证**，
 请把它的 token 作为客户端的 API Key，或在每个 `curl` 请求中加上
 `-H "Authorization: Bearer <token>"`。
 用 `curl "http://127.0.0.1:8082/v1/models?view=messages"` 列出可用模型。
@@ -462,29 +461,29 @@ Responses 的回复始终为流式。要让 Messages 或 Chat Completions 也流
 
 ## 手机端使用
 
-在 Discord 或 Telegram 里跑编码任务，并可发送语音消息。在 **Admin UI → Messaging** 中配置，然后点击 **Apply**。
+在 Discord 或 Telegram 里跑编码任务，并可发送语音消息。在 **Admin UI → 消息** 中配置，然后点击 **应用**。
 
 <details>
-<summary><strong>Discord 机器人</strong></summary>
+<summary><strong>Discord 机器人</strong></strong></summary>
 
 1. 在 [Discord Developer Portal](https://discord.com/developers/applications) 创建机器人。
 2. 开启 **Message Content Intent**，并以读取、发送、读取消息历史及
    **Manage Messages** 权限邀请它加入服务器，这样 `/clear` 才能删除
    用户消息。
-3. 把 **Messaging Platform** 设为 **discord**。
-4. 填入 **Discord Bot Token**、**Allowed Discord Channels** 和一个绝对路径的 **Allowed Directory**。
+3. 把 **消息平台** 设为 **discord**。
+4. 填入 **Discord 机器人 Token**、**Allowed Discord Channels** 和一个绝对路径的 **Allowed Directory**。
 5. 应用设置；如提示需要，重启服务端。
 
 </details>
 
 <details>
-<summary><strong>Telegram 机器人</strong></summary>
+<summary><strong>Telegram 机器人</strong></strong></summary>
 
 1. 通过 [@BotFather](https://t.me/BotFather) 创建机器人。
 2. 从 [@userinfobot](https://t.me/userinfobot) 获取你的数字用户 ID。
    在群组中使用时，请授予机器人删除消息的权限。
-3. 把 **Messaging Platform** 设为 **telegram**。
-4. 填入 **Telegram Bot Token**、**Allowed Telegram User ID** 和一个绝对路径的 **Allowed Directory**。
+3. 把 **消息平台** 设为 **telegram**。
+4. 填入 **Telegram 机器人 Token**、**Allowed Telegram User ID** 和一个绝对路径的 **Allowed Directory**。
 5. 应用设置；如提示需要，重启服务端。
 
 </details>
@@ -500,10 +499,10 @@ Responses 的回复始终为流式。要让 Messages 或 Chat Completions 也流
 | 回复某条消息并带 `/clear` | 删除被回复的那条消息及其后续回复链，保留其他会话。 |
 
 <details>
-<summary><strong>语音消息</summary>
+<summary><strong>语音消息</strong></summary>
 
-所有安装方式都内置 NVIDIA NIM 转写支持。在 **Admin UI → Messaging → Voice** 中启用语音消息，
-选择 `nvidia_nim` 并挑一个受支持的模型。**NVIDIA NIM API key** 在 Providers 页面配置。
+所有安装方式都内置 NVIDIA NIM 转写支持。在 **Admin UI → 消息 → 语音** 中启用语音消息，
+选择 `nvidia_nim` 并挑一个受支持的模型。**NVIDIA NIM API 密钥** 在 Providers 页面配置。
 
 如需在 CPU 或 CUDA 上使用本地 Whisper，请带本地语音选项重跑安装脚本：
 
@@ -535,7 +534,7 @@ CUDA 13.0 的本地 Whisper：
 & ([scriptblock]::Create((irm "https://raw.githubusercontent.com/Alishahryar1/free-claude-code/main/scripts/install.ps1"))) -VoiceLocal -TorchBackend cu130
 ```
 
-安装本地支持后，重启 `fcc-server`。在 **Admin UI → Messaging → Voice** 中启用语音消息，
+安装本地支持后，重启 `fcc-server`。在 **Admin UI → 消息 → 语音** 中启用语音消息，
 选择 `cpu` 或 `cuda`，并选择 Whisper 模型。本地受限（gated）模型需要 `HUGGINGFACE_API_KEY`。
 
 </details>

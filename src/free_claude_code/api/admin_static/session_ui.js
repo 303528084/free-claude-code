@@ -152,10 +152,10 @@
     textarea.rows = 2;
     textarea.value = draft;
     textarea.placeholder = placeholder;
-    textarea.setAttribute("aria-label", "Message");
+    textarea.setAttribute("aria-label", "消息");
     const actions = node("div", "session-composer-actions");
-    const send = button("Send", "primary-button", onSend),
-      stop = button("Stop", "danger-button", onStop);
+    const send = button("发送", "primary-button", onSend),
+      stop = button("停止", "danger-button", onStop);
     send.id = `${id}Send`;
     stop.id = `${id}Stop`;
     stop.hidden = true;

@@ -19,14 +19,14 @@ def _reasoning_options(
     preferences: tuple[ReasoningPreference, ...],
 ) -> tuple[ConfigOptionSpec, ...]:
     labels = {
-        ReasoningPreference.INHERIT: "Inherit",
-        ReasoningPreference.OFF: "Off",
-        ReasoningPreference.CLIENT: "From client",
-        ReasoningPreference.LOW: "Low",
-        ReasoningPreference.MEDIUM: "Medium",
-        ReasoningPreference.HIGH: "High",
-        ReasoningPreference.XHIGH: "X-High",
-        ReasoningPreference.MAX: "Max",
+        ReasoningPreference.INHERIT: "继承",
+        ReasoningPreference.OFF: "关闭",
+        ReasoningPreference.CLIENT: "跟随客户端",
+        ReasoningPreference.LOW: "低",
+        ReasoningPreference.MEDIUM: "中",
+        ReasoningPreference.HIGH: "高",
+        ReasoningPreference.XHIGH: "极高",
+        ReasoningPreference.MAX: "最大",
     }
     return tuple(
         ConfigOptionSpec(preference.value, labels[preference])
@@ -37,44 +37,44 @@ def _reasoning_options(
 SECTIONS: tuple[ConfigSectionSpec, ...] = (
     ConfigSectionSpec(
         "providers",
-        "Providers",
-        "Provider keys, local endpoints, and proxy settings.",
+        "供应商",
+        "供应商密钥、本地端点与代理设置。",
     ),
     ConfigSectionSpec(
         "models",
-        "Model Routing",
-        "Choose a model and effort together. Tier overrides can inherit the defaults.",
+        "模型路由",
+        "为每个模型同时选择模型与推理强度。档位覆盖项可继承默认值。",
     ),
     ConfigSectionSpec(
         "runtime",
-        "Runtime",
-        "Server API token, rate limits, timeouts, and process settings.",
+        "运行时",
+        "服务端 API 令牌、限流、超时与进程设置。",
     ),
     ConfigSectionSpec(
         "messaging",
-        "Messaging",
-        "Discord, Telegram, CLI workspace, and session settings.",
+        "消息",
+        "Discord、Telegram、CLI 工作区与会话相关设置。",
     ),
     ConfigSectionSpec(
         "voice",
-        "Voice",
-        "Voice note transcription settings.",
+        "语音",
+        "语音消息转写设置。",
     ),
     ConfigSectionSpec(
         "web_tools",
-        "Web Tools",
-        "Local Anthropic web_search and web_fetch behavior.",
+        "网页工具",
+        "本地 Anthropic web_search 与 web_fetch 的行为设置。",
     ),
     ConfigSectionSpec(
         "diagnostics",
-        "Diagnostics",
-        "Logging and debugging flags.",
+        "诊断",
+        "日志与调试相关开关。",
         advanced=True,
     ),
     ConfigSectionSpec(
         "smoke",
-        "Smoke Tests",
-        "Optional live smoke-test model overrides.",
+        "冒烟测试",
+        "可选的在线冒烟测试模型覆盖项。",
         advanced=True,
     ),
 )
@@ -83,74 +83,69 @@ SECTIONS: tuple[ConfigSectionSpec, ...] = (
 _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ConfigFieldSpec(
         "MODEL",
-        "Default Model",
+        "默认模型",
         "models",
         "model",
         settings_attr="model",
-        description="Provider/model used when no tier-specific override applies.",
+        description="未设置档位覆盖时使用的供应商/模型。",
     ),
     ConfigFieldSpec(
         "MODEL_FABLE",
-        "Fable Override",
+        "Fable 档位覆盖",
         "models",
         "optional_model",
         settings_attr="model_fable",
-        description="Select None to use the Default Model for Fable requests.",
+        description="选择 None 表示 Fable 请求沿用默认模型。",
     ),
     ConfigFieldSpec(
         "MODEL_OPUS",
-        "Opus Override",
+        "Opus 档位覆盖",
         "models",
         "optional_model",
         settings_attr="model_opus",
-        description="Select None to use the Default Model for Opus requests.",
+        description="选择 None 表示 Opus 请求沿用默认模型。",
     ),
     ConfigFieldSpec(
         "MODEL_SONNET",
-        "Sonnet Override",
+        "Sonnet 档位覆盖",
         "models",
         "optional_model",
         settings_attr="model_sonnet",
-        description="Select None to use the Default Model for Sonnet requests.",
+        description="选择 None 表示 Sonnet 请求沿用默认模型。",
     ),
     ConfigFieldSpec(
         "MODEL_HAIKU",
-        "Haiku Override",
+        "Haiku 档位覆盖",
         "models",
         "optional_model",
         settings_attr="model_haiku",
-        description="Select None to use the Default Model for Haiku requests.",
+        description="选择 None 表示 Haiku 请求沿用默认模型。",
     ),
     ConfigFieldSpec(
         "MODEL_FALLBACKS",
-        "Fallback Models",
+        "回退模型",
         "models",
         "model_list",
         settings_attr="model_fallbacks",
         options=_reasoning_options(FALLBACK_REASONING_PREFERENCES),
         description=(
-            "Tried in order when the selected provider/model fails before output "
-            "starts. Applies to every client. One request may reach multiple "
-            "providers and consume usage at each. Native Anthropic Messages requests "
-            "use only other Anthropic models as fallbacks."
+            "当所选供应商/模型在输出开始前失败时，按顺序尝试这些回退项。对所有客户端生效。一次请求可能访问多个供应商，并在每一处消耗额度。原生 Anthropic Messages 请求只会用其他 Anthropic 模型作为回退。"
         ),
     ),
     ConfigFieldSpec(
         "REASONING_POLICY",
-        "Default Effort",
+        "默认推理强度",
         "models",
         "select",
         settings_attr="reasoning_policy",
         options=_reasoning_options(ROOT_REASONING_PREFERENCES),
         description=(
-            "Used by inherited routes and direct provider/model requests. From client "
-            "preserves CLI effort. Native Anthropic primary requests use client "
-            "thinking controls."
+            "用于继承档位的路由以及直连供应商/模型的请求。选择「跟随客户端」时保留 CLI 的推理强度。原生 Anthropic 主请求使用客户端自身的思考控制。"
         ),
     ),
     ConfigFieldSpec(
         "REASONING_FABLE",
-        "Fable Effort",
+        "Fable 推理强度",
         "models",
         "select",
         settings_attr="reasoning_fable",
@@ -158,7 +153,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "REASONING_OPUS",
-        "Opus Effort",
+        "Opus 推理强度",
         "models",
         "select",
         settings_attr="reasoning_opus",
@@ -166,7 +161,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "REASONING_SONNET",
-        "Sonnet Effort",
+        "Sonnet 推理强度",
         "models",
         "select",
         settings_attr="reasoning_sonnet",
@@ -174,7 +169,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "REASONING_HAIKU",
-        "Haiku Effort",
+        "Haiku 推理强度",
         "models",
         "select",
         settings_attr="reasoning_haiku",
@@ -182,89 +177,87 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "PROXY_AUTH_ENABLED",
-        "Require API Authentication",
+        "要求 API 认证",
         "runtime",
         "boolean",
         settings_attr="proxy_auth_enabled",
         restart_required=True,
-        description="Require the retained API/CLI token on FCC API routes.",
+        description="FCC 的 API 路由要求携带已保存的 API/CLI 令牌。",
     ),
     ConfigFieldSpec(
         "ANTHROPIC_AUTH_TOKEN",
-        "API/CLI Auth Token",
+        "API/CLI 认证令牌",
         "runtime",
         "secret",
         settings_attr="proxy_auth_token",
         secret=True,
         restart_required=True,
         description=(
-            "Retained non-empty token passed to every harness. Authentication can be "
-            "disabled without clearing it."
+            "下发给所有客户端的已保存非空令牌。可以关闭认证而保留该令牌值。"
         ),
     ),
     ConfigFieldSpec(
         "PROVIDER_RATE_LIMIT",
-        "Provider Rate Limit",
+        "供应商请求速率上限",
         "runtime",
         "number",
         settings_attr="provider_rate_limit",
     ),
     ConfigFieldSpec(
         "PROVIDER_RATE_WINDOW",
-        "Provider Rate Window",
+        "供应商速率统计窗口",
         "runtime",
         "number",
         settings_attr="provider_rate_window",
     ),
     ConfigFieldSpec(
         "PROVIDER_MAX_CONCURRENCY",
-        "Provider Max Concurrency",
+        "供应商最大并发数",
         "runtime",
         "number",
         settings_attr="provider_max_concurrency",
     ),
     ConfigFieldSpec(
         "PROVIDER_MAX_ATTEMPTS",
-        "Provider Max Attempts",
+        "供应商最大尝试次数",
         "runtime",
         "number",
         settings_attr="provider_max_attempts",
         description=(
-            "Total tries per model for one request, including the first. Retries, "
-            "mid-stream continuations, and model discovery all count against it."
+            "单个请求对每个模型的总尝试次数（含首次）。重试、流中断续传与模型发现都计入其中。"
         ),
     ),
     ConfigFieldSpec(
         "HTTP_READ_TIMEOUT",
-        "HTTP Read Timeout",
+        "HTTP 读取超时",
         "runtime",
         "number",
         settings_attr="http_read_timeout",
     ),
     ConfigFieldSpec(
         "HTTP_WRITE_TIMEOUT",
-        "HTTP Write Timeout",
+        "HTTP 写入超时",
         "runtime",
         "number",
         settings_attr="http_write_timeout",
     ),
     ConfigFieldSpec(
         "HTTP_CONNECT_TIMEOUT",
-        "HTTP Connect Timeout",
+        "HTTP 连接超时",
         "runtime",
         "number",
         settings_attr="http_connect_timeout",
     ),
     ConfigFieldSpec(
         "HOST",
-        "Server Host",
+        "服务监听地址",
         "runtime",
         settings_attr="host",
         restart_required=True,
     ),
     ConfigFieldSpec(
         "PORT",
-        "Server Port",
+        "服务端口",
         "runtime",
         "number",
         settings_attr="port",
@@ -272,15 +265,15 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "FCC_OPEN_BROWSER",
-        "Open Admin on Startup",
+        "启动时自动打开管理台",
         "runtime",
         "boolean",
         settings_attr="open_admin_browser",
-        description="Open the Admin UI after the next fcc-server launch becomes healthy.",
+        description="下次 fcc-server 启动并健康后自动打开管理台。",
     ),
     ConfigFieldSpec(
         "MESSAGING_PLATFORM",
-        "Messaging Platform",
+        "消息平台",
         "messaging",
         "select",
         settings_attr="messaging_platform",
@@ -289,7 +282,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "MESSAGING_RATE_LIMIT",
-        "Messaging Rate Limit",
+        "消息请求速率上限",
         "messaging",
         "number",
         settings_attr="messaging_rate_limit",
@@ -297,7 +290,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "MESSAGING_RATE_WINDOW",
-        "Messaging Rate Window",
+        "消息速率统计窗口",
         "messaging",
         "number",
         settings_attr="messaging_rate_window",
@@ -305,7 +298,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "TELEGRAM_BOT_TOKEN",
-        "Telegram Bot Token",
+        "Telegram 机器人 Token",
         "messaging",
         "secret",
         settings_attr="telegram_bot_token",
@@ -314,24 +307,24 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "ALLOWED_TELEGRAM_USER_ID",
-        "Allowed Telegram User ID",
+        "允许的 Telegram 用户 ID",
         "messaging",
         settings_attr="allowed_telegram_user_id",
         session_sensitive=True,
     ),
     ConfigFieldSpec(
         "TELEGRAM_PROXY_URL",
-        "Telegram Proxy URL",
+        "Telegram 代理地址",
         "messaging",
         "secret",
         settings_attr="telegram_proxy_url",
         secret=True,
         session_sensitive=True,
-        description="Optional Telegram-only proxy, e.g. socks5://127.0.0.1:1080.",
+        description="可选的 Telegram 专用代理，例如 socks5://127.0.0.1:1080。",
     ),
     ConfigFieldSpec(
         "DISCORD_BOT_TOKEN",
-        "Discord Bot Token",
+        "Discord 机器人 Token",
         "messaging",
         "secret",
         settings_attr="discord_bot_token",
@@ -340,21 +333,21 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "ALLOWED_DISCORD_CHANNELS",
-        "Allowed Discord Channels",
+        "允许的 Discord 频道",
         "messaging",
         settings_attr="allowed_discord_channels",
         session_sensitive=True,
     ),
     ConfigFieldSpec(
         "ALLOWED_DIR",
-        "Allowed Directory",
+        "允许访问的目录",
         "messaging",
         settings_attr="allowed_dir",
         session_sensitive=True,
     ),
     ConfigFieldSpec(
         "MAX_MESSAGE_LOG_ENTRIES_PER_CHAT",
-        "Max Tracked Messages Per Chat",
+        "每个会话最多跟踪的消息数",
         "messaging",
         "number",
         settings_attr="max_message_log_entries_per_chat",
@@ -363,7 +356,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "VOICE_NOTE_ENABLED",
-        "Voice Notes",
+        "语音消息",
         "voice",
         "boolean",
         settings_attr="voice_note_enabled",
@@ -371,7 +364,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "WHISPER_DEVICE",
-        "Whisper Device",
+        "Whisper 运行设备",
         "voice",
         "select",
         settings_attr="whisper_device",
@@ -380,38 +373,37 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "WHISPER_MODEL",
-        "Whisper Model",
+        "Whisper 模型",
         "voice",
         settings_attr="whisper_model",
         session_sensitive=True,
     ),
     ConfigFieldSpec(
         "ENABLE_WEB_SERVER_TOOLS",
-        "Web Server Tools",
+        "网页服务工具",
         "web_tools",
         "boolean",
         settings_attr="enable_web_server_tools",
         description=(
-            "Let Claude Code use WebSearch through FCC and allow forced local web "
-            "tools. Disable to prevent local web access."
+            "允许 Claude Code 通过 FCC 使用 WebSearch，并允许强制调用本地网页工具。关闭后将禁止本地网页访问。"
         ),
     ),
     ConfigFieldSpec(
         "WEB_FETCH_ALLOWED_SCHEMES",
-        "Allowed Web Fetch Schemes",
+        "允许的网页抓取协议",
         "web_tools",
         settings_attr="web_fetch_allowed_schemes",
     ),
     ConfigFieldSpec(
         "WEB_FETCH_ALLOW_PRIVATE_NETWORKS",
-        "Allow Private Networks",
+        "允许访问私有网络",
         "web_tools",
         "boolean",
         settings_attr="web_fetch_allow_private_networks",
     ),
     ConfigFieldSpec(
         "LOG_LEVEL",
-        "Log Level",
+        "日志级别",
         "diagnostics",
         "select",
         settings_attr="log_level",
@@ -421,7 +413,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "DEBUG_PLATFORM_EDITS",
-        "Debug Platform Edits",
+        "调试平台文件修改",
         "diagnostics",
         "boolean",
         settings_attr="debug_platform_edits",
@@ -430,7 +422,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "DEBUG_SUBAGENT_STACK",
-        "Debug Subagent Stack",
+        "调试子代理调用栈",
         "diagnostics",
         "boolean",
         settings_attr="debug_subagent_stack",
@@ -439,7 +431,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "LOG_RAW_API_PAYLOADS",
-        "Log Raw API Payloads",
+        "记录原始 API 请求体",
         "diagnostics",
         "boolean",
         settings_attr="log_raw_api_payloads",
@@ -448,7 +440,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "LOG_RAW_SSE_EVENTS",
-        "Log Raw SSE Events",
+        "记录原始 SSE 事件",
         "diagnostics",
         "boolean",
         settings_attr="log_raw_sse_events",
@@ -456,7 +448,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "LOG_API_ERROR_TRACEBACKS",
-        "Log API Error Tracebacks",
+        "记录 API 错误堆栈",
         "diagnostics",
         "boolean",
         settings_attr="log_api_error_tracebacks",
@@ -465,7 +457,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "LOG_RAW_MESSAGING_CONTENT",
-        "Log Raw Messaging Content",
+        "记录原始消息内容",
         "diagnostics",
         "boolean",
         settings_attr="log_raw_messaging_content",
@@ -474,7 +466,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "LOG_RAW_CLI_DIAGNOSTICS",
-        "Log Raw CLI Diagnostics",
+        "记录原始 CLI 诊断信息",
         "diagnostics",
         "boolean",
         settings_attr="log_raw_cli_diagnostics",
@@ -483,7 +475,7 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "LOG_MESSAGING_ERROR_DETAILS",
-        "Log Messaging Error Details",
+        "记录消息功能错误详情",
         "diagnostics",
         "boolean",
         settings_attr="log_messaging_error_details",
@@ -492,31 +484,31 @@ _NON_PROVIDER_FIELDS: tuple[ConfigFieldSpec, ...] = (
     ),
     ConfigFieldSpec(
         "FCC_SMOKE_MODEL_MISTRAL_REASONING",
-        "Smoke Mistral Reasoning Model",
+        "冒烟测试 Mistral 推理模型",
         "smoke",
         advanced=True,
     ),
     ConfigFieldSpec(
         "FCC_SMOKE_NIM_MODELS",
-        "Smoke NIM Models",
+        "冒烟测试 NIM 模型",
         "smoke",
         advanced=True,
     ),
     ConfigFieldSpec(
         "FCC_SMOKE_NIM_EXTRA_MODELS",
-        "Smoke NIM Extra Models",
+        "冒烟测试 NIM 额外模型",
         "smoke",
         advanced=True,
     ),
     ConfigFieldSpec(
         "FCC_SMOKE_OPENROUTER_FREE_MODELS",
-        "Smoke OpenRouter Free Models",
+        "冒烟测试 OpenRouter 免费模型",
         "smoke",
         advanced=True,
     ),
     ConfigFieldSpec(
         "FCC_SMOKE_OPENROUTER_FREE_EXTRA_MODELS",
-        "Smoke OpenRouter Free Extra Models",
+        "冒烟测试 OpenRouter 免费额外模型",
         "smoke",
         advanced=True,
     ),
@@ -527,7 +519,7 @@ def _catalog_smoke_fields() -> tuple[ConfigFieldSpec, ...]:
     return tuple(
         ConfigFieldSpec(
             key=f"FCC_SMOKE_MODEL_{provider_id.upper()}",
-            label=f"Smoke {descriptor.display_name} Model",
+            label=f"冒烟测试 {descriptor.display_name} 模型",
             section_id="smoke",
             advanced=True,
         )
