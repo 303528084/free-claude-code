@@ -1,0 +1,5 @@
+#!/bin/bash
+# 升级前：停服务，避免旧进程占用端口与 socket
+set -u
+"/var/apps/${TRIM_APPNAME}/cmd/main" stop 2>/dev/null || true
+exit 0

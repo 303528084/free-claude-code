@@ -1,0 +1,17 @@
+{
+  ".url": {
+    "freeclaudecode.main": {
+      "title": "Free Claude Code",
+      "icon": "images/icon_{0}.png",
+      "type": "iframe",
+      "protocol": "",
+      "gatewayPrefix": "/app/freeclaudecode",
+      "gatewaySocket": "fcc.sock",
+      "url": "/app/freeclaudecode/admin",
+      "allUsers": false,
+      "control": {
+        "accessPerm": "readonly"
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "stepTitle": "访问与安全",
+    "items": [
+      {
+        "type": "tips",
+        "helpText": "管理页面通过飞牛统一网关访问，需要先登录 NAS，并且只有管理员可见。下面的令牌用于局域网内的模型客户端（Claude Code / Codex 等）调用本应用。"
+      },
+      {
+        "type": "password",
+        "field": "admin_token",
+        "label": "API 访问令牌",
+        "initValue": "",
+        "rules": [
+          { "required": true, "message": "必须设置访问令牌" },
+          { "min": 32, "message": "至少 32 位，建议用随机字符串" }
+        ]
+      },
+      {
+        "type": "switch",
+        "field": "bind_lan",
+        "label": "允许局域网客户端直连 API 端口",
+        "initValue": "true",
+        "helpText": "开启：服务监听 0.0.0.0，局域网内的 Claude Code / Codex 可用 http://NAS地址:端口 接入。关闭：只允许网关访问。"
+      }
+    ]
+  }
+]

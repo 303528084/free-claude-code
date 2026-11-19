@@ -1,0 +1,207 @@
+name: 飞牛 FPK 打包
+
+# 把 fnos-fpk/freeclaudecode 打成飞牛原生应用包（.fpk），挂到对应汉化 Release 上。
+#   - 载荷：自带 CPython 3.14.10（编译进 /var/apps 生产路径）+ venv + 本仓库 Release 的汉化 wheel
+#   - 打包：fnpack 1.3.3（官方公开直链，非签名短链）
+#   - 产物：freeclaudecode.fpk，约 150-250MB
+#
+# 触发：
+#   1. 手动（推荐）：填汉化修订号，自动算出 zh-v<上游版本>-<修订> 标签
+#   2. 推 fpk-v* 标签
+
+on:
+  workflow_dispatch:
+    inputs:
+      zh_revision:
+        description: 同一上游版本的汉化修订号（第几版汉化）
+        required: false
+        default: "1"
+        type: string
+      dry_run:
+        description: 只构建产物不发布
+        required: false
+        default: false
+        type: boolean
+  push:
+    tags:
+      - "fpk-v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fnos-fpk-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  APPNAME: freeclaudecode
+  FNPACK_URL: https://static2.fnnas.com/fnpack/fnpack-1.3.3-linux-amd64
+  PKG_DIR: fnos-fpk/freeclaudecode
+
+jobs:
+  fpk:
+    name: 构建并发布 FPK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: 安装 fnpack
+        run: |
+          set -euo pipefail
+          sudo curl -sSLo /usr/local/bin/fnpack "$FNPACK_URL"
+          sudo chmod +x /usr/local/bin/fnpack
+          fnpack --help | head -n 3
+
+      - name: 准备 /var/apps（供缓存与载荷使用）
+        run: |
+          set -euo pipefail
+          sudo mkdir -p /var/apps/${APPNAME}/app
+          sudo chown -R "$(id -u):$(id -g)" /var/apps/${APPNAME}
+
+      - name: 缓存 CPython 运行时
+        uses: actions/cache@v4
+        with:
+          path: /var/apps/${{ env.APPNAME }}/app/runtime/python
+          key: cpython-3.14.10-gnu-prefix-${{ env.APPNAME }}-v1
+
+      - name: 计算汉化版本与标签
+        id: version
+        env:
+          ZH_REVISION: ${{ inputs.zh_revision }}
+        run: |
+          set -euo pipefail
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            TAG="${GITHUB_REF_NAME}"
+            echo "使用推送的标签：$TAG"
+            echo "TAG=$TAG" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          base="$(git describe --tags --abbrev=0 --match 'v*')"
+          base_version="${base#v}"
+          revision="${ZH_REVISION:-1}"
+          if ! [[ "$revision" =~ ^[1-9][0-9]*$ ]]; then
+            echo "汉化修订号必须是正整数：$revision" >&2
+            exit 1
+          fi
+          {
+            echo "BASE_VERSION=$base_version"
+            echo "VERSION=${base_version}+zh.${revision}"
+            echo "TAG=zh-v${base_version}-${revision}"
+          } >> "$GITHUB_ENV"
+          echo "目标标签 $TAG（上游版本 $base_version，汉化修订 $revision）"
+
+      - name: 装配运行时载荷
+        env:
+          ZH_TAG: ${{ env.TAG }}
+          ZH_VERSION: ${{ env.VERSION }}
+        run: |
+          set -euo pipefail
+          # wheel 文件名里带 "+"，下载 URL 必须写成 %2B
+          enc_version="${ZH_VERSION//+/%2B}"
+          WHEEL_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${ZH_TAG}/free_claude_code-${enc_version}-py3-none-any.whl"
+          echo "wheel：$WHEEL_URL"
+          curl -sILf "$WHEEL_URL" > /dev/null || { echo "该 Release 还没有 wheel，先跑「汉化版发布」工作流"; exit 1; }
+          sudo env WHEEL_URL="$WHEEL_URL" bash "$PKG_DIR/scripts/build_payload.sh"
+          sudo chown -R "$(id -u):$(id -g)" "$PKG_DIR" "/var/apps/${APPNAME}"
+
+      - name: 打包 FPK
+        run: |
+          set -euo pipefail
+          cd "$PKG_DIR/.."
+          fnpack build --directory "./${APPNAME}"
+          fpk="$(find . -maxdepth 3 -name '*.fpk' | head -n 1)"
+          [ -n "$fpk" ] || { echo "没找到 fnpack 产物"; ls -la; exit 1; }
+          ls -lh "$fpk"
+          size=$(stat -c %s "$fpk")
+          if [ "$size" -lt 50000000 ]; then
+            echo "FPK 只有 $size 字节，载荷可能没打进去（预期 >100MB）" >&2
+            exit 1
+          fi
+          echo "FPK=$fpk" >> "$GITHUB_ENV"
+          echo "产物 $fpk，$(numfmt --to=iec "$size")"
+
+      - name: 冒烟检查（包结构）
+        run: |
+          set -euo pipefail
+          # fnpack 的检查已覆盖 manifest/config/app/cmd/wizard；这里只复核关键文件在包里
+          file "$FPK"
+          python3 - "$FPK" <<'PY'
+          import sys, zipfile, tarfile
+          path = sys.argv[1]
+          names = []
+          if zipfile.is_zipfile(path):
+              names = zipfile.ZipFile(path).namelist()
+          elif tarfile.is_tarfile(path):
+              names = tarfile.open(path).getnames()
+          else:
+              print("未识别的归档格式，跳过内部检查"); sys.exit(0)
+          need = ["manifest", "cmd/main", "app/ui/config", "app/shim/gateway_shim.py",
+                  "app/venv/bin/fcc-server", "app/runtime/python/bin/python3"]
+          missing = [n for n in need if not any(x.endswith(n) or x == n for x in names)]
+          print("包内条目数：", len(names))
+          if missing:
+              print("缺少必要文件：", missing); sys.exit(1)
+          print("关键文件齐全")
+          PY
+
+      - name: 上传构建产物（artifact）
+        uses: actions/upload-artifact@v4
+        with:
+          name: fnos-fpk-${{ env.TAG }}
+          path: ${{ env.FPK }}
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: 发布到对应 Release
+        if: ${{ !inputs.dry_run && github.ref_type != 'tag' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ZH_TAG: ${{ env.TAG }}
+          ZH_VERSION: ${{ env.VERSION }}
+          ZH_REVISION_INPUT: ${{ inputs.zh_revision }}
+        run: |
+          set -euo pipefail
+          notes="$RUNNER_TEMP/fpk-notes.md"
+          cat > "$notes" <<NOTES
+          汉化版 **$ZH_VERSION**（汉化修订 $ZH_REVISION_INPUT）的飞牛 fnOS 原生应用包。
+
+          ## 这是什么
+
+          - 不是在 Docker 里跑，而是飞牛原生应用（FPK），由系统接管启停与状态
+          - 自带 CPython 3.14.10 与全部依赖，不依赖应用中心的 python312
+          - 桌面入口走飞牛统一网关（Unix Socket），在飞牛桌面窗口内直接打开汉化 Admin
+          - 局域网模型客户端走 ${TRIM_SERVICE_PORT} 端口（默认 8586）
+
+          ## 安装
+
+          应用中心 → 手动安装 → 选择 \`freeclaudecode.fpk\`；
+          安装向导里填 API 令牌（≥32 位）并选择是否允许局域网客户端直连。
+
+          ## 注意
+
+          - 仅 x86_64 设备
+          - 管理页面只对 NAS 管理员可见；局域网端口上的 /admin 仍会 403
+          NOTES
+          gh release view "$ZH_TAG" > /dev/null 2>&1 || \
+            gh release create "$ZH_TAG" --title "汉化版 v$(echo "$ZH_VERSION" | cut -d+ -f1)（汉化修订 $ZH_REVISION_INPUT）" --notes-file "$notes"
+          gh release upload "$ZH_TAG" "$FPK" --clobber
+          echo "已上传 $FPK 到 Release $ZH_TAG"
+
+      - name: 汇总
+        run: |
+          {
+            echo "### 飞牛 FPK 构建结果"
+            echo ""
+            echo "| 项 | 值 |"
+            echo "| --- | --- |"
+            echo "| 标签 | \`$TAG\` |"
+            echo "| 产物 | \`$FPK\` |"
+            echo "| 体积 | $(du -h "$FPK" | cut -f1) |"
+            echo "| 载荷 | $(du -sh "$PKG_DIR/app/runtime/python" | cut -f1) + $(du -sh "$PKG_DIR/app/venv" | cut -f1) |"
+          } >> "$GITHUB_STEP_SUMMARY"

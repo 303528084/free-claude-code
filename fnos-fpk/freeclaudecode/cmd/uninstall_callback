@@ -1,0 +1,4 @@
+#!/bin/bash
+# 卸载后：无额外动作（用户数据在 var/home，由系统按其策略处理）
+set -u
+exit 0

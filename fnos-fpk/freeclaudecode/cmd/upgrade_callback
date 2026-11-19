@@ -1,0 +1,5 @@
+#!/bin/bash
+# 升级后：保留 fcc.env 与 var/home 数据，直接重启服务
+set -u
+"/var/apps/${TRIM_APPNAME}/cmd/main" start 2>/dev/null || true
+exit 0

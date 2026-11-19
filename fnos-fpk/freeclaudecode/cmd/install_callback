@@ -1,0 +1,24 @@
+#!/bin/bash
+# 安装后回调：把安装向导收集的值写进应用配置目录，供 cmd/main 使用
+set -u
+
+ENV_FILE="${TRIM_PKGETC}/fcc.env"
+TOKEN="${admin_token:-}"
+BIND_LAN="${bind_lan:-true}"
+
+mkdir -p "$TRIM_PKGETC" "$TRIM_PKGVAR" "$TRIM_PKGHOME" 2>/dev/null || true
+
+if [ -z "$TOKEN" ]; then
+  # 向导未提供时兜底生成一个随机令牌，安装完成后可在“应用设置”里改
+  TOKEN="$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+fi
+
+umask 077
+cat > "$ENV_FILE" <<EOF
+# 由 install_callback 生成；修改后需在应用中心重启应用
+export FCC_BIND_LAN="${BIND_LAN}"
+export PROXY_AUTH_TOKEN="${TOKEN}"
+EOF
+chmod 600 "$ENV_FILE" 2>/dev/null || true
+
+exit 0

@@ -1,0 +1,154 @@
+#!/bin/bash
+# Free Claude Code 汉化版 · 生命周期脚本（原生 + 统一网关）
+# 起：fcc-server（TCP 127.0.0.1 / 0.0.0.0）+ 网关适配进程（Unix Socket）
+# 停：先 TERM，超时 KILL，并清理 socket
+
+set -u
+
+LOG_FILE="${TRIM_PKGVAR}/app.log"
+SERVER_PID_FILE="${TRIM_PKGVAR}/server.pid"
+SHIM_PID_FILE="${TRIM_PKGVAR}/shim.pid"
+ENV_FILE="${TRIM_PKGETC}/fcc.env"
+RUNTIME_BIN="${TRIM_APPDEST}/runtime/python/bin"
+PYTHON="${RUNTIME_BIN}/python3"
+SERVER_BIN="${TRIM_APPDEST}/venv/bin/fcc-server"
+SHIM_SCRIPT="${TRIM_APPDEST}/shim/gateway_shim.py"
+SOCKET_PATH="${TRIM_APPDEST}/fcc.sock"
+GATEWAY_PREFIX="/app/freeclaudecode"
+PORT="${TRIM_SERVICE_PORT:-8586}"
+
+log_msg() {
+  echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$LOG_FILE"
+}
+
+fail() {
+  log_msg "ERROR: $1"
+  echo "$1" > "$TRIM_TEMP_LOGFILE"
+  exit 1
+}
+
+check_process() {
+  local pid="$1"
+  [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null
+}
+
+read_pid() {
+  local file="$1"
+  [ -f "$file" ] || return 1
+  head -n 1 "$file" | tr -d '[:space:]'
+}
+
+# 读取安装/配置向导写入的环境文件（不存在则用默认值）
+load_env() {
+  FCC_BIND_ADDR="0.0.0.0"
+  PROXY_AUTH_TOKEN=""
+  if [ -f "$ENV_FILE" ]; then
+    # shellcheck disable=SC1090
+    . "$ENV_FILE"
+    case "${FCC_BIND_LAN:-true}" in
+      true|1|yes) FCC_BIND_ADDR="0.0.0.0" ;;
+      *)          FCC_BIND_ADDR="127.0.0.1" ;;
+    esac
+  fi
+}
+
+status_app() {
+  local srv shim
+  srv="$(read_pid "$SERVER_PID_FILE")"
+  shim="$(read_pid "$SHIM_PID_FILE")"
+  check_process "$srv" || { rm -f "$SERVER_PID_FILE"; return 1; }
+  check_process "$shim" || { rm -f "$SHIM_PID_FILE"; return 1; }
+  [ -S "$SOCKET_PATH" ] || return 1
+  return 0
+}
+
+start_app() {
+  if status_app; then
+    return 0
+  fi
+
+  [ -x "$SERVER_BIN" ] || fail "找不到 fcc-server（预期路径：${SERVER_BIN}）_请检查 app/venv 是否已随包打入"
+  [ -x "$PYTHON" ] || fail "找不到内置 Python 运行时（预期路径：${PYTHON}）"
+  [ -f "$SHIM_SCRIPT" ] || fail "缺少网关适配脚本：${SHIM_SCRIPT}"
+
+  load_env
+  export PATH="${RUNTIME_BIN}:$PATH"
+  export HOME="${TRIM_PKGHOME}"
+  export PYTHONUNBUFFERED=1
+  export HOST="$FCC_BIND_ADDR"
+  export PORT="$PORT"
+  export PROXY_AUTH_ENABLED=true
+  # 项目的令牌环境变量名是 ANTHROPIC_AUTH_TOKEN（settings.py 的 validation_alias）
+  export ANTHROPIC_AUTH_TOKEN="${PROXY_AUTH_TOKEN}"
+  export PROXY_AUTH_TOKEN="${PROXY_AUTH_TOKEN}"
+  # NAS 上没有桌面浏览器，别让服务端去开浏览器
+  export FCC_OPEN_BROWSER=false
+  export TZ=Asia/Shanghai
+
+  log_msg "Starting ${TRIM_APPNAME} ${TRIM_APPVER} on ${HOST}:${PORT}"
+
+  cd "$TRIM_APPDEST" || fail "无法进入应用目录 ${TRIM_APPDEST}"
+  "$SERVER_BIN" >> "$LOG_FILE" 2>&1 &
+  echo "$!" > "$SERVER_PID_FILE"
+
+  # 等端口就绪（最多 20 秒）
+  local i=0
+  while [ "$i" -lt 20 ]; do
+    if (exec 3<>"/dev/tcp/127.0.0.1/${PORT}") 2>/dev/null; then
+      exec 3>&- 3<&-
+      break
+    fi
+    sleep 1
+    i=$((i + 1))
+  done
+
+  rm -f "$SOCKET_PATH"
+  "$PYTHON" "$SHIM_SCRIPT" \
+    --socket "$SOCKET_PATH" \
+    --upstream "127.0.0.1:${PORT}" \
+    --prefix "$GATEWAY_PREFIX" >> "$LOG_FILE" 2>&1 &
+  echo "$!" > "$SHIM_PID_FILE"
+
+  sleep 1
+  if ! status_app; then
+    fail "启动失败，详见 ${LOG_FILE}"
+  fi
+  log_msg "Started (server pid $(read_pid "$SERVER_PID_FILE"), shim pid $(read_pid "$SHIM_PID_FILE"))"
+  return 0
+}
+
+stop_app() {
+  log_msg "Stopping ${TRIM_APPNAME}"
+  local srv shim
+  srv="$(read_pid "$SERVER_PID_FILE")"
+  shim="$(read_pid "$SHIM_PID_FILE")"
+
+  for pid in "$shim" "$srv"; do
+    check_process "$pid" || continue
+    kill -TERM "$pid" 2>> "$LOG_FILE" || true
+    local count=0
+    while check_process "$pid" && [ "$count" -lt 10 ]; do
+      sleep 1
+      count=$((count + 1))
+    done
+    if check_process "$pid"; then
+      kill -KILL "$pid" 2>> "$LOG_FILE" || true
+    fi
+  done
+
+  rm -f "$SERVER_PID_FILE" "$SHIM_PID_FILE" "$SOCKET_PATH"
+  return 0
+}
+
+case "${1:-}" in
+  start) start_app ;;
+  stop) stop_app ;;
+  status)
+    if status_app; then exit 0; fi
+    exit 3
+    ;;
+  *)
+    echo "Unknown command: ${1:-}" > "$TRIM_TEMP_LOGFILE"
+    exit 1
+    ;;
+esac

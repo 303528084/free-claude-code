@@ -1,0 +1,24 @@
+#!/bin/bash
+# 配置（修改设置）后回调：更新环境文件，由系统在重启应用后生效
+set -u
+
+ENV_FILE="${TRIM_PKGETC}/fcc.env"
+BIND_LAN="${bind_lan:-true}"
+TOKEN="${admin_token:-}"
+
+# 令牌留空表示“不修改”，沿用旧值
+if [ -f "$ENV_FILE" ]; then
+  # shellcheck disable=SC1090
+  . "$ENV_FILE"
+  [ -n "$TOKEN" ] || TOKEN="${PROXY_AUTH_TOKEN:-}"
+fi
+
+umask 077
+cat > "$ENV_FILE" <<EOF
+# 由 config_callback 生成；修改后需在应用中心重启应用
+export FCC_BIND_LAN="${BIND_LAN}"
+export PROXY_AUTH_TOKEN="${TOKEN}"
+EOF
+chmod 600 "$ENV_FILE" 2>/dev/null || true
+
+exit 0
