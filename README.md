@@ -621,3 +621,13 @@ fcc-doctor
 ## 许可证
 
 GNU Affero General Public License version 3 only（`AGPL-3.0-only`）。详见 [LICENSE](LICENSE)。
+
+本仓库是上游的修改版本（汉化 + 飞牛 fnOS 原生应用打包），依 AGPL-3.0 §5 在本仓库
+[NOTICE](NOTICE) 中列明修改内容与日期，并保留上游版权声明。
+
+- **源码就是本仓库**：`zh-cn` 分支的源码树即构建发布包所用的对应源码；每个 Release 同时附带
+  `<包名>-source.tar.gz`（该版本完整源码归档）。
+- **分发与网络使用**：按 AGPL-3.0，若你把本程序分发给他人，须同时提供对应源码；若把它作为
+  网络服务提供给他人使用（§13），须向使用者提供源码获取方式。
+- **商标**：Claude / Claude Code / Anthropic 等为各自权利人商标，本项目与上游作者及这些公司
+  无隶属关系、未获背书，属社区非官方汉化分支。

@@ -1,0 +1,42 @@
+Free Claude Code — 中文汉化分支（zh-cn）
+Copyright (c) 2026 Ali Khokhar（上游作者）
+Copyright (c) 2026 本仓库的汉化与 fnOS 打包贡献者
+
+本仓库基于 Alishahryar1/free-claude-code（https://github.com/Alishahryar1/free-claude-code），
+遵循 GNU Affero General Public License version 3 only（AGPL-3.0-only）发布，
+许可证全文见本目录 LICENSE 文件。
+
+本仓库对上游作品的修改（依 AGPL-3.0 §5 标注）：
+
+1. 汉化（zh 分支独有）
+   - zh/strings.json：中文文案表
+   - zh/apply_translations.py：幂等 AST 翻译应用脚本
+   - zh/sync_upstream.ps1：上游同步脚本
+   - 上述改动只翻译界面文案与说明，不改变程序行为。
+
+2. fnOS 原生应用打包（fnos-fpk/freeclaudecode）
+   - manifest / config/privilege / config/resource / wizard/install / cmd/*：
+     飞牛 fnOS 应用（FPK）的打包与控制脚本
+   - app/ui/config：飞牛桌面入口配置（统一网关 iframe）
+   - app/shim/gateway_shim.py：飞牛统一网关（Unix Socket）到 FCC 本地 HTTP 的转发层，
+     负责改写 Host/Origin、为 /admin 路径加网关前缀
+   - scripts/build_payload.sh、scripts/make_icons.py、图标文件：载荷组装与图标生成
+   - .github/workflows/fnos-fpk.yml：FPK 构建与发布流水线
+   - 这些改动让上游程序以飞牛原生应用方式安装运行，不改动上游 Python 业务代码。
+
+3. 版本与发布
+   - 版本号形如 6.19.40+zh.N，构建产物发布在本仓库 Releases 下。
+
+修改日期：2026-11。
+
+分发说明：
+
+- 本仓库发布的 FPK 二进制属于 AGPL-3.0 意义上的分发，每个 Release 同时提供对应源码归档
+  （<包名>-source.tar.gz），对应构建该二进制的 zh-cn 分支源码树。
+- 若你把本程序作为网络服务提供给他人使用（AGPL-3.0 §13），须向使用者提供对应源码的获取方式。
+
+名称与商标：
+
+- Claude、Claude Code、Anthropic 是 Anthropic 的商标；NVIDIA NIM、OpenAI 等名称归各自权利人所有。
+- 本项目与上游作者及上述公司均无隶属关系，也未获得其背书；"Free Claude Code" 指向上游项目名，
+  本仓库为社区非官方汉化分支。

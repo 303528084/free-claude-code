@@ -254,10 +254,21 @@ jobs:
           - 仅 x86_64 设备
           - 签名：$SIG_NOTE
           - 管理页面只对 NAS 管理员可见；局域网端口上的 /admin 仍会 403
+
+          ## 许可证与源码（AGPL-3.0-only）
+
+          - 本项目基于 [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code)，以 AGPL-3.0-only 发布；修改内容见仓库 [NOTICE](https://github.com/${GITHUB_REPOSITORY}/blob/zh-cn/NOTICE)。
+          - 每个 Release 同时附带 \`${APPNAME}-${VERSION}-source.tar.gz\`：构建该 FPK 所用的完整源码归档（zh-cn 分支源码树）。
+          - 按 AGPL-3.0，再分发本二进制须同时提供对应源码；将本程序作为网络服务提供给他人使用（§13）时，须向使用者提供源码获取方式。
           NOTES
           gh release view "$ZH_TAG" > /dev/null 2>&1 || \
             gh release create "$ZH_TAG" --title "汉化版 v$(echo "$ZH_VERSION" | cut -d+ -f1)（汉化修订 $ZH_REVISION_INPUT）" --notes-file "$notes"
           gh release upload "$ZH_TAG" "$FPK_FINAL" --clobber
+          # AGPL-3.0 合规：二进制分发的对应源码（当前提交的完整源码树）
+          SRC_ARCHIVE="$RUNNER_TEMP/${APPNAME}-${VERSION}-source.tar.gz"
+          git archive --format=tar.gz --prefix="${APPNAME}-${VERSION}/" -o "$SRC_ARCHIVE" HEAD
+          gh release upload "$ZH_TAG" "$SRC_ARCHIVE" --clobber
+          echo "已上传对应源码 ${APPNAME}-${VERSION}-source.tar.gz"
           # 旧的无版本号资产清掉，避免下载页同时挂两个同名内容的包
           gh release delete-asset "$ZH_TAG" "${APPNAME}.fpk" -y 2>/dev/null || true
           # 已存在的 Release：把 FPK 说明段追加进去（先剥掉上一版同段落，避免重跑叠加）
