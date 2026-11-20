@@ -15,7 +15,7 @@
 [![Formatter: Ruff](https://img.shields.io/badge/Formatter-ruff-bf4b00.svg?style=for-the-badge)](https://github.com/astral-sh/ruff)
 [![Logging: Loguru](https://img.shields.io/badge/logging-loguru-00695c.svg?style=for-the-badge)](https://github.com/Delgan/loguru)
 
-[快速开始](#quick-start) · [选择供应商](#choose-a-provider) · [客户端集成](#integrations) · [API 直连](#use-the-api-directly) · [手机端使用](#use-from-your-phone) · [安装维护](#manage-your-installation)
+[快速开始](#quick-start) · [选择供应商](#choose-a-provider) · [客户端集成](#integrations) · [API 直连](#use-the-api-directly) · [手机端使用](#use-from-your-phone) · [飞牛 fnOS 原生应用（FPK）](#fnos-fpk) · [安装维护](#manage-your-installation)
 
 </div>
 
@@ -24,6 +24,8 @@
 </p>
 
 > **关于本仓库**：这是 [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code) 的**中文汉化分支**（`zh-cn`）。代码功能与上游保持一致并持续跟随上游更新，汉化内容仅存在于本分支，不会回推到上游。英文原版 README 见[上游 main 分支](https://github.com/Alishahryar1/free-claude-code/blob/main/README.md)。
+>
+> **飞牛 fnOS 用户**：本分支额外提供**飞牛原生应用包（FPK）**，不依赖 Docker，自带 CPython 运行时，装完从飞牛桌面图标点开就是汉化 Admin。详见[飞牛 fnOS 原生应用](#飞牛-fnos-原生应用fpk)。
 
 <a id="features"></a>
 
@@ -540,6 +542,51 @@ CUDA 13.0 的本地 Whisper：
 </details>
 
 <a id="manage-your-installation"></a>
+
+<a id="fnos-fpk"></a>
+
+## 飞牛 fnOS 原生应用（FPK）
+
+除了按上面的方式在电脑上跑，本汉化分支还提供了**飞牛 fnOS 原生应用包（.fpk）**：装完就是飞牛桌面上的一个应用，从图标点开就是汉化 Admin 页面，不需要 Docker、不需要另开一台机器常驻。
+
+下载：见仓库 [Releases](https://github.com/303528084/free-claude-code/releases) 里的 `freeclaudecode-<版本>.fpk`（同页还有对应的完整源码归档）。
+
+### 相比 Docker 部署好在哪
+
+| | 原生 FPK（本仓库） | Docker 部署 |
+| --- | --- | --- |
+| 依赖 | 不依赖 Docker / Docker Compose，应用中心直接装 | 需要 Docker 守护进程与镜像拉取 |
+| 运行时 | **自带 CPython 3.14.10 和全部依赖**，不受 NAS 系统 python 版本影响 | 取决于基础镜像 |
+| 桌面入口 | 飞牛桌面图标直达汉化 Admin，窗口内嵌页面 | 一般要自己记 IP:端口，或另配反代 |
+| 管理页暴露面 | 走飞牛**统一网关（Unix Socket）**，`/admin` 不对外开在局域网端口上 | 端口上的 `/admin` 通常和 API 同端口 |
+| 启停 | 由 fnOS 系统接管，随机启停、可在应用中心停止/重启 | 依赖容器重启策略 |
+| 升级 | 应用中心走应用包升级 | 重新拉镜像 / 重建容器 |
+| 存储占用 | 单份安装目录（约 95 MB 安装包，含解释器） | 镜像层 + 容器卷 |
+
+打包上还做了这些工程处理，保证在真机上真的能装能跑：
+
+- 载荷里的符号链接全部改成**相对链接**、属主统一 `root:root`、清理非 ASCII 文件名——否则飞牛的安全解包器会直接报「解压 app.tgz 失败」
+- 用 `ubuntu-22.04` 构建 CPython，把 glibc 依赖压到 **2.35**（飞牛系统是 2.36），CI 里加了 glibc 上限检查
+- 安装后自动把 venv 里写死构建路径的 shebang 改写成 `${TRIM_APPDEST}`，所以安装目录换了也不影响启动
+- 首次启动自动把向导里填的令牌写进托管配置 `$HOME/.fcc/.env`（FCC 只认这个文件，不读进程环境变量）
+- 一个轻量 shim 把网关的 Unix Socket 请求转给 FCC 本地 HTTP：改写 `Host`/`Origin`、给 `/admin` 相关路径补网关前缀——**完全没有改动上游业务代码**
+
+### 安装步骤
+
+1. 应用中心 → 手动安装 → 选择下载到的 `freeclaudecode-<版本>.fpk`
+2. 向导里填 **API 令牌**（至少 32 位，客户端请求用 `Authorization: Bearer <令牌>`），并选择是否允许局域网客户端直连
+3. 装完自动启动，回到桌面点应用图标即可打开汉化 Admin；模型供应商、密钥、代理都在该页面配置
+
+### 已知限制
+
+- 仅 **x86_64** 设备
+- 当前发布包为 **未签名**（`fnpack --nosign`），需要应用中心允许“手动安装”本地包；正式分发前需飞牛开发者证书签名
+- Admin 页面只对 NAS 管理员可见；局域网端口（默认 `8586`）上的 `/admin` 仍会返回 403
+- 界面文案、汉化与 FPK 打包脚手架都属于本分支的修改，详见 [NOTICE](NOTICE)
+
+### 自己构建
+
+`.github/workflows/fnos-fpk.yml` 一条流水线完成：编译 CPython → 建 venv 装汉化 wheel → 用仓库源码同步最新前端 → 组装载荷 → `fnpack build` → 冒烟校验（载荷完整性、`root:root`、glibc ≤ 2.36、关键文件存在）→ 发布到 Release 并附源码归档。本地也可以在 x86_64 Linux 上跑 `fnos-fpk/freeclaudecode/scripts/build_payload.sh` 再 `fnpack build`。
 
 ## 安装维护
 
