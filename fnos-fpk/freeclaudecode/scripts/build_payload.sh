@@ -103,8 +103,40 @@ if find "$PKG_DIR/app" -print 2>/dev/null | LC_ALL=C grep -q '[^ -~]'; then
 fi
 echo "    已无非 ASCII 条目"
 
-echo "载荷体积："
+echo "==> 把绝对符号链接改成相对"
+find "$PKG_DIR/app" -type l -print 2>/dev/null > "$BUILD/abs-links.txt" || true
+python3 - "$PKG_DIR/app" <<'PY'
+import os, sys
+root = sys.argv[1]
+INSTALL_PREFIX = "/var/apps/freeclaudecode/app"   # 安装后的 app 目录（载荷约定）
+fixed = 0
+for dirpath, _, files in os.walk(root):
+    for name in files:
+        p = os.path.join(dirpath, name)
+        if not os.path.islink(p):
+            continue
+        tgt = os.readlink(p)
+        if not os.path.isabs(tgt):
+            continue
+        print("    绝对链接：%s -> %s" % (os.path.relpath(p, root), tgt))
+        if not tgt.startswith(INSTALL_PREFIX + "/"):
+            print("    无法映射到包内路径，判定为失败", file=sys.stderr)
+            sys.exit(1)
+        real = os.path.join(root, tgt[len(INSTALL_PREFIX) + 1:])
+        rel = os.path.relpath(real, os.path.dirname(p))
+        os.remove(p)
+        os.symlink(rel, p)
+        fixed += 1
+        print("      改为 %s" % rel)
+print("    共修正 %d 个绝对符号链接" % fixed)
+PY
+if find "$PKG_DIR/app" -type l -exec sh -c 'case "$(readlink "$1")" in /*) echo "$1 -> $(readlink "$1")";; esac' _ {} \; | grep -q .; then
+  echo "    仍存在绝对符号链接，判定为失败" >&2
+  exit 1
+fi
+echo "    已无绝对符号链接"
 
 echo "载荷体积："
+
 du -sh "$PKG_DIR/app/runtime/python" "$PKG_DIR/app/venv"
 echo "完成：fnpack build --directory $PKG_DIR"
