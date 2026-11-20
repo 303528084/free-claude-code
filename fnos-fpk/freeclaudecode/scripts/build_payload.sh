@@ -61,6 +61,16 @@ if ! "$APPDIR/venv/bin/pip" install -q --no-cache-dir -i "$PIP_INDEX" "$WHEEL_UR
 fi
 "$APPDIR/venv/bin/python" -c "import free_claude_code, sys; print('    import ok', sys.version.split()[0])"
 
+echo "==> 2.5 用仓库源码覆盖后台静态资源（避免 wheel 落后于当前提交）"
+REPO_ROOT="$(cd "$PKG_DIR/../.." && pwd)"
+SITE_DIR="$("$APPDIR/venv/bin/python" -c "import free_claude_code, os; print(os.path.dirname(free_claude_code.__file__))")"
+for sub in api/admin_static assets; do
+  if [ -d "$REPO_ROOT/src/free_claude_code/$sub" ]; then
+    cp -a "$REPO_ROOT/src/free_claude_code/$sub/." "$SITE_DIR/$sub/"
+    echo "    已同步 $sub"
+  fi
+done
+
 echo "==> 3/3 把载荷拷回包目录并瘦身"
 rm -rf "$PKG_DIR/app/runtime/python" "$PKG_DIR/app/venv"
 mkdir -p "$PKG_DIR/app/runtime"
