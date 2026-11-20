@@ -1,14 +1,30 @@
 #!/bin/bash
-# 安装前：检查系统架构与依赖运行时是否就位
+# 安装前：检查系统架构与目录就位
+#
+# 注意：fnOS 传入的 TRIM_SYS_ARCH 是 "x86"（不是 uname 的 x86_64），
+# 所以这里必须同时接受 x86 / x86_64 / amd64，否则会在安装向导里直接判架构不符。
 set -u
 
-case "${TRIM_SYS_ARCH:-x86_64}" in
-  x86_64|amd64) : ;;
+case "${TRIM_SYS_ARCH:-x86}" in
+  x86|x86_64|amd64|i386|i686) : ;;
   *)
-    echo "当前骨架只提供 x86_64 运行时，检测到架构：${TRIM_SYS_ARCH}" > "$TRIM_TEMP_LOGFILE"
+    echo "当前包只提供 x86 运行时（x86_64 内核），检测到架构：${TRIM_SYS_ARCH}" > "$TRIM_TEMP_LOGFILE"
     exit 1
     ;;
 esac
+
+# 兜底：本机 ELF 若不是 64 位 x86，同样不该继续
+if [ -x /bin/sh ] && command -v file >/dev/null 2>&1; then
+  arch_line="$(file -L /bin/sh 2>/dev/null || true)"
+  case "$arch_line" in
+    *x86-64*) : ;;
+    "") : ;;
+    *)
+      echo "当前包只提供 x86_64 二进制，本机 /bin/sh 为：${arch_line}" > "$TRIM_TEMP_LOGFILE"
+      exit 1
+      ;;
+  esac
+fi
 
 mkdir -p "$TRIM_PKGETC" "$TRIM_PKGVAR" "$TRIM_PKGHOME" 2>/dev/null || true
 exit 0
