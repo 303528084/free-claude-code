@@ -147,6 +147,10 @@ jobs:
         run: |
           set -euo pipefail
           cd "$PKG_DIR/.."
+          # manifest 里的应用版本必须是「上游版本-汉化修订」，否则换了上游版本后
+          # 应用中心仍按旧版本号判断（同版本不会替换载荷，升级也看不出版本变化）。
+          sudo sed -i "s/^version[[:space:]]*=[[:space:]]*.*/version=${BASE_VERSION}-${ZH_REVISION_INPUT}/" "./${APPNAME}/manifest"
+          grep -E '^version' "./${APPNAME}/manifest"
           # fnOS 解包时不是以 root 跑 tar 的：条目属主若不是 root，chown 会失败并让 tar 非零退出，
           # 应用中心就报「解压 app.tgz 失败」。所以把属主统一成 root:root 再打。
           sudo chown -R root:root "./${APPNAME}"
@@ -186,6 +190,10 @@ jobs:
           for f in manifest cmd/main config/privilege config/resource wizard/install ICON.PNG ICON_256.PNG app.tgz; do
             echo "$list" | grep -qx "$f" || { echo "缺少必要条目：$f" >&2; exit 1; }
           done
+          echo "--- manifest 版本 ---"
+          pkg_version="$(tar -xzf "$FPK" -O manifest | grep -E '^version' | tr -d ' ' | cut -d= -f2)"
+          echo "包内 version=${pkg_version}，期望 ${BASE_VERSION}-${ZH_REVISION_INPUT}"
+          [ "$pkg_version" = "${BASE_VERSION}-${ZH_REVISION_INPUT}" ] || { echo "manifest 版本与本次构建不一致" >&2; exit 1; }
           echo "--- app.tgz 内部（载荷是否打进去了）---"
           applist="$RUNNER_TEMP/applist.txt"
           tar -xzf "$FPK" -O app.tgz | tar -tzf - | sed 's#^\./##' > "$applist"
