@@ -18,7 +18,7 @@ APPDIR=/var/apps/${APPNAME}/app
 PKG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PY_VER=${PY_VER:-3.14.10}
 PY_MIRROR=${PY_MIRROR:-https://mirrors.huaweicloud.com/python}
-WHEEL_URL=${WHEEL_URL:-"https://github.com/303528084/free-claude-code/releases/download/zh-v6.19.40-1/free_claude_code-6.19.40%2Bzh.1-py3-none-any.whl"}
+WHEEL_URL=${WHEEL_URL:-"https://github.com/303528084/free-claude-code/releases/download/zh-v6.19.41-1/free_claude_code-6.19.41%2Bzh.1-py3-none-any.whl"}
 PIP_INDEX=${PIP_INDEX:-https://pypi.org/simple}
 BUILD=${BUILD:-/tmp/fcc-build}
 
@@ -152,3 +152,4 @@ echo "载荷体积："
 
 du -sh "$PKG_DIR/app/runtime/python" "$PKG_DIR/app/venv"
 echo "完成：fnpack build --directory $PKG_DIR"
+
