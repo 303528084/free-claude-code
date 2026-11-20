@@ -8,6 +8,20 @@ BIND_LAN="${bind_lan:-true}"
 
 mkdir -p "$TRIM_PKGETC" "$TRIM_PKGVAR" "$TRIM_PKGHOME" 2>/dev/null || true
 
+# 载荷实际解在 ${TRIM_APPDEST}（如 /vol1/@appcenter/freeclaudecode），
+# 而构建期写入 venv 的是 /var/apps/freeclaudecode/app，这里就地改正
+BUILD_PREFIX="/var/apps/freeclaudecode/app"
+if [ -n "${TRIM_APPDEST:-}" ] && [ "$TRIM_APPDEST" != "$BUILD_PREFIX" ] && [ -d "${TRIM_APPDEST}/venv" ]; then
+  [ -f "${TRIM_APPDEST}/venv/pyvenv.cfg" ] && \
+    sed -i "s|${BUILD_PREFIX}|${TRIM_APPDEST}|g" "${TRIM_APPDEST}/venv/pyvenv.cfg" 2>/dev/null || true
+  for f in "${TRIM_APPDEST}"/venv/bin/*; do
+    [ -f "$f" ] || continue
+    [ "$(head -c 2 "$f" 2>/dev/null)" = "#!" ] || continue
+    sed -i -e "1s|${BUILD_PREFIX}|${TRIM_APPDEST}|g" "$f" 2>/dev/null || true
+  done
+  echo "已把 venv 路径改到 ${TRIM_APPDEST}"
+fi
+
 if [ -z "$TOKEN" ]; then
   # 向导未提供时兜底生成一个随机令牌，安装完成后可在“应用设置”里改
   TOKEN="$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"

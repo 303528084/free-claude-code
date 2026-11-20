@@ -41,7 +41,9 @@ env:
 jobs:
   fpk:
     name: 构建并发布 FPK
-    runs-on: ubuntu-latest
+    # 必须用 ubuntu-22.04（glibc 2.35）：飞牛 fnOS 是 Debian 12 / glibc 2.36，
+    # ubuntu-latest(24.04, glibc 2.39) 编出来的 python 在 NAS 上会报 GLIBC_2.38 not found
+    runs-on: ubuntu-22.04
     timeout-minutes: 90
 
     steps:
@@ -68,7 +70,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /var/apps/${{ env.APPNAME }}/app/runtime/python
-          key: cpython-3.14.10-gnu-prefix-${{ env.APPNAME }}-v1
+          key: cpython-3.14.10-gnu2204-prefix-${{ env.APPNAME }}-v1
 
       - name: 计算汉化版本与标签
         id: version
@@ -190,6 +192,14 @@ jobs:
           if [ -n "$badowner" ]; then echo "app.tgz 里有非 root:root 条目：" >&2; echo "$badowner" >&2; exit 1; fi
           echo "app.tgz 内所有条目均为 root:root"
           tar -tvzf "$FPK" | grep -E ' cmd/main$' | sed 's/^/cmd\/main：/'
+
+          echo "--- 运行时 glibc 依赖（fnOS 只有 2.36）---"
+          maxreq=$(objdump -T "$PKG_DIR/app/runtime/python/bin/python3.14" 2>/dev/null | grep -o 'GLIBC_[0-9.]*' | sed 's/GLIBC_//' | sort -V | tail -n 1)
+          echo "python3.14 最高要求：${maxreq:-未知}"
+          if [ -n "$maxreq" ] && [ "$(printf '%s\n2.36\n' "$maxreq" | sort -V | tail -n 1)" != "2.36" ]; then
+            echo "构建机 glibc 太新（要求 ${maxreq} > 2.36），NAS 上会起不来" >&2
+            exit 1
+          fi
 
       - name: 上传构建产物（artifact）
         uses: actions/upload-artifact@v4

@@ -88,7 +88,10 @@ start_app() {
   log_msg "Starting ${TRIM_APPNAME} ${TRIM_APPVER} on ${HOST}:${PORT}"
 
   cd "$TRIM_APPDEST" || fail "无法进入应用目录 ${TRIM_APPDEST}"
-  "$SERVER_BIN" >> "$LOG_FILE" 2>&1 &
+  # 用解释器显式跑入口脚本，绕开 pip 生成的 shebang：
+  # 那个 shebang 里写死的是构建期路径（/var/apps/freeclaudecode/app），
+  # 实际载荷解在 ${TRIM_APPDEST}（例如 /vol1/@appcenter/freeclaudecode）下。
+  "$PYTHON" "$SERVER_BIN" >> "$LOG_FILE" 2>&1 &
   echo "$!" > "$SERVER_PID_FILE"
 
   # 等端口就绪（最多 20 秒）
