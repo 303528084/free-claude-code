@@ -36,6 +36,15 @@ REWRITABLE_TYPES = ("text/html", "javascript", "text/css", "application/json")
 # 这样 /admin.css、/admin.js 这类文件名不会被误改（第一版就踩过这个坑）。
 _ADMIN_RE = re.compile(rb"/admin(?=[/\"'`\\?#\s<]|$)")
 
+# JS 里还有正则字面量（例如 /^\/admin\/code\/([0-9a-f-]+)$/），
+# 前缀里带斜杠，插进正则会把字面量提前闭合，整段 JS 直接语法错误。
+# 所以 JS / JSON / HTML 只改「引号后面」的 /admin，正则里的（前面是 \ 或 ^）一律不碰。
+_ADMIN_QUOTED_RE = re.compile(rb"([\"'`])/admin(?=[/\"'`\\?#\s<]|$)")
+
+# 正则字面量里的写法是 \/admin\/（斜杠被转义），这种也要加前缀，
+# 但插入的斜杠必须同样转义，否则字面量会被提前闭合。
+_ADMIN_ESC_RE = re.compile(rb"(?<=\\)/admin(?=[\\/])")
+
 
 def _rewrite_request(head: bytes, up_host: str, up_port: int, prefix: str) -> tuple[bytes, int] | None:
     """返回 (改写后的请求头, Content-Length)；无法处理时返回 None。"""
@@ -82,14 +91,23 @@ def _rewrite_body(head: bytes, body: bytes, prefix: str) -> tuple[bytes, bytes] 
         return None
 
     ctype_ok = False
+    quoted_only = False
     for line in head.split(b"\r\n")[1:]:
         if line.lower().startswith(b"content-type:"):
             val = line.split(b":", 1)[1].decode("latin-1").lower()
             ctype_ok = any(t in val for t in REWRITABLE_TYPES)
+            # JS 与 JSON 里的路径一定在引号里；HTML 属性亦然。CSS 可能有无引号的 url(...)
+            quoted_only = "javascript" in val or "application/json" in val or "text/html" in val
     if not ctype_ok:
         return None
 
-    new_body = _ADMIN_RE.sub((prefix + "/admin").encode("latin-1"), body)
+    if quoted_only:
+        # 匹配到的 "/admin" 前面已经有一个 "\"（转义斜杠），所以替换串不能再带前导反斜杠
+        esc_prefix = prefix.replace("/", "\\/")[1:].encode("latin-1") + b"\\/admin"
+        new_body = _ADMIN_ESC_RE.sub(esc_prefix, body)
+        new_body = _ADMIN_QUOTED_RE.sub(lambda m: m.group(1) + (prefix + "/admin").encode("latin-1"), new_body)
+    else:
+        new_body = _ADMIN_RE.sub((prefix + "/admin").encode("latin-1"), body)
     lines = []
     for line in head.split(b"\r\n"):
         if line.lower().startswith(b"content-length:"):

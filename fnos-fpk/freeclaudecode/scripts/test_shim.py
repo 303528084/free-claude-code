@@ -31,6 +31,13 @@ HTML_BODY = (
     b'</head><body><a href="/admin/model_config">cfg</a></body></html>'
 )
 
+# 真实 admin 前端里的两种写法：字符串里的绝对路径 + 正则字面量里转义过的路径。
+# 后者要是被直接插前缀，正则会被提前闭合、整段 JS 变语法错误（真机上踩过）。
+JS_BODY = (
+    b'const base = "/admin/api/code";\n'
+    b'let id = /^\\/admin\\/code\\/([0-9a-f-]+)$/.exec(path)?.[1] || null;\n'
+)
+
 
 async def fake_upstream(reader, writer) -> None:
     head = await reader.readuntil(b"\r\n\r\n")
@@ -125,6 +132,15 @@ async def main() -> int:
     check(b'href="/app/freeclaudecode/admin/model_config"' in page, "裸 /admin 链接已加前缀")
     check(b'"/app/freeclaudecode/admin/assets/v1/admin.css"' not in page, "没有重复加前缀")
     check(b"data: first" in sse and b"data: second" in sse, "SSE 流式两帧都送达")
+
+    js_head = b"Content-Type: text/javascript; charset=utf-8\r\nContent-Length: 1\r\n\r\n"
+    js_rewritten = gateway_shim._rewrite_body(js_head, JS_BODY, PREFIX)
+    js_out = js_rewritten[1] if js_rewritten else JS_BODY
+    print("--- JS 改写结果 ---")
+    print(js_out.decode("latin-1"))
+    check(b'"/app/freeclaudecode/admin/api/code"' in js_out, "JS 字符串路径已加前缀")
+    check(b"/^\\/app\\/freeclaudecode\\/admin\\/code\\/" in js_out, "正则字面量加了转义前缀")
+    check(js_out.count(b"\\/\\/") == 0, "没有产生双反斜杠（否则正则直接语法错误）")
 
     bad = (
         f"POST {PREFIX}/admin/api/config/apply HTTP/1.1\r\n"
