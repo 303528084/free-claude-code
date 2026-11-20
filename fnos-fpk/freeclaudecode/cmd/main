@@ -89,6 +89,17 @@ start_app() {
   export FCC_OPEN_BROWSER=false
   export TZ=Asia/Shanghai
 
+  # 项目把访问令牌存在自己的托管配置 ${HOME}/.fcc/.env 里，而且只认这个文件里的值
+  # （进程环境里的 ANTHROPIC_AUTH_TOKEN 会被 config/loader.py 明确忽略）。
+  # 所以首次启动时把向导填的令牌落进去；之后用户在 Admin 里改的令牌以文件为准，不再覆盖。
+  local fcc_env="${HOME}/.fcc/.env"
+  if [ ! -f "$fcc_env" ]; then
+    mkdir -p "${HOME}/.fcc" 2>/dev/null || true
+    printf 'ANTHROPIC_AUTH_TOKEN="%s"\n' "${PROXY_AUTH_TOKEN}" > "$fcc_env" 2>/dev/null || true
+  elif ! grep -q '^ANTHROPIC_AUTH_TOKEN=' "$fcc_env"; then
+    printf 'ANTHROPIC_AUTH_TOKEN="%s"\n' "${PROXY_AUTH_TOKEN}" >> "$fcc_env" 2>/dev/null || true
+  fi
+
   log_msg "Starting ${TRIM_APPNAME} ${TRIM_APPVER} on ${HOST}:${PORT}"
 
   cd "$TRIM_APPDEST" || fail "无法进入应用目录 ${TRIM_APPDEST}"
