@@ -7,6 +7,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 STATIC = ROOT / "src" / "free_claude_code" / "api" / "admin_static"
 STRINGS = pathlib.Path(__file__).resolve().parent / "strings.json"
+SOURCE_URL = "https://github.com/303528084/free-claude-code"
 
 
 def apply_pairs(path: pathlib.Path, pairs) -> tuple[int, int]:
@@ -202,9 +203,33 @@ def apply_python(path: pathlib.Path, spec: dict) -> tuple[int, list]:
     return len(edits), leftover
 
 
+def inject_source_link() -> bool:
+    """在 Admin 页脚加"源码"链接（AGPL-3.0 §13 的源码获取入口），幂等。"""
+    path = STATIC / "index.html"
+    if not path.exists():
+        return False
+    text = path.read_text(encoding="utf-8")
+    if 'id="sourceLink"' in text:
+        return False
+    anchor = '<span id="configPath"></span>'
+    if anchor not in text:
+        print("footer 锚点缺失，跳过源码链接注入")
+        return False
+    link = (
+        f"{anchor}\n          <a id=\"sourceLink\" href=\"{SOURCE_URL}\" target=\"_blank\" "
+        'rel="noopener" style="color:inherit;opacity:.7;font-size:12px;text-decoration:underline">'
+        "源码（AGPL-3.0）</a>"
+    )
+    path.write_text(text.replace(anchor, link, 1), encoding="utf-8")
+    print("html index.html: 已注入页脚源码链接")
+    return True
+
+
 def main() -> int:
     data = json.loads(STRINGS.read_text(encoding="utf-8"))
     errors = 0
+
+    inject_source_link()
 
     for name, pairs in data.get("html_literals", {}).items():
         p = STATIC / name.lstrip("/")
