@@ -12,6 +12,9 @@ ENV_FILE="${TRIM_PKGETC}/fcc.env"
 RUNTIME_BIN="${TRIM_APPDEST}/runtime/python/bin"
 PYTHON="${RUNTIME_BIN}/python3"
 SERVER_BIN="${TRIM_APPDEST}/venv/bin/fcc-server"
+# 跑 fcc-server 必须用 venv 里的解释器：用 runtime 的 python 跑脚本时，
+# sys.path 里不会有 venv 的 site-packages，会报 No module named 'free_claude_code'
+VENV_PYTHON="${TRIM_APPDEST}/venv/bin/python3"
 SHIM_SCRIPT="${TRIM_APPDEST}/shim/gateway_shim.py"
 SOCKET_PATH="${TRIM_APPDEST}/fcc.sock"
 GATEWAY_PREFIX="/app/freeclaudecode"
@@ -69,6 +72,7 @@ start_app() {
 
   [ -x "$SERVER_BIN" ] || fail "找不到 fcc-server（预期路径：${SERVER_BIN}）_请检查 app/venv 是否已随包打入"
   [ -x "$PYTHON" ] || fail "找不到内置 Python 运行时（预期路径：${PYTHON}）"
+  [ -x "$VENV_PYTHON" ] || fail "找不到 venv 解释器（预期路径：${VENV_PYTHON}）"
   [ -f "$SHIM_SCRIPT" ] || fail "缺少网关适配脚本：${SHIM_SCRIPT}"
 
   load_env
@@ -91,7 +95,7 @@ start_app() {
   # 用解释器显式跑入口脚本，绕开 pip 生成的 shebang：
   # 那个 shebang 里写死的是构建期路径（/var/apps/freeclaudecode/app），
   # 实际载荷解在 ${TRIM_APPDEST}（例如 /vol1/@appcenter/freeclaudecode）下。
-  "$PYTHON" "$SERVER_BIN" >> "$LOG_FILE" 2>&1 &
+  "$VENV_PYTHON" "$SERVER_BIN" >> "$LOG_FILE" 2>&1 &
   echo "$!" > "$SERVER_PID_FILE"
 
   # 等端口就绪（最多 20 秒）

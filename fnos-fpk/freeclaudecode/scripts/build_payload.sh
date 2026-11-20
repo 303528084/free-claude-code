@@ -86,6 +86,8 @@ rm -rf "$PKG_DIR/app/runtime/python/lib/python3.14/test" \
        "$PKG_DIR/app/venv/lib/python3.14/site-packages/_distutils_hack"
 find "$PKG_DIR/app/venv/lib/python3.14/site-packages" -type d -name 'licenses' -prune -exec rm -rf {} + 2>/dev/null || true
 find "$PKG_DIR/app/venv/lib/python3.14/site-packages" -maxdepth 1 -name '*.dist-info' -type d -exec sh -c 'rm -rf "$1/RECORD" 2>/dev/null || true' _ {} \;
+# 删了 setuptools/_distutils_hack 之后它留下的 .pth 还在，每次启动都会打印 ModuleNotFoundError 噪音
+rm -f "$PKG_DIR/app/venv/lib/python3.14/site-packages/distutils-precedence.pth" 2>/dev/null || true
 
 # 非 ASCII 文件名（例如 setuptools 造的 venv/bin/𝜋thon）在 fnOS 解包器上会导致整包解压失败，必须清掉
 echo "==> 清理非 ASCII 条目"
