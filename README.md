@@ -25,7 +25,7 @@
 
 > **关于本仓库**：这是 [Alishahryar1/free-claude-code](https://github.com/Alishahryar1/free-claude-code) 的**中文汉化分支**（`zh-cn`）。代码功能与上游保持一致并持续跟随上游更新，汉化内容仅存在于本分支，不会回推到上游。英文原版 README 见[上游 main 分支](https://github.com/Alishahryar1/free-claude-code/blob/main/README.md)。
 >
-> **飞牛 fnOS 用户**：本分支额外提供**飞牛原生应用包（FPK）**，不依赖 Docker，自带 CPython 运行时，装完从飞牛桌面图标点开就是汉化 Admin。详见[飞牛 fnOS 原生应用](#飞牛-fnos-原生应用fpk)。
+> **飞牛 fnOS 用户**：本分支额外提供**飞牛原生应用包（FPK）**，不依赖 Docker，自带 CPython 运行时，装完从飞牛桌面图标点开就是汉化 Admin。详见[飞牛 fnOS 原生应用](#fnos-fpk)。
 
 <a id="features"></a>
 
