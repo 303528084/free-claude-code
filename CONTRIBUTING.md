@@ -47,11 +47,11 @@ Python 命令一律用 `uv run` 执行，不要用全局 Python 解释器运行�
 ```bash
 uv run ruff format
 uv run ruff check --fix
-uv run ty check
+uv run pyrefly check
 uv run pytest -v --tb=short
 ```
 
-GitHub CI 以只检查（check-only）模式运行 Ruff，并禁止使用 `# type: ignore`、`# ty: ignore` 以及旧式注解绕过手段。请修复底层的类型与导入边界问题，而不是压制告警。
+Pyrefly 告警会让检查失败。GitHub CI 以只检查（check-only）模式运行 Ruff，并禁止使用 `# type: ignore`、`# ty: ignore`、`# pyrefly: ignore` 以及旧式注解绕过手段。请修复底层的类型与导入边界问题，而不是压制告警。
 
 ## 项目规范
 
