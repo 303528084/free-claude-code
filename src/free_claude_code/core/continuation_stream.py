@@ -203,7 +203,7 @@ class ContinuationStream:
                 raise ExecutionFailure(
                     kind=FailureKind.UPSTREAM,
                     status_code=502,
-                    message="The provider continuation completed without adding output.",
+                    message="供应商续传结束时没有产生任何输出。",
                     retryable=False,
                 )
             data.pop("usage", None)
@@ -221,7 +221,7 @@ class ContinuationStream:
                 raise ExecutionFailure(
                     kind=FailureKind.UPSTREAM,
                     status_code=502,
-                    message="The provider continuation completed without adding output.",
+                    message="供应商续传结束时没有产生任何输出。",
                     retryable=False,
                 )
             # After overlap removal, keep an empty terminal valid for SDK chat
@@ -253,7 +253,7 @@ class ContinuationStream:
             raise ExecutionFailure(
                 kind=FailureKind.UPSTREAM,
                 status_code=502,
-                message="The provider continuation completed without adding output.",
+                message="供应商续传结束时没有产生任何输出。",
                 retryable=False,
             )
         if isinstance(response, dict):

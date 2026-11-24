@@ -107,7 +107,7 @@ class PacketPublication:
                 raise ExecutionFailure(
                     kind=FailureKind.UPSTREAM,
                     status_code=502,
-                    message="The provider continuation completed without adding output.",
+                    message="供应商续传结束时没有产生任何输出。",
                     retryable=False,
                 )
             frame = replace_frame_data(frame, payload)

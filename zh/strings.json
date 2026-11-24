@@ -789,6 +789,18 @@
         "The connection ended before the availability check completed. Retry and check the local server logs.": "连接在可用性检查完成前中断。请重试并查看本地服务日志。"
       },
       "fragments": {}
+    },
+    "src/free_claude_code/api/stream_publication.py": {
+      "literals": {
+        "The provider continuation completed without adding output.": "供应商续传结束时没有产生任何输出。"
+      },
+      "fragments": {}
+    },
+    "src/free_claude_code/core/continuation_stream.py": {
+      "literals": {
+        "The provider continuation completed without adding output.": "供应商续传结束时没有产生任何输出。"
+      },
+      "fragments": {}
     }
   }
 }
