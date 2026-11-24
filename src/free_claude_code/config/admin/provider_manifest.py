@@ -4,7 +4,7 @@ from dataclasses import replace
 from typing import TypedDict
 
 from free_claude_code.config.provider_catalog import PROVIDER_CATALOG
-from free_claude_code.config.settings import Settings
+from free_claude_code.config.settings import ENV_KEY_BY_SETTING
 
 from .specs import ConfigFieldSpec
 
@@ -356,7 +356,7 @@ def _base_url_field_specs() -> tuple[ConfigFieldSpec, ...]:
     for descriptor in PROVIDER_CATALOG.values():
         if descriptor.base_url_attr is None:
             continue
-        key = _settings_env_key(descriptor.base_url_attr)
+        key = ENV_KEY_BY_SETTING[descriptor.base_url_attr]
         specs.append(
             _with_override(
                 ConfigFieldSpec(
@@ -419,7 +419,7 @@ def _proxy_field_specs() -> tuple[ConfigFieldSpec, ...]:
         specs.append(
             _with_override(
                 ConfigFieldSpec(
-                    key=_settings_env_key(descriptor.proxy_attr),
+                    key=ENV_KEY_BY_SETTING[descriptor.proxy_attr],
                     label=f"{descriptor.display_name} 代理",
                     description="可选的网络代理，不使用请留空",
                     section_id="providers",
@@ -444,9 +444,3 @@ def _with_override(spec: ConfigFieldSpec) -> ConfigFieldSpec:
         description=override.get("description", spec.description),
         restart_required=override.get("restart_required", spec.restart_required),
     )
-
-
-def _settings_env_key(settings_attr: str) -> str:
-    model_field = Settings.model_fields[settings_attr]
-    alias = model_field.validation_alias
-    return str(alias) if alias is not None else settings_attr
